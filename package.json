@@ -7,7 +7,7 @@
   "scripts": {
     "build": "remix build",
     "dev": "remix dev",
-    "types": "openapi-typescript https://pxctfvtvdzmcrmssxkkj.supabase.co/rest/v1/?apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4Y3RmdnR2ZHptY3Jtc3N4a2tqIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDk2MjczMjYsImV4cCI6MTk2NTIwMzMyNn0.42sk46cq8u4yvDqpfe3AioOq9pM1sU_thncq7ip2MI0 --output _types/supabase.ts"
+    "types": "openapi-typescript https://pxctfvtvdzmcrmssxkkj.supabase.co/rest/v1/?apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4Y3RmdnR2ZHptY3Jtc3N4a2tqIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDk2MjczMjYsImV4cCI6MTk2NTIwMzMyNn0.42sk46cq8u4yvDqpfe3AioOq9pM1sU_thncq7ip2MI0 --output app/_types/supabase.ts"
   },
   "dependencies": {
     "@remix-run/node": "^1.3.5",
