@@ -1,3 +1,4 @@
+import { Button, Heading, Text } from "@chakra-ui/react";
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
@@ -16,11 +17,15 @@ const NotesIndexPage: React.VFC = () => {
   const { data, count, error } = useLoaderData<LoaderData>();
   return (
     <div>
-      <h1>Hola</h1>
-      <h2>Notes</h2>
-      <p>Count: {count}</p>
-      <p>Error: {JSON.stringify(error)}</p>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
+      <Heading as="h1">Hola</Heading>
+      <Heading as="h2" size={"md"}>
+        Notes
+      </Heading>
+
+      <Text>Count: {count}</Text>
+      <Text>Error: {JSON.stringify(error)}</Text>
+      <Text>{JSON.stringify(data, null, 2)}</Text>
+      <Button>Click me</Button>
     </div>
   );
 };

@@ -1,4 +1,10 @@
-import { RemixBrowser } from "@remix-run/react";
 import { hydrate } from "react-dom";
+import { RemixBrowser } from "@remix-run/react";
+import { ClientCacheProvider } from "./styles";
 
-hydrate(<RemixBrowser />, document);
+hydrate(
+  <ClientCacheProvider>
+    <RemixBrowser />
+  </ClientCacheProvider>,
+  document
+);
