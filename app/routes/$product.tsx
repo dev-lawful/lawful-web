@@ -4,6 +4,8 @@ const ProductLayoutRoute = () => {
   return (
     <>
       <div>ProductLayoutRoute</div>
+      <div>Custon Theme</div>
+      <div>Navbar and footer</div>
       <Outlet />
     </>
   );
