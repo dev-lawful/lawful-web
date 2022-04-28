@@ -8,9 +8,10 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useMatches,
 } from "@remix-run/react";
 import React, { useContext, useEffect } from "react";
-import { ClientStyleContext, ServerStyleContext, theme } from "~/styles";
+import { ClientStyleContext, ServerStyleContext, getTheme } from "~/styles";
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
@@ -78,9 +79,11 @@ const Document = withEmotionCache(
 );
 
 export default function App() {
+  const match = useMatches();
+  const product = match[0]?.params?.product;
   return (
     <Document>
-      <ChakraProvider theme={theme}>
+      <ChakraProvider theme={getTheme(product)}>
         <Outlet />
       </ChakraProvider>
     </Document>
