@@ -1,4 +1,4 @@
-import { ChakraProvider } from "@chakra-ui/react";
+import { Button, ChakraProvider } from "@chakra-ui/react";
 import { withEmotionCache } from "@emotion/react";
 import type { LinksFunction, MetaFunction } from "@remix-run/node"; // Depends on the runtime you choose
 import {
@@ -9,6 +9,7 @@ import {
   Scripts,
   ScrollRestoration,
   useMatches,
+  useParams,
 } from "@remix-run/react";
 import React, { useContext, useEffect } from "react";
 import { ClientStyleContext, ServerStyleContext, getTheme } from "~/styles";
@@ -79,11 +80,12 @@ const Document = withEmotionCache(
 );
 
 export default function App() {
-  const match = useMatches();
-  const product = match[0]?.params?.product;
+  const { product } = useParams();
   return (
     <Document>
       <ChakraProvider theme={getTheme(product)}>
+        <Button>Goood</Button>
+        <Button variant="outline">Goood</Button>
         <Outlet />
       </ChakraProvider>
     </Document>
