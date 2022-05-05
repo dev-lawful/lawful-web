@@ -15,6 +15,10 @@ export const getTheme = (variant?: string) => {
     variant === "decode" || variant === "network" ? variant : "lawful";
   return extendTheme(
     {
+      fonts: {
+        heading: "Inter, sans-serif",
+        body: "Inter, sans-serif",
+      },
       colors: {
         lawful: {
           "50": "#ECF2F9",
