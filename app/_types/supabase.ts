@@ -12,6 +12,195 @@ export interface paths {
       };
     };
   };
+  "/boardStates": {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.boardStates.id"];
+          boardId?: parameters["rowFilter.boardStates.boardId"];
+          description?: parameters["rowFilter.boardStates.description"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["boardStates"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** boardStates */
+          boardStates?: definitions["boardStates"];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters["select"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.boardStates.id"];
+          boardId?: parameters["rowFilter.boardStates.boardId"];
+          description?: parameters["rowFilter.boardStates.description"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.boardStates.id"];
+          boardId?: parameters["rowFilter.boardStates.boardId"];
+          description?: parameters["rowFilter.boardStates.description"];
+        };
+        body: {
+          /** boardStates */
+          boardStates?: definitions["boardStates"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
+  "/boards": {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.boards.id"];
+          created_at?: parameters["rowFilter.boards.created_at"];
+          teamId?: parameters["rowFilter.boards.teamId"];
+          name?: parameters["rowFilter.boards.name"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["boards"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** boards */
+          boards?: definitions["boards"];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters["select"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.boards.id"];
+          created_at?: parameters["rowFilter.boards.created_at"];
+          teamId?: parameters["rowFilter.boards.teamId"];
+          name?: parameters["rowFilter.boards.name"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.boards.id"];
+          created_at?: parameters["rowFilter.boards.created_at"];
+          teamId?: parameters["rowFilter.boards.teamId"];
+          name?: parameters["rowFilter.boards.name"];
+        };
+        body: {
+          /** boards */
+          boards?: definitions["boards"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
   "/initiatives": {
     get: {
       parameters: {
@@ -405,6 +594,108 @@ export interface paths {
       };
     };
   };
+  "/tasks": {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.tasks.id"];
+          created_at?: parameters["rowFilter.tasks.created_at"];
+          name?: parameters["rowFilter.tasks.name"];
+          description?: parameters["rowFilter.tasks.description"];
+          dueDate?: parameters["rowFilter.tasks.dueDate"];
+          asignee?: parameters["rowFilter.tasks.asignee"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["tasks"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** tasks */
+          tasks?: definitions["tasks"];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters["select"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.tasks.id"];
+          created_at?: parameters["rowFilter.tasks.created_at"];
+          name?: parameters["rowFilter.tasks.name"];
+          description?: parameters["rowFilter.tasks.description"];
+          dueDate?: parameters["rowFilter.tasks.dueDate"];
+          asignee?: parameters["rowFilter.tasks.asignee"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.tasks.id"];
+          created_at?: parameters["rowFilter.tasks.created_at"];
+          name?: parameters["rowFilter.tasks.name"];
+          description?: parameters["rowFilter.tasks.description"];
+          dueDate?: parameters["rowFilter.tasks.dueDate"];
+          asignee?: parameters["rowFilter.tasks.asignee"];
+        };
+        body: {
+          /** tasks */
+          tasks?: definitions["tasks"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
   "/teamMembers": {
     get: {
       parameters: {
@@ -699,6 +990,43 @@ export interface paths {
 }
 
 export interface definitions {
+  boardStates: {
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: number;
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Foreign Key to `boards.id`.<fk table='boards' column='id'/>
+     */
+    boardId?: number;
+    /** Format: text */
+    description?: string;
+  };
+  boards: {
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: number;
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    created_at?: string;
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Foreign Key to `teams.id`.<fk table='teams' column='id'/>
+     */
+    teamId?: number;
+    /** Format: text */
+    name?: string;
+  };
   initiatives: {
     /**
      * Format: bigint
@@ -778,6 +1106,27 @@ export interface definitions {
     logoUrl?: string;
     /** Format: text */
     description?: string;
+  };
+  tasks: {
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: number;
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    created_at?: string;
+    /** Format: text */
+    name?: string;
+    /** Format: text */
+    description?: string;
+    /** Format: timestamp with time zone */
+    dueDate?: string;
+    /** Format: uuid */
+    asignee?: string;
   };
   teamMembers: {
     /**
@@ -876,6 +1225,24 @@ export interface parameters {
   offset: string;
   /** @description Limiting and Pagination */
   limit: string;
+  /** @description boardStates */
+  "body.boardStates": definitions["boardStates"];
+  /** Format: bigint */
+  "rowFilter.boardStates.id": string;
+  /** Format: bigint */
+  "rowFilter.boardStates.boardId": string;
+  /** Format: text */
+  "rowFilter.boardStates.description": string;
+  /** @description boards */
+  "body.boards": definitions["boards"];
+  /** Format: bigint */
+  "rowFilter.boards.id": string;
+  /** Format: timestamp with time zone */
+  "rowFilter.boards.created_at": string;
+  /** Format: bigint */
+  "rowFilter.boards.teamId": string;
+  /** Format: text */
+  "rowFilter.boards.name": string;
   /** @description initiatives */
   "body.initiatives": definitions["initiatives"];
   /** Format: bigint */
@@ -922,6 +1289,20 @@ export interface parameters {
   "rowFilter.organizations.logoUrl": string;
   /** Format: text */
   "rowFilter.organizations.description": string;
+  /** @description tasks */
+  "body.tasks": definitions["tasks"];
+  /** Format: bigint */
+  "rowFilter.tasks.id": string;
+  /** Format: timestamp with time zone */
+  "rowFilter.tasks.created_at": string;
+  /** Format: text */
+  "rowFilter.tasks.name": string;
+  /** Format: text */
+  "rowFilter.tasks.description": string;
+  /** Format: timestamp with time zone */
+  "rowFilter.tasks.dueDate": string;
+  /** Format: uuid */
+  "rowFilter.tasks.asignee": string;
   /** @description teamMembers */
   "body.teamMembers": definitions["teamMembers"];
   /** Format: bigint */
