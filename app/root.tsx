@@ -15,7 +15,7 @@ import { ClientStyleContext, getTheme, ServerStyleContext } from "~/styles";
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
-  title: "New Remix App",
+  title: "Lawful",
   viewport: "width=device-width,initial-scale=1",
 });
 
