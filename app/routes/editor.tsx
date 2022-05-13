@@ -1,9 +1,11 @@
-import { LoaderFunction } from "@remix-run/node";
-import { json, LinksFunction } from "@remix-run/node";
-import { ActionFunction } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
-import Editor from "~/components/ui/Editor";
-import stylesUrl from "~/components/ui/Editor/styles/index.css";
+import type {
+  LoaderFunction,
+  LinksFunction,
+  ActionFunction,
+} from "@remix-run/node";
+import { json } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
+import { Editor, links as editorLinks } from "~/components/ui/Editor";
 
 export const action: ActionFunction = async ({ request }) => {
   const data = await request.formData();
@@ -19,12 +21,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 export const links: LinksFunction = () => {
-  return [
-    {
-      href: stylesUrl,
-      rel: "stylesheet",
-    },
-  ];
+  return [...editorLinks()];
 };
 
 const EditorRoute = () => {
