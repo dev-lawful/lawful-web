@@ -8,10 +8,13 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
   useParams,
 } from "@remix-run/react";
+import { createClient } from "@supabase/supabase-js";
 import React, { useContext, useEffect } from "react";
 import { ClientStyleContext, getTheme, ServerStyleContext } from "~/styles";
+import { SupabaseClientProvider } from "./db";
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
@@ -78,14 +81,40 @@ const Document = withEmotionCache(
   }
 );
 
+interface LoaderData {
+  ENV: {
+    SUPABASE_URL: string;
+    SUPABASE_ANON_KEY: string;
+  };
+}
+
+export const loader = async (): Promise<LoaderData> => {
+  return {
+    ENV: {
+      SUPABASE_URL: process.env.SUPABASE_URL || "",
+      SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY || "",
+    },
+  };
+};
+
 export default function App() {
   const { product } = useParams();
+  const data = useLoaderData<LoaderData>();
   return (
     <Document>
       <ChakraProvider theme={getTheme(product)}>
         <Button>Goood</Button>
         <Button variant="outline">Goood</Button>
-        <Outlet />
+        {data && (
+          <SupabaseClientProvider
+            value={createClient(
+              data.ENV.SUPABASE_URL,
+              data.ENV.SUPABASE_ANON_KEY
+            )}
+          >
+            <Outlet />
+          </SupabaseClientProvider>
+        )}
       </ChakraProvider>
     </Document>
   );
