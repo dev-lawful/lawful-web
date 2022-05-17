@@ -1,6 +1,11 @@
 import { Button, ChakraProvider } from "@chakra-ui/react";
 import { withEmotionCache } from "@emotion/react";
-import type { LinksFunction, MetaFunction } from "@remix-run/node"; // Depends on the runtime you choose
+import type {
+  LinksFunction,
+  LoaderFunction,
+  MetaFunction,
+} from "@remix-run/node"; // Depends on the runtime you choose
+import { json } from "@remix-run/node";
 import {
   Links,
   LiveReload,
@@ -88,15 +93,14 @@ interface LoaderData {
   };
 }
 
-export const loader = async (): Promise<LoaderData> => {
-  return {
+export const loader: LoaderFunction = () => {
+  return json<LoaderData>({
     ENV: {
       SUPABASE_URL: process.env.SUPABASE_URL || "",
       SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY || "",
     },
-  };
+  });
 };
-
 export default function App() {
   const { product } = useParams();
   const data = useLoaderData<LoaderData>();
@@ -105,7 +109,7 @@ export default function App() {
       <ChakraProvider theme={getTheme(product)}>
         <Button>Goood</Button>
         <Button variant="outline">Goood</Button>
-        {data && (
+        {data ? (
           <SupabaseClientProvider
             value={createClient(
               data.ENV.SUPABASE_URL,
@@ -114,7 +118,7 @@ export default function App() {
           >
             <Outlet />
           </SupabaseClientProvider>
-        )}
+        ) : null}
       </ChakraProvider>
     </Document>
   );
