@@ -16,7 +16,7 @@ import { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
 import type { LinksFunction } from "@remix-run/node";
 import { Form } from "@remix-run/react";
 import type { EditorState } from "lexical";
-import { useRef, forwardRef } from "react";
+import { useRef, forwardRef, useState } from "react";
 import AutoLinkPlugin from "./plugins/AutoLinkPlugin";
 import CodeHighlightPlugin from "./plugins/CodeHighlightPlugin";
 import ListMaxIndentLevelPlugin from "./plugins/ListMaxIndentLevelPlugin";
@@ -52,7 +52,9 @@ const editorConfig = {
 };
 
 // TODO: Add preload links for each asset
-export const links: LinksFunction = () => [{ rel: "stylesheet", href: styles }];
+export const editorLinks: LinksFunction = () => [
+  { rel: "stylesheet", href: styles },
+];
 
 //Not sure why i need a ref here, https://remix.run/docs/en/v1/guides/styling#shared-component-styles
 const EditorComponent = ({
@@ -62,7 +64,7 @@ const EditorComponent = ({
   initialState?: string;
   ref?: any;
 }) => {
-  const editorStateRef = useRef<EditorState | undefined>();
+  const [editorState, setEditorState] = useState("");
 
   return (
     <LexicalComposer initialConfig={editorConfig}>
@@ -77,25 +79,16 @@ const EditorComponent = ({
             placeholder={<Placeholder />}
           />
           <LexicalOnChangePlugin
-            onChange={(editorState) => (editorStateRef.current = editorState)}
+            onChange={(editorState) => {
+              setEditorState(JSON.stringify(editorState.toJSON()));
+            }}
           />
-          <Form method="post">
-            <input
-              type="hidden"
-              name="data"
-              value={JSON.stringify(editorStateRef.current?.toJSON() || "")}
-            />
-            <Button
-              onClick={() => {
-                if (editorStateRef.current) {
-                  // console.log(JSON.stringify(editorStateRef.current.toJSON()));
-                }
-              }}
-              type="submit"
-            >
-              Save
-            </Button>
-          </Form>
+          <input
+            type="hidden"
+            name="content"
+            id="content"
+            value={editorState}
+          />
           <LexicalAutoFocusPlugin />
           <CodeHighlightPlugin />
           <LexicalListPlugin />
@@ -115,5 +108,4 @@ const EditorComponent = ({
 export const Editor = forwardRef(({ children, ...props }, ref) => {
   return <EditorComponent {...props} ref={ref} />;
 });
-export default Editor;
 Editor.displayName = "Editor";
