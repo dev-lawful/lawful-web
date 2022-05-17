@@ -1,7 +1,7 @@
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { getInitiatives } from "~/models/initiatives.server";
+import { getInitiatives } from "~/models";
 import type { Initiative } from "~/_types";
 
 interface LoaderData {
