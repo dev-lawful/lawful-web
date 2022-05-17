@@ -1,15 +1,51 @@
-import { LoaderFunction } from "@remix-run/node";
-import { json, LinksFunction } from "@remix-run/node";
-import { ActionFunction } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
-import Editor from "~/components/ui/Editor";
-import stylesUrl from "~/components/ui/Editor/styles/index.css";
+import { Button, Input } from "@chakra-ui/react";
+import type {
+  LoaderFunction,
+  LinksFunction,
+  ActionFunction,
+} from "@remix-run/node";
+import { json } from "@remix-run/node";
+import { Form, useCatch, useLoaderData } from "@remix-run/react";
+import { Editor, editorLinks } from "~/components/ui";
+import { createInitiative } from "~/models/initiatives.server";
+import type { Initiative } from "~/_types";
+import {
+  $convertFromMarkdownString,
+  $convertToMarkdownString,
+  TRANSFORMERS,
+} from "@lexical/markdown";
+
+interface ActionData {
+  data: Array<Initiative>;
+}
 
 export const action: ActionFunction = async ({ request }) => {
-  const data = await request.formData();
+  const formData = await request.formData();
+  const content = formData.get("content") ?? "";
+  const title = formData.get("title") ?? "";
+  const description = formData.get("description") ?? "";
+  const dueDate = formData.get("dueDate") ?? "";
 
-  console.log({ data: data.get("data") });
-  return json({});
+  if (
+    typeof content !== "string" ||
+    typeof title !== "string" ||
+    typeof description !== "string" ||
+    typeof dueDate !== "string"
+  ) {
+    throw new Response("Form not submitted correcty", { status: 400 });
+  }
+
+  const { data, error } = await createInitiative({
+    content,
+    title,
+    description,
+    dueDate,
+  });
+
+  if (error) {
+    throw new Error(error);
+  }
+  return json<ActionData>({ data });
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -19,21 +55,39 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 export const links: LinksFunction = () => {
-  return [
-    {
-      href: stylesUrl,
-      rel: "stylesheet",
-    },
-  ];
+  return [...editorLinks()];
 };
 
 const EditorRoute = () => {
   const { data } = useLoaderData();
   return (
     <div>
-      <Editor initialState={data} />
+      <Form method="post">
+        <Input type="text" name="title" id="title" />
+        <Input type="text" name="description" id="description" />
+        <Input type="date" name="dueDate" id="dueDate" />
+        <Editor initialState={data} />
+        <Button type="submit">Submit</Button>
+      </Form>
     </div>
   );
 };
 
 export default EditorRoute;
+
+export const ErrorBoundary = ({ error }: { error: Error }) => {
+  return (
+    <div>
+      <p>{error.message}</p>
+    </div>
+  );
+};
+export const CatchBoundary = () => {
+  const error = useCatch();
+  return (
+    <div>
+      <p>{error.status}</p>
+      <p>{error.data}</p>
+    </div>
+  );
+};

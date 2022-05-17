@@ -101,6 +101,7 @@ export const loader: LoaderFunction = () => {
     },
   });
 };
+
 export default function App() {
   const { product } = useParams();
   const data = useLoaderData<LoaderData>();
