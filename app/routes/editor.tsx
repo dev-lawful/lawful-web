@@ -7,7 +7,7 @@ import type {
 import { json } from "@remix-run/node";
 import { Form, useCatch, useLoaderData } from "@remix-run/react";
 import { Editor, editorLinks } from "~/components/ui";
-import { createInitiative } from "~/models/initiatives.server";
+import { createInitiative } from "~/models";
 import type { Initiative } from "~/_types";
 import {
   $convertFromMarkdownString,
