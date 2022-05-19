@@ -1,8 +1,7 @@
-import { Button } from "@chakra-ui/react";
 import { CodeHighlightNode, CodeNode } from "@lexical/code";
 import { AutoLinkNode, LinkNode } from "@lexical/link";
 import { ListItemNode, ListNode } from "@lexical/list";
-import { TRANSFORMERS } from "@lexical/markdown";
+import { TRANSFORMERS, $convertToMarkdownString } from "@lexical/markdown";
 import LexicalAutoFocusPlugin from "@lexical/react/LexicalAutoFocusPlugin";
 import LexicalComposer from "@lexical/react/LexicalComposer";
 import LexicalContentEditable from "@lexical/react/LexicalContentEditable";
@@ -14,9 +13,7 @@ import LexicalRichTextPlugin from "@lexical/react/LexicalRichTextPlugin";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
 import type { LinksFunction } from "@remix-run/node";
-import { Form } from "@remix-run/react";
-import type { EditorState } from "lexical";
-import { useRef, forwardRef, useState } from "react";
+import { forwardRef, useState } from "react";
 import AutoLinkPlugin from "./plugins/AutoLinkPlugin";
 import CodeHighlightPlugin from "./plugins/CodeHighlightPlugin";
 import ListMaxIndentLevelPlugin from "./plugins/ListMaxIndentLevelPlugin";
@@ -80,7 +77,9 @@ const EditorComponent = ({
           />
           <LexicalOnChangePlugin
             onChange={(editorState) => {
-              setEditorState(JSON.stringify(editorState.toJSON()));
+              editorState.read(() => {
+                setEditorState($convertToMarkdownString(TRANSFORMERS));
+              });
             }}
           />
           <input
@@ -96,6 +95,7 @@ const EditorComponent = ({
           <AutoLinkPlugin />
           <ListMaxIndentLevelPlugin maxDepth={7} />
           {/* TODO: fix ts error */}
+          {/* @ts-ignore */}
           <LexicalMarkdownShortcutPlugin transformers={TRANSFORMERS} />
         </div>
       </div>
