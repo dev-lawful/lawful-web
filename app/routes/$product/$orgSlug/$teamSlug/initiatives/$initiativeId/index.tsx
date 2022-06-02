@@ -4,7 +4,7 @@ import { getInitiativeById } from "~/models";
 import type { Initiative } from "~/_types";
 import { useCatch, useLoaderData } from "@remix-run/react";
 import { Alert, Code, Text } from "@chakra-ui/react";
-import { marked } from "marked";
+import { MarkdownViewer } from "~/components/ui";
 
 interface LoaderData {
   data: Array<Initiative>;
@@ -27,9 +27,8 @@ const InitiativeRoute = () => {
   const {
     data: { 0: initiative },
   } = useLoaderData<LoaderData>();
-  const __html = marked.parse(initiative.content!);
 
-  return <div dangerouslySetInnerHTML={{ __html }}></div>;
+  return <MarkdownViewer markdown={initiative.content || ""} />;
 };
 
 export default InitiativeRoute;
