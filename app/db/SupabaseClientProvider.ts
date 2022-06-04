@@ -8,4 +8,3 @@ export const SupabaseClientContext = createContext<SupabaseClient | undefined>(
 SupabaseClientContext.displayName = "SupabaseClientContext";
 
 export const SupabaseClientProvider = SupabaseClientContext.Provider;
-export const SupabaseClientConsumer = SupabaseClientContext.Consumer;

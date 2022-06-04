@@ -3,21 +3,23 @@ import { json } from "@remix-run/node";
 import { useContext, useEffect } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { Board, StateTray } from "~/components/modules/decode";
 import { SupabaseClientContext } from "~/db";
-import { Board, StateTray, Task } from "~/components/modules/decode";
+import { Board, StateTray, TaskCard } from "~/components/modules/decode";
 import type { Task } from "~/_types";
+
+/**
+ * Steps
+ * 1. Obtener los diferentes estados y mostrar un tray mas o menos estilado con el titulo.
+ * 2. Popular dichos trays con las tareas que tengan su estado
+ * 3. Lograr crear una tarea y que se sincronice la UI en tiempo real
+ */
 
 interface LoaderData {
   data: Array<Task> | null;
 }
 
 export const loader: LoaderFunction = async () => {
-  const { data } = await getTasksByStateId({ stateId: 1 });
-
-  return json<LoaderData>({
-    data,
-  });
+  return json({});
 };
 
 const BoardRoute: RouteComponent = () => {
@@ -46,9 +48,6 @@ const BoardRoute: RouteComponent = () => {
         <StateTray></StateTray>
         <StateTray></StateTray>
         <StateTray></StateTray>
-        <Task></Task>
-        <Task></Task>
-        <Task></Task>
       </Board>
     </DndProvider>
   );

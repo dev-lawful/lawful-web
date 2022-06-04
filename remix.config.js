@@ -2,6 +2,26 @@
  * @type {import('@remix-run/dev').AppConfig}
  */
 module.exports = {
+  serverDependenciesToBundle: [
+    /^rehype.*/,
+    /^remark.*/,
+    /^unified.*/,
+    /^unist.*/,
+    /^hast.*/,
+    /^bail.*/,
+    /^trough.*/,
+    /^mdast.*/,
+    /^micromark.*/,
+    /^decode.*/,
+    /^character.*/,
+    /^property.*/,
+    /^space.*/,
+    /^comma.*/,
+    /^react-markdown$/,
+    /^vfile.*/,
+    /^ccount*/,
+    /^markdown-table*/,
+  ],
   serverBuildTarget: "vercel",
   // When running locally in development mode, we use the built in remix
   // server. This does not understand the vercel lambda module format,

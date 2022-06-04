@@ -23,7 +23,7 @@ export const getInitiatives = async (): Promise<CustomResponse<Initiative>> => {
 };
 
 export const getInitiativeById = async (
-  id: number
+  id: string
 ): Promise<CustomResponse<Initiative>> => {
   try {
     const { data }: PostgrestResponse<Initiative> = await supabase
