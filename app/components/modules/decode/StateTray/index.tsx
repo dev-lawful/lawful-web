@@ -1,20 +1,38 @@
+import { Box, Heading, Stack } from "@chakra-ui/react";
 import { useDrop } from "react-dnd";
+import type { BoardState, Task } from "~/_types";
 
-export const StateTray: React.FC = ({ children }) => {
-  const [{ canDrop, isOver }, drop] = useDrop(() => ({
+export const StateTray: React.FC<{
+  title: string;
+  boardState: BoardState;
+  onDropHandler: (params: { taskId: string; updatedStateId: string }) => void;
+}> = ({ children, title, onDropHandler, boardState }) => {
+  const [, dropRef] = useDrop<Task, unknown, {}>(() => ({
     accept: "TASK",
     drop: (item) => {
-      console.log(item);
+      // if (!(boardState.id === item.stateId)) {
+      onDropHandler({
+        taskId: (item.id as number).toString(),
+        updatedStateId: boardState.id.toString(),
+      });
+      // }
     },
-    collect: (monitor) => ({
-      isOver: monitor.isOver(),
-      canDrop: monitor.canDrop(),
-    }),
   }));
 
   return (
-    <div ref={drop} style={{ backgroundColor: isOver ? "red" : "white" }}>
-      {canDrop ? "Release to drop" : "Drag a box here"}
-    </div>
+    <Box ref={dropRef} bgColor="gray.900" p={3} borderRadius={5}>
+      <Heading marginBottom={"10"}>{title}</Heading>
+      <Stack
+        width="20rem"
+        minWidth="max-content"
+        height="60vh"
+        maxHeight="60vh"
+        scrollBehavior="smooth"
+        spacing={5}
+        overflowY="auto"
+      >
+        {children}
+      </Stack>
+    </Box>
   );
 };
