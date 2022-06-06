@@ -23,19 +23,17 @@ export const MarkdownViewer: React.VFC<{ markdown: string }> = ({
           <Heading as="h2" size="lg" {...props} />
         ),
         code: ({ node, ...props }) => <Code {...props} />,
-        p: ({ node, ...props }) => (
-          <>
-            <Text {...props} />
-            <br />
-          </>
+        p: ({ node, ...props }) => <Text {...props} />,
+        ul: ({ node, depth, ordered, ...props }) => (
+          <UnorderedList {...props} />
         ),
-        ul: ({ node, depth, ...props }) => <UnorderedList {...props} />,
-        ol: ({ node, depth, ...props }) => <OrderedList {...props} />,
-        li: ({ node, index, ...props }) => <ListItem {...props} />,
+        ol: ({ node, depth, ordered, ...props }) => <OrderedList {...props} />,
+        li: ({ node, index, ordered, ...props }) => <ListItem {...props} />,
         // eslint-disable-next-line jsx-a11y/anchor-has-content
         a: ({ node, ...props }) => <Link {...props} />,
         strong: ({ node, ...props }) => <Text as="strong" {...props} />,
         em: ({ node, ...props }) => <Text as="em" {...props} />,
+        // @ts-ignore
         blockquote: ({ node, ...props }) => <Text as="blockquote" {...props} />,
         br: () => <br />,
       }}
