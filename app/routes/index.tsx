@@ -1,23 +1,20 @@
-import { Heading } from "@chakra-ui/react";
-import ReactMarkdown from "react-markdown";
+import { MarkdownViewer } from "~/components/ui/MarkdownViewer";
 
-const markdown = `# Here is some JavaScript code:
+const markdown = `
+# Here is some JavaScript code:
+## Sub header
 
 ~~~js
 console.log('It works!')
 ~~~
+- Hola
+- Chau
 `;
-
 export default function IndexRoute() {
   return (
     <div>
       <h1>Landing Lawful</h1>
-      <ReactMarkdown
-        children={markdown}
-        components={{
-          h1: (props) => <Heading as="h1" size="xl" {...props} />,
-        }}
-      />
+      <MarkdownViewer markdown={markdown} />
     </div>
   );
 }
