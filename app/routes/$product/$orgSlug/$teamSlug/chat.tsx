@@ -30,8 +30,8 @@ export const loader: LoaderFunction = async ({ params }) => {
 const ChatLayoutRoute = () => {
   const { data: chats } = useLoaderData<LoaderData>();
   return (
-    <HStack divider={<StackDivider borderColor="red.500" />}>
-      <VStack divider={<StackDivider borderColor="gray.200" />} spacing={4}>
+    <HStack divider={<StackDivider borderColor="red.500" />} bg="gray.900">
+      <VStack bg="gray.700">
         {chats.map(({ name, id }) => (
           <Box key={id} h="40px">
             {name}
