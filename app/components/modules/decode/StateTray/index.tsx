@@ -10,12 +10,11 @@ export const StateTray: React.FC<{
   const [, dropRef] = useDrop<Task, unknown, {}>(() => ({
     accept: "TASK",
     drop: (item) => {
-      // if (!(boardState.id === item.stateId)) {
+      // TODO: Avoid updating the task's state if it's the same as before
       onDropHandler({
         taskId: (item.id as number).toString(),
         updatedStateId: boardState.id.toString(),
       });
-      // }
     },
   }));
 
