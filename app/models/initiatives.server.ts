@@ -1,11 +1,6 @@
 import type { PostgrestResponse } from "@supabase/supabase-js";
 import { supabase } from "~/db";
-import type { Initiative } from "~/_types";
-
-interface CustomResponse<T> {
-  data: Array<T>;
-  error: string | null;
-}
+import type { Initiative, CustomResponse } from "~/_types";
 
 export const getInitiatives = async (): Promise<CustomResponse<Initiative>> => {
   try {
