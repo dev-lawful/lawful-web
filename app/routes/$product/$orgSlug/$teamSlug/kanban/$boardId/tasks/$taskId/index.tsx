@@ -1,6 +1,6 @@
 import { Button, Heading, Link, Stack, Text } from "@chakra-ui/react";
-import { ActionFunction, LoaderFunction, redirect } from "@remix-run/node";
-import { json } from "@remix-run/node";
+import type { ActionFunction, LoaderFunction } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import {
   Form,
   useCatch,
