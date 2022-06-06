@@ -1,7 +1,8 @@
-import { Box, HStack, StackDivider, VStack } from "@chakra-ui/react";
+import { HStack, StackDivider } from "@chakra-ui/react";
 import type { LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Outlet, useCatch, useLoaderData } from "@remix-run/react";
+import { ChatList } from "~/components/modules/network";
 import { getChats } from "~/models/chats.server";
 import type { Chat } from "~/_types";
 
@@ -30,14 +31,12 @@ export const loader: LoaderFunction = async ({ params }) => {
 const ChatLayoutRoute = () => {
   const { data: chats } = useLoaderData<LoaderData>();
   return (
-    <HStack divider={<StackDivider borderColor="red.500" />} bg="gray.900">
-      <VStack bg="gray.700">
-        {chats.map(({ name, id }) => (
-          <Box key={id} h="40px">
-            {name}
-          </Box>
-        ))}
-      </VStack>
+    <HStack
+      divider={<StackDivider borderColor="red.500" />}
+      bg="gray.900"
+      height="full"
+    >
+      <ChatList chats={chats} />
       <Outlet />
     </HStack>
   );
