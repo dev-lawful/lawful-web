@@ -1,4 +1,4 @@
-import { Button, ChakraProvider } from "@chakra-ui/react";
+import { ChakraProvider } from "@chakra-ui/react";
 import { withEmotionCache } from "@emotion/react";
 import type {
   LinksFunction,
@@ -108,8 +108,6 @@ export default function App() {
   return (
     <Document>
       <ChakraProvider theme={getTheme(product)}>
-        <Button>Goood</Button>
-        <Button variant="outline">Goood</Button>
         {data ? (
           <SupabaseClientProvider
             value={createClient(
