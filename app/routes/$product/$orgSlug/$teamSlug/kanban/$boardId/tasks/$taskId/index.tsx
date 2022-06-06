@@ -1,7 +1,12 @@
 import { Heading, Link, Stack, Text } from "@chakra-ui/react";
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { useLoaderData, useMatches, useParams } from "@remix-run/react";
+import {
+  useCatch,
+  useLoaderData,
+  useMatches,
+  useParams,
+} from "@remix-run/react";
 import { Link as RemixLink } from "react-router-dom";
 import { supabase } from "~/db";
 import type { BoardState, Task } from "~/_types";
@@ -106,3 +111,20 @@ const TaskRoute = () => {
 };
 
 export default TaskRoute;
+
+export const ErrorBoundary = ({ error }: { error: Error }) => {
+  return (
+    <div>
+      <p>{error.message}</p>
+    </div>
+  );
+};
+export const CatchBoundary = () => {
+  const error = useCatch();
+  return (
+    <div>
+      <p>{error.status}</p>
+      <p>{error.data}</p>
+    </div>
+  );
+};

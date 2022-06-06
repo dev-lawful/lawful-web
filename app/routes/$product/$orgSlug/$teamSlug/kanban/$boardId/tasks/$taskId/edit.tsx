@@ -1,9 +1,9 @@
-import { ActionFunction, LoaderFunction, redirect } from "@remix-run/node";
-import { json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import type { ActionFunction, LoaderFunction } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
+import { useCatch, useLoaderData } from "@remix-run/react";
 import { TaskForm } from "~/components/modules/decode/Forms/TaskForm";
 import { supabase } from "~/db";
-import { getBoardStatesByBoardId } from "~/models";
+import { getBoardStatesByBoardId, updateTask } from "~/models";
 import type { BoardState, Task } from "~/_types";
 
 interface LoaderData {
@@ -43,23 +43,23 @@ export const action: ActionFunction = async ({ request }) => {
   const description = (formData.get("description") as string) ?? "";
   const stateId = (formData.get("stateId") as string) ?? "";
 
-  const { error } = await supabase
-    .from<Task>("tasks")
-    .update({
+  const { error } = await updateTask({
+    taskData: {
       dueDate,
       description,
       name,
       stateId: parseInt(stateId),
-    })
-    .eq("id", id);
+    },
+    taskId: id,
+  });
 
-  if (error) throw new Error(error.message);
+  if (error) throw new Error(error);
 
-  const url = new URL(request.url);
+  const { pathname, origin } = new URL(request.url);
 
-  const boardUrl = url.pathname.split("/").slice(0, -3).join("/");
+  const taskBoardPath = pathname.split("/").slice(0, -3).join("/");
 
-  return redirect(`${url.origin}${boardUrl}`);
+  return redirect(`${origin}${taskBoardPath}`);
 };
 
 const EditTaskRoute = () => {
@@ -76,3 +76,20 @@ const EditTaskRoute = () => {
 };
 
 export default EditTaskRoute;
+
+export const ErrorBoundary = ({ error }: { error: Error }) => {
+  return (
+    <div>
+      <p>{error.message}</p>
+    </div>
+  );
+};
+export const CatchBoundary = () => {
+  const error = useCatch();
+  return (
+    <div>
+      <p>{error.status}</p>
+      <p>{error.data}</p>
+    </div>
+  );
+};
