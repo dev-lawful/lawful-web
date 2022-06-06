@@ -83,3 +83,32 @@ export const createTask = async ({
     };
   }
 };
+
+export const getTaskById = async (id: string) => {
+  try {
+    const { data } = await supabase
+      .from<Task>("tasks")
+      .select("name, description, dueDate, asignee, stateId, id")
+      .eq("id", id);
+
+    return { data: data ?? [], error: null };
+  } catch (error) {
+    return {
+      data: [],
+      error: "There has been an error trying to fetch this task.",
+    };
+  }
+};
+
+export const deleteTask = async (id: string) => {
+  try {
+    const { data } = await supabase.from<Task>("tasks").delete().eq("id", id);
+
+    return { data: data ?? [], error: null };
+  } catch (error) {
+    return {
+      data: [],
+      error: "There has been an error trying to delete this task.",
+    };
+  }
+};

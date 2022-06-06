@@ -3,7 +3,7 @@ import { json, redirect } from "@remix-run/node";
 import { useCatch, useLoaderData } from "@remix-run/react";
 import { TaskForm } from "~/components/modules/decode/Forms/TaskForm";
 import { supabase } from "~/db";
-import { getBoardStatesByBoardId, updateTask } from "~/models";
+import { getBoardStatesByBoardId, getTaskById, updateTask } from "~/models";
 import type { BoardState, Task } from "~/_types";
 
 interface LoaderData {
@@ -19,12 +19,9 @@ export const loader: LoaderFunction = async ({ params }) => {
 
   if (boardStatesError) throw new Error(boardStatesError);
 
-  const { data: taskData, error: taskError } = await supabase
-    .from<Task>("tasks")
-    .select("name, description, dueDate, asignee, stateId, id")
-    .eq("id", params.taskId);
+  const { data: taskData, error: taskError } = await getTaskById(params.taskId!);
 
-  if (taskError) throw new Error(taskError.message);
+  if (taskError) throw new Error(taskError);
 
   return json<LoaderData>({
     data: {

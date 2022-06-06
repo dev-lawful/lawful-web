@@ -1,7 +1,8 @@
-import { Heading, Link, Stack, Text } from "@chakra-ui/react";
-import type { LoaderFunction } from "@remix-run/node";
+import { Button, Heading, Link, Stack, Text } from "@chakra-ui/react";
+import { ActionFunction, LoaderFunction, redirect } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import {
+  Form,
   useCatch,
   useLoaderData,
   useMatches,
@@ -9,6 +10,7 @@ import {
 } from "@remix-run/react";
 import { Link as RemixLink } from "react-router-dom";
 import { supabase } from "~/db";
+import { deleteTask } from "~/models";
 import type { BoardState, Task } from "~/_types";
 
 interface LoaderData {
@@ -54,6 +56,16 @@ export const loader: LoaderFunction = async ({
       boardStateData,
     },
   });
+};
+
+export const action: ActionFunction = async ({ request, params }) => {
+  await deleteTask(params.taskId!);
+
+  const { pathname, origin } = new URL(request.url);
+
+  const taskBoardPath = pathname.split("/").slice(0, -2).join("/");
+
+  return redirect(`${origin}${taskBoardPath}`);
 };
 
 const TaskRoute = () => {
@@ -105,6 +117,12 @@ const TaskRoute = () => {
           Created at
         </Heading>
         <Text>{new Date(task.created_at!).toLocaleString()}</Text>
+        <Form method="delete">
+          <input type="hidden" value={task.id} />
+          <Button type="submit" colorScheme="red">
+            Delete task ❌
+          </Button>
+        </Form>
       </Stack>
     </>
   );
