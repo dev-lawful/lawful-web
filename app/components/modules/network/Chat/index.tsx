@@ -46,7 +46,7 @@ export const Chat: VFC<{ chatId: string; initialMessages: Array<Message> }> = ({
       {messages.map((text, i) => (
         <Text key={i}>{text}</Text>
       ))}
-      <Form method="post">
+      <Form method="post" onSubmit={() => setMessages([])}>
         <Input name="message" type="text" />
         <Button type="submit">Send</Button>
       </Form>
