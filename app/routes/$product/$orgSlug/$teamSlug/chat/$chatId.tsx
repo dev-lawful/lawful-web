@@ -1,11 +1,8 @@
-import { Heading, Text } from "@chakra-ui/react";
-import type { LoaderFunction } from "@remix-run/node";
+import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useCatch, useLoaderData, useParams } from "@remix-run/react";
-import type { SupabaseRealtimePayload } from "@supabase/supabase-js";
-import { useEffect, useState } from "react";
-import { useSupabaseClient } from "~/db";
-import { getLastMessages } from "~/models/chats.server";
+import { Chat } from "~/components/modules/network";
+import { getLastMessages, sendMessage } from "~/models/chats.server";
 import type { Message } from "~/_types";
 
 interface LoaderData {
@@ -19,7 +16,7 @@ export const loader: LoaderFunction = async ({ params }) => {
     throw new Response("No chat id", { status: 400 });
   }
 
-  const { error, data } = await getLastMessages({ chatId, limit: 20 });
+  const { error, data } = await getLastMessages({ chatId, limit: 2000 });
   if (error) {
     throw new Error(error);
   }
@@ -27,46 +24,41 @@ export const loader: LoaderFunction = async ({ params }) => {
   return json<LoaderData>({ data });
 };
 
+interface ActionData {
+  data: Array<Message>;
+}
+
+export const action: ActionFunction = async ({ params, request }) => {
+  const { chatId } = params;
+
+  if (!chatId) {
+    throw new Response("No chatId provided", { status: 400 });
+  }
+  const formData = await request.formData();
+  const message = formData.get("message");
+  // TODO: validate message properties
+  const { data, error } = await sendMessage({
+    chatId: parseInt(chatId),
+    text: message as string,
+  });
+
+  // TODO: refactor maybe?
+  if (error) {
+    throw new Error(error);
+  }
+
+  return json<ActionData>({ data });
+};
+
 const ChatIndexRoute = () => {
   const { data: initialMessages } = useLoaderData<LoaderData>();
   const { chatId } = useParams();
-  const supabase = useSupabaseClient();
-  const [messages, setMessages] = useState<Array<String>>([]);
 
-  const handleReceivedMessage = (message: SupabaseRealtimePayload<Message>) => {
-    const { text = "Empty message .. Oops" } = message.new;
-    setMessages((messages) => [...messages, text]);
-  };
+  if (!chatId) {
+    return <div>No chat id</div>;
+  }
 
-  useEffect(() => {
-    if (!supabase || !chatId) return;
-
-    const subscription = supabase
-      .from(`messages:chatId=eq.${chatId}`)
-      .on("INSERT", handleReceivedMessage)
-      .subscribe();
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [supabase, chatId]);
-
-  return (
-    <div>
-      <Heading size="lg" as="h1">
-        Chat {chatId}
-      </Heading>
-      <Heading size="md">Previous messages</Heading>
-      {initialMessages.map(({ id, text }) => (
-        <Text key={id}>{text}</Text>
-      ))}
-      <Heading size="md">New messages</Heading>
-
-      {messages.map((text, i) => (
-        <Text key={i}>{text}</Text>
-      ))}
-    </div>
-  );
+  return <Chat chatId={chatId} initialMessages={initialMessages} />;
 };
 
 export default ChatIndexRoute;
