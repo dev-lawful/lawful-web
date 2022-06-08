@@ -18,13 +18,14 @@ export const getLastMessages = async ({
   limit: number;
 }): Promise<CustomResponse<Message>> => {
   try {
-    const { data }: PostgrestResponse<Message> = await supabase
-      .from("messages")
+    const { data } = await supabase
+      .from<Message>("messages")
       .select("*")
       .eq("chatId", chatId)
+      .order("createdAt", { ascending: false })
       .limit(limit);
 
-    return { data: data ?? [], error: null };
+    return { data: data?.reverse() ?? [], error: null };
   } catch (err) {
     return {
       data: [],

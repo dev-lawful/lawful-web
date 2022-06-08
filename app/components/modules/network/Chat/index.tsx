@@ -5,19 +5,21 @@ import type { VFC } from "react";
 import { useSupabaseClient } from "~/db";
 import type { Message } from "~/_types";
 import { Message as MessageBox } from "./Message";
-import { Form, useActionData } from "@remix-run/react";
+import { Form } from "@remix-run/react";
+
+const EMPTY_MSG_FALLBACK = "Empty message...";
 
 export const Chat: VFC<{ chatId: string; initialMessages: Array<Message> }> = ({
   chatId,
   initialMessages,
 }) => {
-  const data = useActionData();
-  console.log(data);
   const supabase = useSupabaseClient();
-  const [messages, setMessages] = useState<Array<String>>([]);
+  const [messages, setMessages] = useState<Array<String>>(() =>
+    initialMessages.map(({ text }) => text || EMPTY_MSG_FALLBACK)
+  );
 
   const handleReceivedMessage = (message: SupabaseRealtimePayload<Message>) => {
-    const { text = "Empty message .. Oops" } = message.new;
+    const text = message.new.text || EMPTY_MSG_FALLBACK;
     setMessages((messages) => [...messages, text]);
   };
 
@@ -32,7 +34,7 @@ export const Chat: VFC<{ chatId: string; initialMessages: Array<Message> }> = ({
     return () => {
       subscription.unsubscribe();
     };
-  }, [supabase, chatId]);
+  }, [chatId, supabase]);
 
   return (
     <Box>
@@ -40,13 +42,10 @@ export const Chat: VFC<{ chatId: string; initialMessages: Array<Message> }> = ({
         Chat {chatId}
       </Heading>
       <Heading size="md">Messages</Heading>
-      {initialMessages.map(({ id, text }) => (
-        <Text key={id}>{text}</Text>
-      ))}
       {messages.map((text, i) => (
         <Text key={i}>{text}</Text>
       ))}
-      <Form method="post" onSubmit={() => setMessages([])}>
+      <Form method="post">
         <Input name="message" type="text" />
         <Button type="submit">Send</Button>
       </Form>
