@@ -110,7 +110,6 @@ export default function App() {
     supabaseUrl: data.ENV.SUPABASE_URL,
     supabaseAnonKey: data.ENV.SUPABASE_ANON_KEY,
   });
-  console.log("Re render here");
 
   return (
     <Document>
