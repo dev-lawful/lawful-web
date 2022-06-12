@@ -1,6 +1,6 @@
 import { Button, FormLabel, Input, Select, Stack } from "@chakra-ui/react";
 import { Form } from "@remix-run/react";
-import { getDateInputFormattedDateString } from "~/components/utils/getDateInputFormattedDateString";
+import { getDateInputFormattedDateString } from "./getDateInputFormattedDateString";
 import type { BoardState, Task } from "~/_types";
 
 interface Props {

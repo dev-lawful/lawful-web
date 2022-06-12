@@ -1,5 +1,5 @@
 import { supabase } from "~/db";
-import type { BoardState, CustomResponse } from "~/_types";
+import type { Board, BoardState, CustomResponse } from "~/_types";
 
 export const getBoardStatesByBoardId = async (
   boardId: number
@@ -16,6 +16,32 @@ export const getBoardStatesByBoardId = async (
       data: [],
       error:
         "There has been an error trying to fetch board states by board id.",
+    };
+  }
+};
+
+export const createBoard = async ({
+  boardData,
+  states,
+}: {
+  boardData: Partial<Board>;
+  states: Array<Partial<BoardState>>;
+}): Promise<CustomResponse<Board>> => {
+  try {
+    const { data, error } = await supabase
+      .from<Board>("boards")
+      .insert({ ...boardData });
+
+    if (!data) throw new Error(error.message);
+
+    // TODO: Include board states creation in board creation page
+    await supabase.from<BoardState>("boardStates").insert(states);
+
+    return { data: data ?? [], error: null };
+  } catch (err) {
+    return {
+      data: [],
+      error: "There has been an error trying to create this board",
     };
   }
 };

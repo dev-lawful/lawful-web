@@ -1,9 +1,9 @@
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { useCatch, useLoaderData } from "@remix-run/react";
-import { TaskForm } from "~/components/modules/decode/Forms/TaskForm";
+import { TaskForm } from "~/components/modules/decode";
 import { createTask, getBoardStatesByBoardId } from "~/models";
-import type { BoardState, Task } from "~/_types";
+import type { BoardState } from "~/_types";
 
 interface LoaderData {
   data: Array<BoardState>;
