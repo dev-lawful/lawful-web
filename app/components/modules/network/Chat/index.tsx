@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Heading,
   HStack,
@@ -7,7 +8,7 @@ import {
   UnorderedList,
   VStack,
 } from "@chakra-ui/react";
-import { Form } from "@remix-run/react";
+import { Form, useTransition } from "@remix-run/react";
 import type { SupabaseRealtimePayload } from "@supabase/supabase-js";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { VFC } from "react";
@@ -22,8 +23,11 @@ export const Chat: VFC<{ chatId: string; initialMessages: Array<Message> }> = ({
 }) => {
   const supabase = useSupabaseClient();
   const [messages, setMessages] = useState<Array<Message>>(initialMessages);
+  const transition = useTransition();
+  const isSending = transition.state === "submitting";
 
   const listRef = useRef<HTMLUListElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const scrollToLastMessage = () => {
     const lastMessage = listRef.current?.lastElementChild;
@@ -65,21 +69,31 @@ export const Chat: VFC<{ chatId: string; initialMessages: Array<Message> }> = ({
     setMessages(initialMessages);
   }, [chatId]);
 
+  useEffect(() => {
+    if (!isSending) {
+      formRef.current?.reset();
+    }
+  }, [isSending]);
+
   return (
-    <VStack h="full" alignItems="stretch" w="full">
-      <VStack flexGrow={1} alignItems="stretch" overflowY="scroll">
-        <Heading size="lg" as="h1">
-          Chat {chatId}
-        </Heading>
-        <UnorderedList ref={listRef} p="2">
-          {messages.map((message) => (
-            <ListItem key={message.id}>
-              <MessageBox message={message} />
-            </ListItem>
-          ))}
-        </UnorderedList>
-      </VStack>
-      <Form method="post">
+    <VStack h="full" alignItems="stretch" flex="1">
+      <Heading size="lg" as="h1">
+        Chat {chatId}
+      </Heading>
+      <UnorderedList
+        ref={listRef}
+        p="2"
+        listStyleType="none"
+        flexGrow={1}
+        overflowY="scroll"
+      >
+        {messages.map((message) => (
+          <ListItem key={message.id}>
+            <MessageBox message={message} />
+          </ListItem>
+        ))}
+      </UnorderedList>
+      <Form method="post" ref={formRef}>
         <HStack>
           <Input name="message" type="text" />
           <Button type="submit">Send 💥</Button>

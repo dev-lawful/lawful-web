@@ -1,7 +1,7 @@
-import { HStack, StackDivider } from "@chakra-ui/react";
+import { Button, HStack, Stack, StackDivider, VStack } from "@chakra-ui/react";
 import type { LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Outlet, useCatch, useLoaderData } from "@remix-run/react";
+import { Link, Outlet, useCatch, useLoaderData } from "@remix-run/react";
 import { ChatList } from "~/components/modules/network";
 import { getChats } from "~/models/chats.server";
 import type { Chat } from "~/_types";
@@ -32,8 +32,11 @@ const ChatLayoutRoute = () => {
   const { data: chats } = useLoaderData<LoaderData>();
   return (
     // TODO: 80vh? I want it to cover all the viewport
-    <HStack bg="gray.900" height="80vh">
-      <ChatList chats={chats} />
+    <HStack height="80vh">
+      <VStack alignItems="stretch" w="20%" minW="200px" h="full" bg="gray.700">
+        <Link to="./new">Create chat</Link>
+        <ChatList chats={chats} />
+      </VStack>
       <Outlet />
     </HStack>
   );

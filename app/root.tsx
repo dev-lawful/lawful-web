@@ -127,3 +127,6 @@ export default function App() {
 export const CatchBoundary = () => {
   return <h1>Invalid Route</h1>;
 };
+export const ErrorBoundary = () => {
+  return <h1>Error</h1>;
+};

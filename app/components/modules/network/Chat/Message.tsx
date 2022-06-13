@@ -13,7 +13,7 @@ export const Message: VFC<{ message: MessageType }> = ({
   return (
     <VStack
       maxW="60%"
-      bgColor={isSender ? "green.500" : "blue.500"}
+      bgColor={isSender ? "green.600" : "blue.600"}
       ml={isSender ? "auto" : "unset"}
       mt="2"
       borderRadius="lg"

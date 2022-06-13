@@ -75,3 +75,22 @@ export const sendMessage = async (
     };
   }
 };
+
+export const createChat = async (
+  chatData: Omit<Chat, "id" | "createdAt">
+): Promise<CustomResponse<Chat>> => {
+  try {
+    const { data }: PostgrestResponse<Chat> = await supabase
+      .from("chats")
+      .insert(chatData);
+    return {
+      data: data ?? [],
+      error: null,
+    };
+  } catch (err) {
+    return {
+      data: [],
+      error: "There has been an error trying to create this chat.",
+    };
+  }
+};
