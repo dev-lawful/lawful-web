@@ -31,6 +31,7 @@ export const loader: LoaderFunction = async ({ params }) => {
 const ChatLayoutRoute = () => {
   const { data: chats } = useLoaderData<LoaderData>();
   return (
+    // TODO: 80vh? I want it to cover all the viewport
     <HStack bg="gray.900" height="80vh">
       <ChatList chats={chats} />
       <Outlet />
