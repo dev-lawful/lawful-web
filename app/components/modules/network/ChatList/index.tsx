@@ -14,6 +14,7 @@ export const ChatList: VFC<Props> = ({ chats }) => {
       bg="gray.700"
       margin="0"
       h="full"
+      w="30%"
     >
       {chats.map(({ name, id }) => (
         <ListItem key={id} h="60px">

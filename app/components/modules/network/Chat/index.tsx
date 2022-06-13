@@ -16,16 +16,13 @@ import type { Message } from "~/_types";
 import { Message as MessageBox } from "./Message";
 import { flushSync } from "react-dom";
 
-const EMPTY_MSG_FALLBACK = "Empty message...";
-
 export const Chat: VFC<{ chatId: string; initialMessages: Array<Message> }> = ({
   chatId,
   initialMessages,
 }) => {
   const supabase = useSupabaseClient();
-  const [messages, setMessages] = useState<Array<string>>(() =>
-    initialMessages.map(({ text }) => text || EMPTY_MSG_FALLBACK)
-  );
+  const [messages, setMessages] = useState<Array<Message>>(initialMessages);
+
   const listRef = useRef<HTMLUListElement>(null);
 
   const scrollToLastMessage = () => {
@@ -41,9 +38,9 @@ export const Chat: VFC<{ chatId: string; initialMessages: Array<Message> }> = ({
 
   const handleReceivedMessage = useCallback(
     (message: SupabaseRealtimePayload<Message>) => {
-      const text = message.new.text || EMPTY_MSG_FALLBACK;
+      const { new: newMessage } = message;
       flushSync(() => {
-        setMessages((messages) => [...messages, text]);
+        setMessages((messages) => [...messages, newMessage]);
       });
       scrollToLastMessage();
     },
@@ -65,7 +62,7 @@ export const Chat: VFC<{ chatId: string; initialMessages: Array<Message> }> = ({
 
   useEffect(() => {
     //TODO: repeated and also I don't like this approach
-    setMessages(initialMessages.map(({ text }) => text || EMPTY_MSG_FALLBACK));
+    setMessages(initialMessages);
   }, [chatId]);
 
   return (
@@ -74,10 +71,10 @@ export const Chat: VFC<{ chatId: string; initialMessages: Array<Message> }> = ({
         <Heading size="lg" as="h1">
           Chat {chatId}
         </Heading>
-        <UnorderedList ref={listRef}>
-          {messages.map((text, i) => (
-            <ListItem key={i}>
-              <MessageBox text={text} />
+        <UnorderedList ref={listRef} p="2">
+          {messages.map((message) => (
+            <ListItem key={message.id}>
+              <MessageBox message={message} />
             </ListItem>
           ))}
         </UnorderedList>
