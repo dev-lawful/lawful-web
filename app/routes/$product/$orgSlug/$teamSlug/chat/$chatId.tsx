@@ -16,7 +16,7 @@ export const loader: LoaderFunction = async ({ params }) => {
     throw new Response("No chat id", { status: 400 });
   }
 
-  const { error, data } = await getLastMessages({ chatId, limit: 20 });
+  const { error, data } = await getLastMessages({ chatId, limit: 30 });
   if (error) {
     throw new Error(error);
   }
