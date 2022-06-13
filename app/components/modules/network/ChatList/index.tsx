@@ -1,4 +1,5 @@
-import { Box, VStack } from "@chakra-ui/react";
+import { ListItem, UnorderedList } from "@chakra-ui/react";
+import { NavLink } from "@remix-run/react";
 import type { VFC } from "react";
 import type { Chat } from "~/_types";
 
@@ -7,12 +8,18 @@ interface Props {
 }
 export const ChatList: VFC<Props> = ({ chats }) => {
   return (
-    <VStack bg="gray.700" h="full">
+    <UnorderedList
+      display="flex"
+      flexDir="column"
+      bg="gray.700"
+      margin="0"
+      h="full"
+    >
       {chats.map(({ name, id }) => (
-        <Box key={id} h="40px">
-          {name}
-        </Box>
+        <ListItem key={id} h="60px">
+          <NavLink to={`${id}`}>{name}</NavLink>
+        </ListItem>
       ))}
-    </VStack>
+    </UnorderedList>
   );
 };

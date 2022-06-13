@@ -63,6 +63,11 @@ export const Chat: VFC<{ chatId: string; initialMessages: Array<Message> }> = ({
     };
   }, [chatId, supabase, handleReceivedMessage]);
 
+  useEffect(() => {
+    //TODO: repeated and also I don't like this approach
+    setMessages(initialMessages.map(({ text }) => text || EMPTY_MSG_FALLBACK));
+  }, [chatId]);
+
   return (
     <VStack h="full" alignItems="stretch" w="full">
       <VStack flexGrow={1} alignItems="stretch" overflowY="scroll">
