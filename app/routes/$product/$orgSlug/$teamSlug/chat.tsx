@@ -31,11 +31,7 @@ export const loader: LoaderFunction = async ({ params }) => {
 const ChatLayoutRoute = () => {
   const { data: chats } = useLoaderData<LoaderData>();
   return (
-    <HStack
-      divider={<StackDivider borderColor="red.500" />}
-      bg="gray.900"
-      height="full"
-    >
+    <HStack bg="gray.900" height="80vh">
       <ChatList chats={chats} />
       <Outlet />
     </HStack>

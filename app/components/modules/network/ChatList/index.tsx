@@ -7,7 +7,7 @@ interface Props {
 }
 export const ChatList: VFC<Props> = ({ chats }) => {
   return (
-    <VStack bg="gray.700">
+    <VStack bg="gray.700" h="full">
       {chats.map(({ name, id }) => (
         <Box key={id} h="40px">
           {name}

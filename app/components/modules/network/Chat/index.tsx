@@ -1,11 +1,18 @@
-import { Box, Button, Heading, Input, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Heading,
+  HStack,
+  Input,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
+import { Form } from "@remix-run/react";
 import type { SupabaseRealtimePayload } from "@supabase/supabase-js";
-import { useEffect, useState } from "react";
 import type { VFC } from "react";
+import { useEffect, useState } from "react";
 import { useSupabaseClient } from "~/db";
 import type { Message } from "~/_types";
-import { Message as MessageBox } from "./Message";
-import { Form } from "@remix-run/react";
 
 const EMPTY_MSG_FALLBACK = "Empty message...";
 
@@ -37,18 +44,21 @@ export const Chat: VFC<{ chatId: string; initialMessages: Array<Message> }> = ({
   }, [chatId, supabase]);
 
   return (
-    <Box>
+    <VStack flexGrow={1} h="full" alignItems="stretch">
       <Heading size="lg" as="h1">
         Chat {chatId}
       </Heading>
-      <Heading size="md">Messages</Heading>
-      {messages.map((text, i) => (
-        <Text key={i}>{text}</Text>
-      ))}
+      <Box flexGrow={1}>
+        {messages.map((text, i) => (
+          <Text key={i}>{text}</Text>
+        ))}
+      </Box>
       <Form method="post">
-        <Input name="message" type="text" />
-        <Button type="submit">Send</Button>
+        <HStack>
+          <Input name="message" type="text" defaultValue="" />
+          <Button type="submit">Send 💥</Button>
+        </HStack>
       </Form>
-    </Box>
+    </VStack>
   );
 };
