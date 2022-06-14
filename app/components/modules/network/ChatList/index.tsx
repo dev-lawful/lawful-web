@@ -14,6 +14,7 @@ export const ChatList: VFC<Props> = ({ chats }) => {
       flexDir="column"
       margin="0"
       h="full"
+      overflowY="auto"
     >
       {chats.map(({ name, id }) => (
         <ListItem key={id} h="60px">

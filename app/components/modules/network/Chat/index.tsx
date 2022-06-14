@@ -85,7 +85,7 @@ export const Chat: VFC<{ chatId: string; initialMessages: Array<Message> }> = ({
         p="2"
         listStyleType="none"
         flexGrow={1}
-        overflowY="scroll"
+        overflowY="auto"
       >
         {messages.map((message) => (
           <ListItem key={message.id}>
