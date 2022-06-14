@@ -1,4 +1,10 @@
-import { Avatar, HStack, ListItem, UnorderedList } from "@chakra-ui/react";
+import {
+  Avatar,
+  HStack,
+  Link,
+  ListItem,
+  UnorderedList,
+} from "@chakra-ui/react";
 import { NavLink } from "@remix-run/react";
 import type { VFC } from "react";
 import type { Chat } from "~/_types";
@@ -15,12 +21,21 @@ export const ChatList: VFC<Props> = ({ chats }) => {
       margin="0"
       h="full"
       overflowY="auto"
+      overflowX="hidden"
     >
       {chats.map(({ name, id }) => (
-        <ListItem key={id} h="60px">
+        <ListItem key={id} py="2" px="1" textOverflow="ellipsis">
           <HStack h="full">
             <Avatar size="md" mr="2" />
-            <NavLink to={`${id}`}>{name}</NavLink>
+            <Link
+              as={NavLink}
+              to={`${id}`}
+              overflow="hidden"
+              textOverflow="ellipsis"
+              whiteSpace="nowrap"
+            >
+              {name}
+            </Link>
           </HStack>
         </ListItem>
       ))}

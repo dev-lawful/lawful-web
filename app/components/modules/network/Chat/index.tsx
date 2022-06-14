@@ -93,12 +93,14 @@ export const Chat: VFC<{ chatId: string; initialMessages: Array<Message> }> = ({
           </ListItem>
         ))}
       </UnorderedList>
-      <Form method="post" ref={formRef}>
-        <HStack>
-          <Input name="message" type="text" />
-          <Button type="submit">Send 💥</Button>
-        </HStack>
-      </Form>
+      <Box p="2" m="0">
+        <Form method="post" ref={formRef}>
+          <HStack>
+            <Input name="message" type="text" />
+            <Button type="submit">Send 💥</Button>
+          </HStack>
+        </Form>
+      </Box>
     </VStack>
   );
 };
