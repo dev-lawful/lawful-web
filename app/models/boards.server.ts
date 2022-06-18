@@ -22,10 +22,8 @@ export const getBoardStatesByBoardId = async (
 
 export const createBoard = async ({
   boardData,
-  states,
 }: {
   boardData: Partial<Board>;
-  states: Array<Partial<BoardState>>;
 }): Promise<CustomResponse<Board>> => {
   try {
     const { data, error } = await supabase
@@ -33,6 +31,25 @@ export const createBoard = async ({
       .insert({ ...boardData });
 
     if (!data) throw new Error(error.message);
+
+    const {
+      0: { id: boardId },
+    } = data;
+
+    const states = [
+      {
+        description: "To do",
+        boardId,
+      },
+      {
+        description: "In progress",
+        boardId,
+      },
+      {
+        description: "Done",
+        boardId,
+      },
+    ];
 
     // TODO: Include board states creation in board creation page
     await supabase.from<BoardState>("boardStates").insert(states);

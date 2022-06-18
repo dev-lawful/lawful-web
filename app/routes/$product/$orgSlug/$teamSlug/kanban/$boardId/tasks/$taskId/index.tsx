@@ -1,14 +1,15 @@
-import { Button, Heading, Link, Stack, Text } from "@chakra-ui/react";
+import { Button, Heading, Stack, Text } from "@chakra-ui/react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import {
   Form,
+  Link,
   useCatch,
   useLoaderData,
   useMatches,
   useParams,
 } from "@remix-run/react";
-import { Link as RemixLink } from "react-router-dom";
+
 import { supabase } from "~/db";
 import { deleteTask } from "~/models";
 import type { BoardState, Task } from "~/_types";
@@ -80,15 +81,15 @@ const TaskRoute = () => {
   const params = useParams();
 
   const {
-    [matches.length - 2]: { pathname: boardRouteBasePath },
+    [matches.length - 2]: { pathname: boardRoutePathname },
   } = matches;
 
   return (
     <>
-      <RemixLink to={`${boardRouteBasePath}/${params.boardId}`}>
+      <Link to={`${boardRoutePathname}/${params.boardId}`}>
         {/* // TODO: Review what to render with Chakra UI links (rendering anchors inside anchors causes console errors) */}
-        <Link as="p">Go back to board</Link>
-      </RemixLink>
+        <Button>Go back to board</Button>
+      </Link>
       <Stack as="article">
         <Heading as="h1" size={"2xl"}>
           {task.name}

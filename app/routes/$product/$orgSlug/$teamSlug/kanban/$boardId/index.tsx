@@ -1,4 +1,4 @@
-import { Box, Button } from "@chakra-ui/react";
+import { Box, Button, Heading, Stack } from "@chakra-ui/react";
 import type {
   ActionFunction,
   LoaderFunction,
@@ -19,14 +19,18 @@ import type {
 import { useContext, useEffect } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { Board, StateTray, TaskCard } from "~/components/modules/decode";
-import { SupabaseClientContext } from "~/db";
+import {
+  Board as BoardContainer,
+  StateTray,
+  TaskCard,
+} from "~/components/modules/decode";
+import { supabase, SupabaseClientContext } from "~/db";
 import {
   getBoardStatesByBoardId,
   getTasksByBoardStateId,
   updateTaskState,
 } from "~/models";
-import type { BoardState, Task } from "~/_types";
+import type { Board, BoardState, Task } from "~/_types";
 
 const getTasksTableSubscription = ({
   callback,
@@ -42,13 +46,15 @@ interface LoaderData {
   data: {
     boardStates: Array<BoardState> | null;
     tasks: Array<Task> | null;
+    boards: Array<Pick<Board, "name">>;
+    url: string;
   };
 }
 interface ActionData {
   data: Array<Task>;
 }
 
-export const loader: LoaderFunction = async ({ params }) => {
+export const loader: LoaderFunction = async ({ params, request }) => {
   const { data: boardStates } = await getBoardStatesByBoardId(
     parseInt(params.boardId as string)
   );
@@ -58,6 +64,8 @@ export const loader: LoaderFunction = async ({ params }) => {
       data: {
         boardStates: [],
         tasks: [],
+        boards: [],
+        url: request.url,
       },
     });
 
@@ -68,10 +76,29 @@ export const loader: LoaderFunction = async ({ params }) => {
 
   const { data: tasks } = await getTasksByBoardStateId(boardStatesIds);
 
+  const { data: boardData, error } = await supabase
+    .from<Board>("boards")
+    .select("name")
+    .eq("id", parseInt(params.boardId as string));
+
+  if (!boardData) throw new Error(error.message);
+
+  const {
+    0: { name },
+  } = boardData;
+
+  const boards: LoaderData["data"]["boards"] = [
+    {
+      name,
+    },
+  ];
+
   return json<LoaderData>({
     data: {
       boardStates,
       tasks,
+      boards,
+      url: request.url,
     },
   });
 };
@@ -100,11 +127,13 @@ export const action: ActionFunction = async ({ request }) => {
 
 const BoardRoute: RouteComponent = () => {
   const {
-    data: { boardStates, tasks },
+    data: { boardStates, tasks, boards, url },
   } = useLoaderData<LoaderData>();
   const supabase = useContext(SupabaseClientContext);
   const fetcher = useFetcher();
   const matches = useMatches();
+
+  const { 0: board } = boards;
 
   const onDropHandler = ({
     taskId,
@@ -137,14 +166,20 @@ const BoardRoute: RouteComponent = () => {
     };
   }, [fetcher, supabase]);
 
+  const { pathname: newTaskUrlPathname } = new URL(
+    `${matches[matches.length - 1].pathname}/tasks/new`,
+    url
+  );
+
   return (
     <DndProvider backend={HTML5Backend}>
-      <Button>
-        <Link to={`${matches[matches.length - 1].pathname}/tasks/new`}>
-          New task 🆕
-        </Link>
-      </Button>
-      <Board>
+      <Stack direction="row" alignItems="center" mb="3">
+        <Heading>{board.name}</Heading>
+        <Button>
+          <Link to={newTaskUrlPathname}>New task 🆕</Link>
+        </Button>
+      </Stack>
+      <BoardContainer>
         {boardStates?.map((boardState) => {
           return (
             <Box as="section" key={boardState.id}>
@@ -164,7 +199,7 @@ const BoardRoute: RouteComponent = () => {
             </Box>
           );
         })}
-      </Board>
+      </BoardContainer>
     </DndProvider>
   );
 };

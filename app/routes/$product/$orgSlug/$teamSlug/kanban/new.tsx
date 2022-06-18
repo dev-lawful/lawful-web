@@ -8,41 +8,25 @@ export const action: ActionFunction = async ({ request, context, params }) => {
   const formData = await request.formData();
 
   const name = (formData.get("name") as string) ?? "";
-  const id = (formData.get("id") as string) ?? "";
-
   const { error } = await createBoard({
     boardData: {
       name,
       // TODO: Un-hardcode this teamId to get the user's current team id
       teamId: 1,
     },
-    states: [
-      {
-        description: "To do",
-        boardId: parseInt(id),
-      },
-      {
-        description: "In progress",
-        boardId: parseInt(id),
-      },
-      {
-        description: "Done",
-        boardId: parseInt(id),
-      },
-    ],
   });
 
   if (error) throw new Error(error);
 
   const { pathname, origin } = new URL(request.url);
 
-  const taskBoardPath = pathname.split("/").slice(0, -2).join("/");
+  const taskBoardPath = pathname.split("/").slice(0, -1).join("/");
 
   return redirect(`${origin}${taskBoardPath}`);
 };
 
 const NewBoardRoute = () => {
-  return <BoardForm />;
+  return <BoardForm defaultValues={{ teamId: 1, name: "" }} />;
 };
 
 export default NewBoardRoute;
