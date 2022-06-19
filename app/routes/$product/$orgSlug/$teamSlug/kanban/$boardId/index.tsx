@@ -205,9 +205,9 @@ const BoardRoute: RouteComponent = () => {
           );
         })}
       </BoardContainer>
-      <Button>
-        <Link to="..">👈🏻 Back to boards list</Link>
-      </Button>
+      <Link to="..">
+        <Button>👈🏻 Back to boards list</Button>
+      </Link>
     </DndProvider>
   );
 };
