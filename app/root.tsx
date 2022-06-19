@@ -19,7 +19,7 @@ import {
 import { createClient } from "@supabase/supabase-js";
 import React, { useContext, useEffect } from "react";
 import { ClientStyleContext, getTheme, ServerStyleContext } from "~/styles";
-import { SupabaseClientProvider } from "./db";
+import { SupabaseClientProvider, useCreateSupabaseClient } from "./db";
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
@@ -105,16 +105,17 @@ export const loader: LoaderFunction = () => {
 export default function App() {
   const { product } = useParams();
   const data = useLoaderData<LoaderData>();
+
+  const supabaseClient = useCreateSupabaseClient({
+    supabaseUrl: data.ENV.SUPABASE_URL,
+    supabaseAnonKey: data.ENV.SUPABASE_ANON_KEY,
+  });
+
   return (
     <Document>
       <ChakraProvider theme={getTheme(product)}>
         {data ? (
-          <SupabaseClientProvider
-            value={createClient(
-              data.ENV.SUPABASE_URL,
-              data.ENV.SUPABASE_ANON_KEY
-            )}
-          >
+          <SupabaseClientProvider value={supabaseClient}>
             <Outlet />
           </SupabaseClientProvider>
         ) : null}
