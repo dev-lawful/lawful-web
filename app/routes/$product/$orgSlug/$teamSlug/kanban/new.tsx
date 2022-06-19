@@ -1,4 +1,4 @@
-import { Button, VStack } from "@chakra-ui/react";
+import { Button, Heading, VStack } from "@chakra-ui/react";
 import type { ActionFunction } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import { useCatch, Link } from "@remix-run/react";
@@ -34,7 +34,8 @@ export const action: ActionFunction = async ({ request, context, params }) => {
 
 const NewBoardRoute = () => {
   return (
-    <VStack>
+    <VStack justify="start" alignItems="start" p="5">
+      <Heading as="h1">Add a new board 🆕</Heading>
       <BoardForm defaultValues={{ teamId: 1, name: "" }} />
       <Link to="..">
         <Button>👈🏻 Back to boards list</Button>
