@@ -62,3 +62,21 @@ export const createBoard = async ({
     };
   }
 };
+
+export const getBoardsByTeamId = async (
+  teamId: number
+): Promise<CustomResponse<Board>> => {
+  try {
+    const { data } = await supabase
+      .from<Board>("boards")
+      .select("*")
+      .eq("teamId", teamId);
+
+    return { data: data ?? [], error: null };
+  } catch (err) {
+    return {
+      data: [],
+      error: "There has been an error trying to fetch boards by team id.",
+    };
+  }
+};

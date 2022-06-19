@@ -1,8 +1,8 @@
-import { List, ListItem, Stack } from "@chakra-ui/react";
+import { List, ListItem } from "@chakra-ui/react";
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Link, useLoaderData, useMatches } from "@remix-run/react";
-import { supabase } from "~/db";
+import { getBoardsByTeamId } from "~/models";
 import type { Board } from "~/_types";
 
 interface LoaderData {
@@ -12,19 +12,16 @@ interface LoaderData {
   };
 }
 
-export const loader: LoaderFunction = async ({ request }) => {
-  const { data: boards, error } = await supabase
-    .from<Board>("boards")
-    .select("*")
-    // TODO: make teamId dynamic given the current team
-    .eq("teamId", 1);
+export const loader: LoaderFunction = async ({ request: { url } }) => {
+  // TODO: make teamId dynamic given the current team
+  const { data: boards, error } = await getBoardsByTeamId(1);
 
-  if (error) throw new Error(error.message);
+  if (error) throw new Error(error);
 
   return json<LoaderData>({
     data: {
       boards,
-      url: request.url,
+      url,
     },
   });
 };
@@ -42,15 +39,12 @@ const KanbanIndexRoute = () => {
 
   return (
     <List>
-      {boards.map((board) => {
-        const { pathname: boardPathname } = new URL(
-          `${pathname}${board.id}`,
-          url
-        );
+      {boards.map(({ id, name }) => {
+        const { pathname: boardPathname } = new URL(`${pathname}${id}`, url);
 
         return (
-          <Link key={board.id} to={boardPathname}>
-            <ListItem>{board.name}</ListItem>
+          <Link key={id} to={boardPathname}>
+            <ListItem>{name}</ListItem>
           </Link>
         );
       })}
