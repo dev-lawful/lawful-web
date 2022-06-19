@@ -106,10 +106,15 @@ export const loader: LoaderFunction = async ({ params, request }) => {
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
 
-  const updatedStateId = parseInt(formData.get("updatedStateId") as string);
-  const taskId = parseInt(formData.get("taskId") as string);
+  const _updatedStateId = formData.get("updatedStateId");
+  const _taskId = formData.get("taskId");
 
-  // TODO: Handle badly formatted request.
+  if (typeof _updatedStateId !== "string" || typeof _taskId !== "string") {
+    throw new Response("Form not submitted correcty", { status: 400 });
+  }
+
+  const updatedStateId = parseInt(_updatedStateId);
+  const taskId = parseInt(_taskId);
 
   const { data, error } = await updateTaskState({
     updatedStateId,
