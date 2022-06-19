@@ -7,7 +7,14 @@ import { createBoard } from "~/models";
 export const action: ActionFunction = async ({ request, context, params }) => {
   const formData = await request.formData();
 
-  const name = (formData.get("name") as string) ?? "";
+  const name = formData.get("name");
+
+  if (typeof name !== "string") {
+    throw new Response("Form not submitted correctly", {
+      status: 400,
+    });
+  }
+
   const { error } = await createBoard({
     boardData: {
       name,
@@ -38,6 +45,7 @@ export const ErrorBoundary = ({ error }: { error: Error }) => {
     </div>
   );
 };
+
 export const CatchBoundary = () => {
   const error = useCatch();
   return (
