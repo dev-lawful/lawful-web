@@ -1,4 +1,4 @@
-import { List, ListItem } from "@chakra-ui/react";
+import { List, ListItem, UnorderedList } from "@chakra-ui/react";
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Link, useLoaderData, useMatches } from "@remix-run/react";
@@ -38,7 +38,7 @@ const KanbanIndexRoute = () => {
   } = matches;
 
   return (
-    <List>
+    <UnorderedList>
       {boards.map(({ id, name }) => {
         const { pathname: boardPathname } = new URL(`${pathname}${id}`, url);
 
@@ -48,7 +48,7 @@ const KanbanIndexRoute = () => {
           </Link>
         );
       })}
-    </List>
+    </UnorderedList>
   );
 };
 
