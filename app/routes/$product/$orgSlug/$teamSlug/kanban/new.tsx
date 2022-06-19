@@ -1,6 +1,7 @@
+import { Button, VStack } from "@chakra-ui/react";
 import type { ActionFunction } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
-import { useCatch } from "@remix-run/react";
+import { useCatch, Link } from "@remix-run/react";
 import { BoardForm } from "~/components/modules/decode/Forms/BoardForm";
 import { createBoard } from "~/models";
 
@@ -18,8 +19,7 @@ export const action: ActionFunction = async ({ request, context, params }) => {
   const { error } = await createBoard({
     boardData: {
       name,
-      // TODO: Un-hardcode this teamId to get the user's current team id
-      teamId: 1,
+      teamId: 1, // TODO: Un-hardcode this teamId to get the user's current team id
     },
   });
 
@@ -33,7 +33,14 @@ export const action: ActionFunction = async ({ request, context, params }) => {
 };
 
 const NewBoardRoute = () => {
-  return <BoardForm defaultValues={{ teamId: 1, name: "" }} />;
+  return (
+    <VStack>
+      <BoardForm defaultValues={{ teamId: 1, name: "" }} />
+      <Link to="..">
+        <Button>👈🏻 Back to boards list</Button>
+      </Link>
+    </VStack>
+  );
 };
 
 export default NewBoardRoute;
