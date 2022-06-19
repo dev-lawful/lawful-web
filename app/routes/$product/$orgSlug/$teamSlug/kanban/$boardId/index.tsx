@@ -1,4 +1,4 @@
-import { Box, Button, Heading, Stack } from "@chakra-ui/react";
+import { Box, Button, Heading, Spacer, Stack } from "@chakra-ui/react";
 import type {
   ActionFunction,
   LoaderFunction,
@@ -47,14 +47,13 @@ interface LoaderData {
     boardStates: Array<BoardState> | null;
     tasks: Array<Task> | null;
     boards: Array<Pick<Board, "name">>;
-    url: string;
   };
 }
 interface ActionData {
   data: Array<Task>;
 }
 
-export const loader: LoaderFunction = async ({ params, request }) => {
+export const loader: LoaderFunction = async ({ params }) => {
   const { data: boardStates } = await getBoardStatesByBoardId(
     parseInt(params.boardId as string)
   );
@@ -65,7 +64,6 @@ export const loader: LoaderFunction = async ({ params, request }) => {
         boardStates: [],
         tasks: [],
         boards: [],
-        url: request.url,
       },
     });
 
@@ -98,7 +96,6 @@ export const loader: LoaderFunction = async ({ params, request }) => {
       boardStates,
       tasks,
       boards,
-      url: request.url,
     },
   });
 };
@@ -132,11 +129,10 @@ export const action: ActionFunction = async ({ request }) => {
 
 const BoardRoute: RouteComponent = () => {
   const {
-    data: { boardStates, tasks, boards, url },
+    data: { boardStates, tasks, boards },
   } = useLoaderData<LoaderData>();
   const supabase = useContext(SupabaseClientContext);
   const fetcher = useFetcher();
-  const matches = useMatches();
 
   const { 0: board } = boards;
 
@@ -171,44 +167,41 @@ const BoardRoute: RouteComponent = () => {
     };
   }, [fetcher, supabase]);
 
-  const { pathname: newTaskUrlPathname } = new URL(
-    `${matches[matches.length - 1].pathname}/tasks/new`,
-    url
-  );
-
   return (
-    <DndProvider backend={HTML5Backend}>
-      <Stack direction="row" alignItems="center" mb="3">
-        <Heading>{board.name}</Heading>
-        <Button>
-          <Link to={newTaskUrlPathname}>New task 🆕</Link>
-        </Button>
-      </Stack>
-      <BoardContainer>
-        {boardStates?.map((boardState) => {
-          return (
-            <Box as="section" key={boardState.id}>
-              <fetcher.Form method="post">
-                <StateTray
-                  boardState={boardState}
-                  title={boardState.description ?? `State #${boardState.id}`}
-                  onDropHandler={onDropHandler}
-                >
-                  {tasks
-                    ?.filter((task) => task.stateId === boardState.id)
-                    .map((task) => {
-                      return <TaskCard key={task.id} task={task} />;
-                    })}
-                </StateTray>
-              </fetcher.Form>
-            </Box>
-          );
-        })}
-      </BoardContainer>
-      <Link to="..">
-        <Button>👈🏻 Back to boards list</Button>
-      </Link>
-    </DndProvider>
+    <Stack direction="column" spacing="2">
+      <DndProvider backend={HTML5Backend}>
+        <Stack direction="row" alignItems="center" mb="3">
+          <Heading>{board.name}</Heading>
+          <Link to="../new">
+            <Button>New task 🆕</Button>
+          </Link>
+        </Stack>
+        <BoardContainer>
+          {boardStates?.map((boardState) => {
+            return (
+              <Box as="section" key={boardState.id}>
+                <fetcher.Form method="post">
+                  <StateTray
+                    boardState={boardState}
+                    title={boardState.description ?? `State #${boardState.id}`}
+                    onDropHandler={onDropHandler}
+                  >
+                    {tasks
+                      ?.filter((task) => task.stateId === boardState.id)
+                      .map((task) => {
+                        return <TaskCard key={task.id} task={task} />;
+                      })}
+                  </StateTray>
+                </fetcher.Form>
+              </Box>
+            );
+          })}
+        </BoardContainer>
+        <Link to="..">
+          <Button>👈🏻 Back to boards list</Button>
+        </Link>
+      </DndProvider>
+    </Stack>
   );
 };
 
