@@ -84,7 +84,9 @@ export const TaskForm: React.VFC<Props> = ({
         </FormLabel>
         <Stack direction="row">
           <Button type="submit">Submit</Button>
-          <Button type="reset">Reset</Button>
+          <Button variant="outline" type="reset">
+            Reset
+          </Button>
         </Stack>
       </Stack>
     </Form>
