@@ -22,6 +22,8 @@ export const Chat: VFC<{ chatId: string; initialMessages: Array<Message> }> = ({
   initialMessages,
 }) => {
   const supabase = useSupabaseClient();
+  // TODO: to be honest, I'm not sure about this approach (using props as initialState)
+  // but I didn't find another way to achieve the same result (all of them broke the exhaustive-deps rule)
   const [messages, setMessages] = useState<Array<Message>>(initialMessages);
   const transition = useTransition();
   const isSending = transition.state === "submitting";
@@ -52,8 +54,6 @@ export const Chat: VFC<{ chatId: string; initialMessages: Array<Message> }> = ({
   );
 
   useEffect(() => {
-    if (!supabase || !chatId) return;
-
     const subscription = supabase
       .from(`messages:chatId=eq.${chatId}`)
       .on("INSERT", handleReceivedMessage)
@@ -63,11 +63,6 @@ export const Chat: VFC<{ chatId: string; initialMessages: Array<Message> }> = ({
       subscription.unsubscribe();
     };
   }, [chatId, supabase, handleReceivedMessage]);
-
-  useEffect(() => {
-    //TODO: repeated and also I don't like this approach
-    setMessages(initialMessages);
-  }, [chatId]);
 
   useEffect(() => {
     if (!isSending) {

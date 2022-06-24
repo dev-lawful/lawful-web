@@ -51,14 +51,14 @@ export const action: ActionFunction = async ({ params, request }) => {
 };
 
 const ChatIndexRoute = () => {
-  const { data: initialMessages } = useLoaderData<LoaderData>();
+  const { data: lastMessages } = useLoaderData<LoaderData>();
   const { chatId } = useParams();
 
   if (!chatId) {
     return <div>No chat id</div>;
   }
 
-  return <Chat chatId={chatId} initialMessages={initialMessages} />;
+  return <Chat key={chatId} chatId={chatId} initialMessages={lastMessages} />;
 };
 
 export default ChatIndexRoute;
