@@ -1,6 +1,6 @@
 import type { PostgrestResponse } from "@supabase/supabase-js";
 import { supabase } from "~/db";
-import type { Task, CustomResponse } from "~/_types";
+import type { CustomResponse, Task } from "~/_types";
 
 export const getTasksByBoardStateId = async (
   boardStatesIds: Array<number>

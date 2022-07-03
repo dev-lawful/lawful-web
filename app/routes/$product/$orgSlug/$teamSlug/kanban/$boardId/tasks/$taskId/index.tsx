@@ -10,7 +10,6 @@ import {
   useParams,
 } from "@remix-run/react";
 
-import { supabase } from "~/db";
 import { deleteTask, getBoardStatesByStateId, getTaskById } from "~/models";
 import type { BoardState, Task } from "~/_types";
 

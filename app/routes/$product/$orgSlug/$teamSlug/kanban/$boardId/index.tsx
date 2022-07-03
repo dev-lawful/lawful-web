@@ -1,17 +1,11 @@
-import { Box, Button, Heading, Spacer, Stack } from "@chakra-ui/react";
+import { Box, Button, Heading, Stack } from "@chakra-ui/react";
 import type {
   ActionFunction,
   LoaderFunction,
   RouteComponent,
 } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import {
-  Link,
-  useCatch,
-  useFetcher,
-  useLoaderData,
-  useMatches,
-} from "@remix-run/react";
+import { Link, useCatch, useFetcher, useLoaderData } from "@remix-run/react";
 import type {
   SupabaseClient,
   SupabaseRealtimePayload,
