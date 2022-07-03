@@ -11,7 +11,7 @@ import {
 } from "@remix-run/react";
 
 import { supabase } from "~/db";
-import { deleteTask } from "~/models";
+import { deleteTask, getBoardStatesByStateId, getTaskById } from "~/models";
 import type { BoardState, Task } from "~/_types";
 
 interface LoaderData {
@@ -21,16 +21,16 @@ interface LoaderData {
   };
 }
 
-export const loader: LoaderFunction = async ({
-  request,
-  params: { taskId },
-}) => {
-  const { data: taskData, error: taskError } = await supabase
-    .from<Task>("tasks")
-    .select("*")
-    .eq("id", taskId);
+export const loader: LoaderFunction = async ({ params: { taskId } }) => {
+  if (typeof taskId !== "string") {
+    throw new Response("Invalid taskId", {
+      status: 400,
+    });
+  }
 
-  if (taskError) throw new Error(taskError.message);
+  const { data: taskData, error: taskError } = await getTaskById(taskId);
+
+  if (taskError) throw new Error(taskError);
 
   if (!taskData.length) {
     throw new Response(`No task found with id: ${taskId}`, {
@@ -38,15 +38,21 @@ export const loader: LoaderFunction = async ({
     });
   }
 
-  const { data: boardStateData, error: boardStateError } = await supabase
-    .from<BoardState>("boardStates")
-    .select("description")
-    .eq("id", taskData[0].stateId);
+  const [{ stateId }] = taskData;
 
-  if (boardStateError) throw new Error(boardStateError.message);
+  if (!stateId) {
+    throw new Response(`Board state id ${stateId}`, {
+      status: 404,
+    });
+  }
+
+  const { data: boardStateData, error: boardStateError } =
+    await getBoardStatesByStateId(stateId);
+
+  if (boardStateError) throw new Error(boardStateError);
 
   if (!boardStateData.length) {
-    throw new Response(`No boardState found with id: ${taskData[0].stateId}`, {
+    throw new Response(`No boardState found with id: ${stateId}`, {
       status: 404,
     });
   }

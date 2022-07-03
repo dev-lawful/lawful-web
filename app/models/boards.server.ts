@@ -80,3 +80,39 @@ export const getBoardsByTeamId = async (
     };
   }
 };
+
+export const getBoardStatesByStateId = async (
+  stateId: number
+): Promise<CustomResponse<BoardState>> => {
+  try {
+    const { data } = await supabase
+      .from<BoardState>("boardStates")
+      .select("description")
+      .eq("id", stateId);
+
+    return { data: data ?? [], error: null };
+  } catch (err) {
+    return {
+      data: [],
+      error: "There has been an error trying to fetch boards by team id.",
+    };
+  }
+};
+
+export const getBoardById = async (
+  boardId: number
+): Promise<CustomResponse<Board>> => {
+  try {
+    const { data } = await supabase
+      .from<Board>("boards")
+      .select("*")
+      .eq("id", boardId);
+
+    return { data: data ?? [], error: null };
+  } catch (err) {
+    return {
+      data: [],
+      error: "There has been an error trying to fetch this board by id.",
+    };
+  }
+};

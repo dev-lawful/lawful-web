@@ -26,7 +26,7 @@ export const updateTaskState = async ({
 }: {
   updatedStateId: number;
   taskId: number;
-}) => {
+}): Promise<CustomResponse<Task>> => {
   try {
     const { data }: PostgrestResponse<Task> = await supabase
       .from<Task>("tasks")
@@ -48,7 +48,7 @@ export const updateTask = async ({
 }: {
   taskData: Omit<Task, "created_at" | "id">;
   taskId: string;
-}) => {
+}): Promise<CustomResponse<Task>> => {
   try {
     const { data } = await supabase
       .from<Task>("tasks")
@@ -69,7 +69,7 @@ export const createTask = async ({
   taskData,
 }: {
   taskData: Omit<Task, "created_at" | "id">;
-}) => {
+}): Promise<CustomResponse<Task>> => {
   try {
     const { data } = await supabase.from<Task>("tasks").insert({
       ...taskData,
@@ -84,12 +84,14 @@ export const createTask = async ({
   }
 };
 
-export const getTaskById = async (id: string) => {
+export const getTaskById = async (
+  taskId: string
+): Promise<CustomResponse<Task>> => {
   try {
     const { data } = await supabase
       .from<Task>("tasks")
       .select("name, description, dueDate, asignee, stateId, id")
-      .eq("id", id);
+      .eq("id", taskId);
 
     return { data: data ?? [], error: null };
   } catch (error) {
@@ -100,9 +102,14 @@ export const getTaskById = async (id: string) => {
   }
 };
 
-export const deleteTask = async (id: string) => {
+export const deleteTask = async (
+  taskId: string
+): Promise<CustomResponse<Task>> => {
   try {
-    const { data } = await supabase.from<Task>("tasks").delete().eq("id", id);
+    const { data } = await supabase
+      .from<Task>("tasks")
+      .delete()
+      .eq("id", taskId);
 
     return { data: data ?? [], error: null };
   } catch (error) {

@@ -24,8 +24,9 @@ import {
   StateTray,
   TaskCard,
 } from "~/components/modules/decode";
-import { supabase, SupabaseClientContext } from "~/db";
+import { SupabaseClientContext } from "~/db";
 import {
+  getBoardById,
   getBoardStatesByBoardId,
   getTasksByBoardStateId,
   updateTaskState,
@@ -53,9 +54,9 @@ interface ActionData {
   data: Array<Task>;
 }
 
-export const loader: LoaderFunction = async ({ params }) => {
+export const loader: LoaderFunction = async ({ params: { boardId } }) => {
   const { data: boardStates } = await getBoardStatesByBoardId(
-    parseInt(params.boardId as string)
+    parseInt(boardId as string)
   );
 
   if (!boardStates)
@@ -74,12 +75,11 @@ export const loader: LoaderFunction = async ({ params }) => {
 
   const { data: tasks } = await getTasksByBoardStateId(boardStatesIds);
 
-  const { data: boardData, error } = await supabase
-    .from<Board>("boards")
-    .select("name")
-    .eq("id", parseInt(params.boardId as string));
+  const { data: boardData, error: boardError } = await getBoardById(
+    parseInt(boardId as string)
+  );
 
-  if (!boardData) throw new Error(error.message);
+  if (boardError) throw new Error(boardError);
 
   const {
     0: { name },
