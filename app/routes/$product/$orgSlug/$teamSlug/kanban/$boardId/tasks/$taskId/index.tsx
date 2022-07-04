@@ -1,15 +1,14 @@
-import { Button, Heading, Stack, Text } from "@chakra-ui/react";
+import { Button, Heading, Link, Stack, Text } from "@chakra-ui/react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import {
   Form,
-  Link,
+  Link as RemixLink,
   useCatch,
   useLoaderData,
   useMatches,
   useParams,
 } from "@remix-run/react";
-
 import { deleteTask, getBoardStatesByStateId, getTaskById } from "~/models";
 import type { BoardState, Task } from "~/_types";
 
@@ -91,9 +90,8 @@ const TaskRoute = () => {
 
   return (
     <>
-      <Link to={`${boardRoutePathname}/${params.boardId}`}>
-        {/* // TODO: Review what to render with Chakra UI links (rendering anchors inside anchors causes console errors) */}
-        <Button>Go back to board</Button>
+      <Link as={RemixLink} to={`${boardRoutePathname}/${params.boardId}`}>
+        Go back to board
       </Link>
       <Stack as="article">
         <Heading as="h1" size={"2xl"}>
@@ -143,6 +141,7 @@ export const ErrorBoundary = ({ error }: { error: Error }) => {
     </div>
   );
 };
+
 export const CatchBoundary = () => {
   const error = useCatch();
   return (

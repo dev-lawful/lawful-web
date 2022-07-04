@@ -208,6 +208,7 @@ export const ErrorBoundary = ({ error }: { error: Error }) => {
     </div>
   );
 };
+
 export const CatchBoundary = () => {
   const error = useCatch();
   return (

@@ -40,7 +40,7 @@ export const action: ActionFunction = async ({ request }) => {
   if (error) {
     throw new Error(error);
   }
-  
+
   return json<ActionData>({ data });
 };
 
@@ -79,6 +79,7 @@ export const ErrorBoundary = ({ error }: { error: Error }) => {
     </div>
   );
 };
+
 export const CatchBoundary = () => {
   const error = useCatch();
   return (

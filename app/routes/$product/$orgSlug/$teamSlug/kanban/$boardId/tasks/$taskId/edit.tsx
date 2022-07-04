@@ -19,7 +19,9 @@ export const loader: LoaderFunction = async ({ params }) => {
 
   if (boardStatesError) throw new Error(boardStatesError);
 
-  const { data: taskData, error: taskError } = await getTaskById(params.taskId!);
+  const { data: taskData, error: taskError } = await getTaskById(
+    params.taskId!
+  );
 
   if (taskError) throw new Error(taskError);
 
@@ -81,6 +83,7 @@ export const ErrorBoundary = ({ error }: { error: Error }) => {
     </div>
   );
 };
+
 export const CatchBoundary = () => {
   const error = useCatch();
   return (

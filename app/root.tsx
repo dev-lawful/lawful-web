@@ -16,7 +16,6 @@ import {
   useLoaderData,
   useParams,
 } from "@remix-run/react";
-import { createClient } from "@supabase/supabase-js";
 import React, { useContext, useEffect } from "react";
 import { ClientStyleContext, getTheme, ServerStyleContext } from "~/styles";
 import { SupabaseClientProvider, useCreateSupabaseClient } from "./db";
@@ -63,7 +62,7 @@ const Document = withEmotionCache(
     }, []);
 
     return (
-      <html lang="en">
+      <html lang="en" style={{ height: "100%" }}>
         <head>
           <Meta />
           <Links />
@@ -75,7 +74,7 @@ const Document = withEmotionCache(
             />
           ))}
         </head>
-        <body>
+        <body style={{ height: "100%" }}>
           {children}
           <ScrollRestoration />
           <Scripts />
@@ -104,6 +103,7 @@ export const loader: LoaderFunction = () => {
 
 export default function App() {
   const { product } = useParams();
+
   const data = useLoaderData<LoaderData>();
 
   const supabaseClient = useCreateSupabaseClient({
@@ -126,4 +126,8 @@ export default function App() {
 
 export const CatchBoundary = () => {
   return <h1>Invalid Route</h1>;
+};
+
+export const ErrorBoundary = () => {
+  return <h1>Error</h1>;
 };

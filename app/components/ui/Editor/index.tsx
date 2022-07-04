@@ -1,7 +1,7 @@
 import { CodeHighlightNode, CodeNode } from "@lexical/code";
 import { AutoLinkNode, LinkNode } from "@lexical/link";
 import { ListItemNode, ListNode } from "@lexical/list";
-import { TRANSFORMERS, $convertToMarkdownString } from "@lexical/markdown";
+import { $convertToMarkdownString, TRANSFORMERS } from "@lexical/markdown";
 import LexicalAutoFocusPlugin from "@lexical/react/LexicalAutoFocusPlugin";
 import LexicalComposer from "@lexical/react/LexicalComposer";
 import LexicalContentEditable from "@lexical/react/LexicalContentEditable";
@@ -13,6 +13,7 @@ import LexicalRichTextPlugin from "@lexical/react/LexicalRichTextPlugin";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
 import type { LinksFunction } from "@remix-run/node";
+import type { ComponentProps, FC } from "react";
 import { forwardRef, useState } from "react";
 import AutoLinkPlugin from "./plugins/AutoLinkPlugin";
 import CodeHighlightPlugin from "./plugins/CodeHighlightPlugin";
@@ -94,7 +95,6 @@ const EditorComponent = ({
           <LexicalLinkPlugin />
           <AutoLinkPlugin />
           <ListMaxIndentLevelPlugin maxDepth={7} />
-          {/* TODO: fix ts error */}
           {/* @ts-ignore */}
           <LexicalMarkdownShortcutPlugin transformers={TRANSFORMERS} />
         </div>
@@ -104,8 +104,10 @@ const EditorComponent = ({
 };
 
 //Not sure why i need a ref here, https://remix.run/docs/en/v1/guides/styling#shared-component-styles
-// TODO: add ts to Editor component
-export const Editor = forwardRef(({ children, ...props }, ref) => {
-  return <EditorComponent {...props} ref={ref} />;
-});
+export const Editor: FC<ComponentProps<typeof EditorComponent>> = forwardRef(
+  ({ children, ...props }, ref) => {
+    return <EditorComponent {...props} ref={ref} />;
+  }
+);
+
 Editor.displayName = "Editor";
