@@ -1,11 +1,6 @@
 import type { PostgrestResponse } from "@supabase/supabase-js";
 import { supabase } from "~/db";
-import type { Team } from "~/_types";
-
-interface CustomResponse<T> {
-  data: Array<T>;
-  error: string | null;
-}
+import type { CustomResponse, Team } from "~/_types";
 
 export const getTeamBySlug = async (
   slug: string

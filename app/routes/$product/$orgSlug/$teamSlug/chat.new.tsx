@@ -1,22 +1,21 @@
 import {
   Button,
-  Input,
   FormControl,
-  FormLabel,
   FormErrorMessage,
+  FormLabel,
+  Input,
 } from "@chakra-ui/react";
-import { ActionFunction, json, redirect } from "@remix-run/node";
+import type { ActionFunction } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { Form, useActionData, useParams } from "@remix-run/react";
 import { createChat } from "~/models/chats.server";
 import { getTeamBySlug } from "~/models/teams.server";
+import type { Chat } from "~/_types";
 
 type ActionData = {
   formError?: string;
+  fieldErrors?: Pick<Chat, "name" | "description">;
   //TODO use Chat type
-  fieldErrors?: {
-    name: string | undefined;
-    description: string | undefined;
-  };
   fields?: {
     name: string;
     description: string;
@@ -65,6 +64,7 @@ export const action: ActionFunction = async ({ request }) => {
 const NewChatRoute = () => {
   const actionData = useActionData<ActionData>();
   const { teamSlug } = useParams();
+
   return (
     <Form method="post">
       <Input type="hidden" id="teamSlug" name="teamSlug" value={teamSlug} />
@@ -90,10 +90,3 @@ const NewChatRoute = () => {
 };
 
 export default NewChatRoute;
-
-export const ErrorBoundary = () => {
-  return <div>Not implemented</div>;
-};
-export const CatchBoundary = () => {
-  return <div>Not implemented</div>;
-};

@@ -40,6 +40,7 @@ export const action: ActionFunction = async ({ request }) => {
   if (error) {
     throw new Error(error);
   }
+
   return json<ActionData>({ data });
 };
 
@@ -61,6 +62,7 @@ const EditorRoute = () => {
         <Input type="text" name="title" id="title" />
         <Input type="text" name="description" id="description" />
         <Input type="date" name="dueDate" id="dueDate" />
+        {/* @ts-ignore */}
         <Editor initialState={data} />
         <Button type="submit">Submit</Button>
       </Form>
@@ -77,6 +79,7 @@ export const ErrorBoundary = ({ error }: { error: Error }) => {
     </div>
   );
 };
+
 export const CatchBoundary = () => {
   const error = useCatch();
   return (

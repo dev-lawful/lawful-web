@@ -1,4 +1,4 @@
-import { Button, HStack, Stack, StackDivider, VStack } from "@chakra-ui/react";
+import { HStack, VStack } from "@chakra-ui/react";
 import type { LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Link, Outlet, useCatch, useLoaderData } from "@remix-run/react";
@@ -51,6 +51,7 @@ export const ErrorBoundary = ({ error }: { error: Error }) => {
     </div>
   );
 };
+
 export const CatchBoundary = () => {
   const error = useCatch();
   return (

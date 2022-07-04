@@ -16,7 +16,6 @@ import {
   useLoaderData,
   useParams,
 } from "@remix-run/react";
-import { createClient } from "@supabase/supabase-js";
 import React, { useContext, useEffect } from "react";
 import { ClientStyleContext, getTheme, ServerStyleContext } from "~/styles";
 import { SupabaseClientProvider, useCreateSupabaseClient } from "./db";
@@ -106,6 +105,7 @@ export default function App() {
   const { product } = useParams();
 
   const data = useLoaderData<LoaderData>();
+
   const supabaseClient = useCreateSupabaseClient({
     supabaseUrl: data.ENV.SUPABASE_URL,
     supabaseAnonKey: data.ENV.SUPABASE_ANON_KEY,
@@ -127,6 +127,7 @@ export default function App() {
 export const CatchBoundary = () => {
   return <h1>Invalid Route</h1>;
 };
+
 export const ErrorBoundary = () => {
   return <h1>Error</h1>;
 };

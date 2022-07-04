@@ -21,6 +21,13 @@ module.exports = {
     /^vfile.*/,
     /^ccount*/,
     /^markdown-table*/,
+    "react-dnd",
+    "react-dnd-html5-backend",
+    "react-dnd-touch-backend",
+    "@react-dnd/invariant",
+    "dnd-core",
+    "@react-dnd/shallowequal",
+    "@react-dnd/asap",
   ],
   serverBuildTarget: "vercel",
   // When running locally in development mode, we use the built in remix

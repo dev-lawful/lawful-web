@@ -1,14 +1,8 @@
 import type { PostgrestResponse } from "@supabase/supabase-js";
 import { supabase } from "~/db";
-import type { Chat, Message } from "~/_types";
+import type { Chat, CustomResponse, Message } from "~/_types";
 
-// TODO: This interface is repeated, refactor is necessary
-// TODO: what if I want to get all messages? should i include a limit?.... select with count maybe
-// TODO: teamId and chatId are of type int8, change from string to number maybe?
-interface CustomResponse<T> {
-  data: Array<T>;
-  error: string | null;
-}
+// TODO: what if I want to get all messages? should i include a limit?.... select with count maybe teamId and chatId are of type int8, change from string to number maybe?
 
 export const getLastMessages = async ({
   chatId,

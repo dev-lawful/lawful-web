@@ -9,7 +9,7 @@ interface LoaderData {
   data: Array<Team> | null;
 }
 
-// TODO: Check if the team belogns to selected organization
+// TODO: Check if the team belongs to selected organization
 export const loader: LoaderFunction = async () => {
   const { data }: PostgrestResponse<Team> = await supabase
     .from("teams")
