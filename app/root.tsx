@@ -1,4 +1,4 @@
-import { Button, ChakraProvider } from "@chakra-ui/react";
+import { ChakraProvider } from "@chakra-ui/react";
 import { withEmotionCache } from "@emotion/react";
 import type {
   LinksFunction,
@@ -19,7 +19,7 @@ import {
 import { createClient } from "@supabase/supabase-js";
 import React, { useContext, useEffect } from "react";
 import { ClientStyleContext, getTheme, ServerStyleContext } from "~/styles";
-import { SupabaseClientProvider } from "./db";
+import { SupabaseClientProvider, useCreateSupabaseClient } from "./db";
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
@@ -63,7 +63,7 @@ const Document = withEmotionCache(
     }, []);
 
     return (
-      <html lang="en">
+      <html lang="en" style={{ height: "100%" }}>
         <head>
           <Meta />
           <Links />
@@ -75,7 +75,7 @@ const Document = withEmotionCache(
             />
           ))}
         </head>
-        <body>
+        <body style={{ height: "100%" }}>
           {children}
           <ScrollRestoration />
           <Scripts />
@@ -104,19 +104,18 @@ export const loader: LoaderFunction = () => {
 
 export default function App() {
   const { product } = useParams();
+
   const data = useLoaderData<LoaderData>();
+  const supabaseClient = useCreateSupabaseClient({
+    supabaseUrl: data.ENV.SUPABASE_URL,
+    supabaseAnonKey: data.ENV.SUPABASE_ANON_KEY,
+  });
+
   return (
     <Document>
       <ChakraProvider theme={getTheme(product)}>
-        <Button>Goood</Button>
-        <Button variant="outline">Goood</Button>
         {data ? (
-          <SupabaseClientProvider
-            value={createClient(
-              data.ENV.SUPABASE_URL,
-              data.ENV.SUPABASE_ANON_KEY
-            )}
-          >
+          <SupabaseClientProvider value={supabaseClient}>
             <Outlet />
           </SupabaseClientProvider>
         ) : null}
@@ -127,4 +126,7 @@ export default function App() {
 
 export const CatchBoundary = () => {
   return <h1>Invalid Route</h1>;
+};
+export const ErrorBoundary = () => {
+  return <h1>Error</h1>;
 };
