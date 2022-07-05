@@ -1,7 +1,7 @@
 import { json, redirect } from "@remix-run/node";
 import type { LoaderFunction } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
-import { Box, Flex } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 
 export const loader: LoaderFunction = ({ params }) => {
   if (!["decode", "network"].includes(params.product || "")) {
@@ -13,9 +13,6 @@ export const loader: LoaderFunction = ({ params }) => {
 const ProductLayoutRoute = () => {
   return (
     <Flex direction="column" height="full">
-      <div>ProductLayoutRoute</div>
-      <div>Custon Theme</div>
-      <div>Navbar and footer</div>
       <Outlet />
     </Flex>
   );

@@ -13,6 +13,7 @@ console.log('It works!')
 export default function IndexRoute() {
   return (
     <div>
+      <div>Hola</div>
       <h1>Landing Lawful</h1>
       <MarkdownViewer markdown={markdown} />
     </div>
