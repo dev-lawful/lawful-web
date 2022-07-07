@@ -100,6 +100,13 @@ export const action: ActionFunction = async ({ request }) => {
   const _updatedStateId = formData.get("updatedStateId");
   const _taskId = formData.get("taskId");
 
+  // Somehow this action is ran twice and the second time values are { _updatedStateId: null, _taskId: null }
+  if (_updatedStateId == null || _taskId == null) {
+    return json<ActionData>({
+      data: [],
+    });
+  }
+
   if (typeof _updatedStateId !== "string" || typeof _taskId !== "string") {
     throw new Response("Form not submitted correcty", { status: 400 });
   }
@@ -174,7 +181,7 @@ const BoardRoute: RouteComponent = () => {
           {boardStates?.map((boardState) => {
             return (
               <Box as="section" key={boardState.id}>
-                <fetcher.Form method="post">
+                <fetcher.Form method="patch">
                   <StateTray
                     boardState={boardState}
                     title={boardState.description ?? `State #${boardState.id}`}
