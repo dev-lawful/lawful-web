@@ -1,8 +1,10 @@
+import { ArrowLeftIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
   Container,
   Heading,
+  HStack,
   Link,
   List,
   ListItem,
@@ -11,6 +13,8 @@ import {
   StackDivider,
   Text,
   useColorModeValue,
+  Wrap,
+  WrapItem,
 } from "@chakra-ui/react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
@@ -19,7 +23,6 @@ import {
   Link as RemixLink,
   useCatch,
   useLoaderData,
-  useMatches,
   useParams,
 } from "@remix-run/react";
 import { deleteTask, getBoardStatesByStateId, getTaskById } from "~/models";
@@ -94,12 +97,7 @@ const TaskRoute = () => {
     },
   } = useLoaderData<LoaderData>();
 
-  const matches = useMatches();
   const params = useParams();
-
-  const {
-    [matches.length - 2]: { pathname: boardRoutePathname },
-  } = matches;
 
   return (
     <Container maxW={"7xl"}>
@@ -175,24 +173,36 @@ const TaskRoute = () => {
             </Box>
           </Stack>
 
-          <Link as={RemixLink} to={`../${params.boardId}`}>
-            Go back to board
-          </Link>
-
-          <Form method="delete">
-            <input type="hidden" value={task.id} />
-            <Button
-              rounded={"lg"}
-              w={"full"}
-              mt={8}
-              size={"lg"}
-              py={"7"}
-              colorScheme={"red"}
-              type="submit"
-            >
-              Delete task ❌
-            </Button>
-          </Form>
+          <Wrap spacing="3">
+            <WrapItem>
+              <Form method="delete">
+                <input type="hidden" value={task.id} />
+                <Button colorScheme="red">
+                  <HStack>
+                    <DeleteIcon /> <Text>Delete</Text>
+                  </HStack>
+                </Button>
+              </Form>
+            </WrapItem>
+            <WrapItem>
+              <Link as={RemixLink} to="./edit">
+                <Button>
+                  <HStack>
+                    <EditIcon /> <Text>Edit</Text>
+                  </HStack>
+                </Button>
+              </Link>
+            </WrapItem>
+            <WrapItem>
+              <Link as={RemixLink} to={`../${params.boardId}`}>
+                <Button variant="outline">
+                  <HStack>
+                    <ArrowLeftIcon /> <Text>Back to board</Text>
+                  </HStack>
+                </Button>
+              </Link>
+            </WrapItem>
+          </Wrap>
         </Stack>
       </SimpleGrid>
     </Container>

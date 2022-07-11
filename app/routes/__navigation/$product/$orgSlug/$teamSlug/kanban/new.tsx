@@ -1,7 +1,8 @@
-import { Button, Heading, VStack } from "@chakra-ui/react";
+import { ArrowLeftIcon } from "@chakra-ui/icons";
+import { Button, Heading, HStack, Link, Text, VStack } from "@chakra-ui/react";
 import type { ActionFunction } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
-import { useCatch, Link } from "@remix-run/react";
+import { Link as RemixLink, useCatch } from "@remix-run/react";
 import { BoardForm } from "~/components/modules/decode/Forms/BoardForm";
 import { createBoard } from "~/models";
 
@@ -35,10 +36,14 @@ export const action: ActionFunction = async ({ request, context, params }) => {
 const NewBoardRoute = () => {
   return (
     <VStack justify="start" alignItems="start" p="5">
-      <Heading as="h1">Add a new board 🆕</Heading>
+      <Heading as="h1">New board</Heading>
       <BoardForm defaultValues={{ teamId: 1, name: "" }} />
-      <Link to="..">
-        <Button>👈🏻 Back to boards list</Button>
+      <Link as={RemixLink} to="..">
+        <Button>
+          <HStack>
+            <ArrowLeftIcon /> <Text>Back to boards list</Text>
+          </HStack>
+        </Button>
       </Link>
     </VStack>
   );

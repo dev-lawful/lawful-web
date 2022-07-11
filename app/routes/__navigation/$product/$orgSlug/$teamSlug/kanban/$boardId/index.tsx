@@ -1,14 +1,24 @@
-import { Box, Button, Heading, Stack } from "@chakra-ui/react";
+import { ArrowLeftIcon, PlusSquareIcon } from "@chakra-ui/icons";
+import {
+  Box,
+  Button,
+  Heading, HStack, Link, Stack, Text
+} from "@chakra-ui/react";
 import type {
   ActionFunction,
   LoaderFunction,
-  RouteComponent,
+  RouteComponent
 } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Link, useCatch, useFetcher, useLoaderData } from "@remix-run/react";
+import {
+  Link as RemixLink,
+  useCatch,
+  useFetcher,
+  useLoaderData
+} from "@remix-run/react";
 import type {
   SupabaseClient,
-  SupabaseRealtimePayload,
+  SupabaseRealtimePayload
 } from "@supabase/supabase-js";
 import { useContext, useEffect } from "react";
 import { DndProvider } from "react-dnd";
@@ -16,14 +26,14 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import {
   Board as BoardContainer,
   StateTray,
-  TaskCard,
+  TaskCard
 } from "~/components/modules/decode";
 import { SupabaseClientContext } from "~/db";
 import {
   getBoardById,
   getBoardStatesByBoardId,
   getTasksByBoardStateId,
-  updateTaskState,
+  updateTaskState
 } from "~/models";
 import type { Board, BoardState, Task } from "~/_types";
 
@@ -69,8 +79,14 @@ export const loader: LoaderFunction = async ({ params: { boardId } }) => {
 
   const { data: tasks } = await getTasksByBoardStateId(boardStatesIds);
 
+  const parsedBoardId = parseInt(boardId as string);
+
+  if (typeof parsedBoardId !== "number") {
+    throw new Error("Board's id should be an integer number");
+  }
+
   const { data: boardData, error: boardError } = await getBoardById(
-    parseInt(boardId as string)
+    parsedBoardId
   );
 
   if (boardError) throw new Error(boardError);
@@ -171,10 +187,15 @@ const BoardRoute: RouteComponent = () => {
   return (
     <Stack direction="column" spacing="2">
       <DndProvider backend={HTML5Backend}>
-        <Stack direction="row" alignItems="center" mb="3">
+        <Stack direction="row" alignItems="start" mb="3">
           <Heading>{board.name}</Heading>
-          <Link to="../new">
-            <Button>New task 🆕</Button>
+          <Link as={RemixLink} to="./tasks/new">
+            <Button>
+              <HStack>
+                <PlusSquareIcon />
+                <Text>New task</Text>
+              </HStack>
+            </Button>
           </Link>
         </Stack>
         <BoardContainer>
@@ -198,8 +219,12 @@ const BoardRoute: RouteComponent = () => {
             );
           })}
         </BoardContainer>
-        <Link to="..">
-          <Button>👈🏻 Back to boards list</Button>
+        <Link as={RemixLink} to="..">
+          <Button>
+            <HStack>
+              <ArrowLeftIcon /> <Text>Back to boards list</Text>
+            </HStack>
+          </Button>
         </Link>
       </DndProvider>
     </Stack>
@@ -211,6 +236,7 @@ export default BoardRoute;
 export const ErrorBoundary = ({ error }: { error: Error }) => {
   return (
     <div>
+      <h1>test</h1>
       <p>{error.message}</p>
     </div>
   );
