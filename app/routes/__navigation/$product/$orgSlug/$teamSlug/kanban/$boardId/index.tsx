@@ -1,30 +1,40 @@
-import { ArrowLeftIcon, PlusSquareIcon } from "@chakra-ui/icons";
+import {
+  ArrowBackIcon,
+  ChevronDownIcon,
+  DeleteIcon,
+  EditIcon,
+  PlusSquareIcon,
+} from "@chakra-ui/icons";
 import {
   Box,
   Button,
   Heading,
   HStack,
   Link,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Stack,
-  Text,
 } from "@chakra-ui/react";
 import type {
   ActionFunction,
   LoaderFunction,
   RouteComponent,
 } from "@remix-run/node";
-import { json } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import {
   Link as RemixLink,
   useCatch,
   useFetcher,
   useLoaderData,
+  useParams,
 } from "@remix-run/react";
 import type {
   SupabaseClient,
   SupabaseRealtimePayload,
 } from "@supabase/supabase-js";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import {
@@ -34,6 +44,7 @@ import {
 } from "~/components/modules/decode";
 import { SupabaseClientContext } from "~/db";
 import {
+  deleteBoard,
   getBoardById,
   getBoardStatesByBoardId,
   getTasksByBoardStateId,
@@ -117,38 +128,83 @@ export const loader: LoaderFunction = async ({ params: { boardId } }) => {
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
 
-  const _updatedStateId = formData.get("updatedStateId");
-  const _taskId = formData.get("taskId");
+  switch (request.method) {
+    case "PATCH": {
+      const _updatedStateId = formData.get("updatedStateId");
+      const _taskId = formData.get("taskId");
 
-  // Somehow this action is ran twice and the second time values are { _updatedStateId: null, _taskId: null }
-  if (_updatedStateId == null || _taskId == null) {
-    return json<ActionData>({
-      data: [],
-    });
+      // Somehow this action is ran twice and the second time values are { _updatedStateId: null, _taskId: null }
+      if (_updatedStateId == null || _taskId == null) {
+        return json<ActionData>({
+          data: [],
+        });
+      }
+
+      if (typeof _updatedStateId !== "string" || typeof _taskId !== "string") {
+        throw new Response("patch form not submitted correcty", {
+          status: 400,
+        });
+      }
+
+      const updatedStateId = parseInt(_updatedStateId);
+      const taskId = parseInt(_taskId);
+
+      const { data, error } = await updateTaskState({
+        updatedStateId,
+        taskId,
+      });
+
+      if (error) {
+        throw new Error(error);
+      }
+
+      return json<ActionData>({
+        data,
+      });
+    }
+
+    case "DELETE": {
+      const _boardId = formData.get("boardId") ?? "";
+
+      console.log({ _boardId });
+
+      if (_boardId == null) {
+        return json<ActionData>({
+          data: [],
+        });
+      }
+
+      if (typeof _boardId !== "string") {
+        throw new Response("Delete form not submitted correcty", {
+          status: 400,
+        });
+      }
+
+      const boardId = parseInt(_boardId);
+
+      const { error } = await deleteBoard({
+        boardId,
+      });
+
+      if (error) {
+        throw new Error(error);
+      }
+
+      const { pathname, origin } = new URL(request.url);
+
+      const boardsListPath = pathname.split("/").slice(0, -1).join("/");
+
+      return redirect(`${origin}${boardsListPath}`);
+    }
+
+    default: {
+      throw new Error(`Method ${request.method} is currently not supported`);
+    }
   }
-
-  if (typeof _updatedStateId !== "string" || typeof _taskId !== "string") {
-    throw new Response("Form not submitted correcty", { status: 400 });
-  }
-
-  const updatedStateId = parseInt(_updatedStateId);
-  const taskId = parseInt(_taskId);
-
-  const { data, error } = await updateTaskState({
-    updatedStateId,
-    taskId,
-  });
-
-  if (error) {
-    throw new Error(error);
-  }
-
-  return json<ActionData>({
-    data,
-  });
 };
 
 const BoardRoute: RouteComponent = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const {
     data: { boardStates, tasks, boards },
   } = useLoaderData<LoaderData>();
@@ -169,16 +225,18 @@ const BoardRoute: RouteComponent = () => {
         taskId,
         updatedStateId,
       },
-      { method: "post" }
+      { method: "patch" }
     );
   };
+
+  const { boardId } = useParams();
 
   useEffect(() => {
     if (!supabase) return;
 
     const subscription = getTasksTableSubscription({
       callback: () => {
-        fetcher.submit(null, { method: "post" });
+        fetcher.submit(null, { method: "patch" });
       },
       client: supabase,
     });
@@ -191,17 +249,47 @@ const BoardRoute: RouteComponent = () => {
   return (
     <Stack direction="column" spacing="2">
       <DndProvider backend={HTML5Backend}>
-        <Stack direction="row" alignItems="start" mb="3">
+        <HStack alignItems="start" justifyContent="space-between" mb="3">
           <Heading>{board.name}</Heading>
-          <Link as={RemixLink} to="./tasks/new">
-            <Button>
-              <HStack>
-                <PlusSquareIcon />
-                <Text>New task</Text>
-              </HStack>
-            </Button>
-          </Link>
-        </Stack>
+          <Menu isOpen={isMenuOpen}>
+            {({ isOpen }) => (
+              <>
+                <MenuButton
+                  isActive={isOpen}
+                  as={Button}
+                  rightIcon={<ChevronDownIcon />}
+                  onClick={() => setIsMenuOpen((ps) => !ps)}
+                >
+                  {isOpen ? "Close" : "Actions"}
+                </MenuButton>
+                <MenuList>
+                  <Link as={RemixLink} to="./tasks/new">
+                    <MenuItem icon={<PlusSquareIcon />}>New task</MenuItem>
+                  </Link>
+                  <Link as={RemixLink} to="./edit">
+                    <MenuItem icon={<EditIcon />}>Edit board</MenuItem>
+                  </Link>
+                  <Link as={RemixLink} to="..">
+                    <MenuItem icon={<ArrowBackIcon />}>
+                      Back to boards list
+                    </MenuItem>
+                  </Link>
+                  <fetcher.Form method="delete">
+                    <input type="hidden" name="boardId" value={boardId} />
+
+                    <MenuItem
+                      type="submit"
+                      color={"red.500"}
+                      icon={<DeleteIcon />}
+                    >
+                      Delete board
+                    </MenuItem>
+                  </fetcher.Form>
+                </MenuList>
+              </>
+            )}
+          </Menu>
+        </HStack>
         <BoardContainer>
           {boardStates?.map((boardState) => {
             return (
@@ -223,13 +311,6 @@ const BoardRoute: RouteComponent = () => {
             );
           })}
         </BoardContainer>
-        <Link as={RemixLink} to="..">
-          <Button>
-            <HStack>
-              <ArrowLeftIcon /> <Text>Back to boards list</Text>
-            </HStack>
-          </Button>
-        </Link>
       </DndProvider>
     </Stack>
   );

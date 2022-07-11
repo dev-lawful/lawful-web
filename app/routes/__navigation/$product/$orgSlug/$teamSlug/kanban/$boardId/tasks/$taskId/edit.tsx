@@ -2,7 +2,6 @@ import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { useCatch, useLoaderData } from "@remix-run/react";
 import { TaskForm } from "~/components/modules/decode/Forms/TaskForm";
-import { supabase } from "~/db";
 import { getBoardStatesByBoardId, getTaskById, updateTask } from "~/models";
 import type { BoardState, Task } from "~/_types";
 

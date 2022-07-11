@@ -38,13 +38,6 @@ const NewBoardRoute = () => {
     <VStack justify="start" alignItems="start" p="5">
       <Heading as="h1">New board</Heading>
       <BoardForm defaultValues={{ teamId: 1, name: "" }} />
-      <Link as={RemixLink} to="..">
-        <Button>
-          <HStack>
-            <ArrowLeftIcon /> <Text>Back to boards list</Text>
-          </HStack>
-        </Button>
-      </Link>
     </VStack>
   );
 };

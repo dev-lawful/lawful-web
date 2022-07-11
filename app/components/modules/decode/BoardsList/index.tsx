@@ -1,5 +1,6 @@
 import { HStack, Link, ListItem, UnorderedList } from "@chakra-ui/react";
 import { NavLink } from "@remix-run/react";
+import { Item } from "framer-motion/types/components/Reorder/Item";
 import type { VFC } from "react";
 import type { Board } from "~/_types";
 
@@ -17,21 +18,27 @@ export const BoardsList: VFC<Props> = ({ boards }) => {
       overflowY="auto"
       overflowX="hidden"
     >
-      {boards.map(({ name, id }) => (
-        <ListItem key={id} py="2" px="1" w="full" textOverflow="ellipsis">
-          <HStack h="full">
-            <Link
-              as={NavLink}
-              to={`./${id}`}
-              overflow="hidden"
-              textOverflow="ellipsis"
-              whiteSpace="nowrap"
-            >
-              {name}
-            </Link>
-          </HStack>
-        </ListItem>
-      ))}
+      {boards
+        .sort(
+          (a, b) =>
+            new Date(a.created_at!).getTime() -
+            new Date(b.created_at!).getTime()
+        )
+        .map(({ name, id, created_at }) => (
+          <ListItem key={id} py="2" px="1" w="full" textOverflow="ellipsis">
+            <HStack h="full">
+              <Link
+                as={NavLink}
+                to={`./${id}`}
+                overflow="hidden"
+                textOverflow="ellipsis"
+                whiteSpace="nowrap"
+              >
+                {name}
+              </Link>
+            </HStack>
+          </ListItem>
+        ))}
     </UnorderedList>
   );
 };
