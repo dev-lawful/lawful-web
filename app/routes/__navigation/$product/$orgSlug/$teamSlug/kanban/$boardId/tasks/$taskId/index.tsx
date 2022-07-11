@@ -1,4 +1,9 @@
-import { ArrowLeftIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
+import {
+  ArrowBackIcon,
+  ArrowLeftIcon,
+  DeleteIcon,
+  EditIcon,
+} from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -197,7 +202,7 @@ const TaskRoute = () => {
               <Link as={RemixLink} to={`../${params.boardId}`}>
                 <Button variant="outline">
                   <HStack>
-                    <ArrowLeftIcon /> <Text>Back to board</Text>
+                    <ArrowBackIcon /> <Text>Back to board</Text>
                   </HStack>
                 </Button>
               </Link>
