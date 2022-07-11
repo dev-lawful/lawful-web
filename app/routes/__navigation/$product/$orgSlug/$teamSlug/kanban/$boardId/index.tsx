@@ -2,23 +2,27 @@ import { ArrowLeftIcon, PlusSquareIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
-  Heading, HStack, Link, Stack, Text
+  Heading,
+  HStack,
+  Link,
+  Stack,
+  Text,
 } from "@chakra-ui/react";
 import type {
   ActionFunction,
   LoaderFunction,
-  RouteComponent
+  RouteComponent,
 } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import {
   Link as RemixLink,
   useCatch,
   useFetcher,
-  useLoaderData
+  useLoaderData,
 } from "@remix-run/react";
 import type {
   SupabaseClient,
-  SupabaseRealtimePayload
+  SupabaseRealtimePayload,
 } from "@supabase/supabase-js";
 import { useContext, useEffect } from "react";
 import { DndProvider } from "react-dnd";
@@ -26,14 +30,14 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import {
   Board as BoardContainer,
   StateTray,
-  TaskCard
+  TaskCard,
 } from "~/components/modules/decode";
 import { SupabaseClientContext } from "~/db";
 import {
   getBoardById,
   getBoardStatesByBoardId,
   getTasksByBoardStateId,
-  updateTaskState
+  updateTaskState,
 } from "~/models";
 import type { Board, BoardState, Task } from "~/_types";
 
@@ -236,7 +240,6 @@ export default BoardRoute;
 export const ErrorBoundary = ({ error }: { error: Error }) => {
   return (
     <div>
-      <h1>test</h1>
       <p>{error.message}</p>
     </div>
   );
