@@ -10,7 +10,8 @@
     "types": "openapi-typescript https://pxctfvtvdzmcrmssxkkj.supabase.co/rest/v1/?apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4Y3RmdnR2ZHptY3Jtc3N4a2tqIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDk2MjczMjYsImV4cCI6MTk2NTIwMzMyNn0.42sk46cq8u4yvDqpfe3AioOq9pM1sU_thncq7ip2MI0 --output app/_types/supabase.ts"
   },
   "dependencies": {
-    "@chakra-ui/react": "^1.8.8",
+    "@chakra-ui/icons": "^2.0.2",
+    "@chakra-ui/react": "^2.2.1",
     "@emotion/react": "^11.9.0",
     "@emotion/server": "^11.4.0",
     "@emotion/styled": "^11.8.1",
@@ -22,10 +23,10 @@
     "@vercel/node": "^1.15.4",
     "framer-motion": "^6.3.0",
     "lexical": "^0.2.7",
-    "react": "^17.0.2",
+    "react": "^18.2.0",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
-    "react-dom": "^17.0.2",
+    "react-dom": "^18.2.0",
     "react-markdown": "^8.0.3"
   },
   "devDependencies": {
