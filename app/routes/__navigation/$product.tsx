@@ -11,11 +11,7 @@ export const loader: LoaderFunction = ({ params }) => {
 };
 
 const ProductLayoutRoute = () => {
-  return (
-    <Flex direction="column" height="full">
-      <Outlet />
-    </Flex>
-  );
+  return <Outlet />;
 };
 
 export default ProductLayoutRoute;

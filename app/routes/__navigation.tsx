@@ -3,10 +3,10 @@ import { Navbar } from "~/components/ui";
 
 const NavigationLayoutRoute = () => {
   return (
-    <div>
+    <>
       <Navbar />
       <Outlet />
-    </div>
+    </>
   );
 };
 

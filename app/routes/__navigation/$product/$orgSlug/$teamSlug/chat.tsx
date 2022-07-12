@@ -31,7 +31,8 @@ export const loader: LoaderFunction = async ({ params }) => {
 const ChatLayoutRoute = () => {
   const { data: chats } = useLoaderData<LoaderData>();
   return (
-    <HStack flex="1" minH="0">
+    // TODO: Well, it is hardcoded
+    <HStack flex="1" minH="0" height="calc(100vh - 64px)">
       <VStack alignItems="stretch" w="20%" minW="200px" h="full" bg="gray.700">
         <Link to="./new">Create chat</Link>
         <ChatList chats={chats} />
