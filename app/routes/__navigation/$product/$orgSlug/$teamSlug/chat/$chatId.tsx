@@ -36,10 +36,12 @@ export const action: ActionFunction = async ({ params, request }) => {
   }
   const formData = await request.formData();
   const message = formData.get("message");
+  const userId = formData.get("userId");
   // TODO: validate message properties
   const { data, error } = await sendMessage({
     chatId: parseInt(chatId),
     text: message as string,
+    userId: (userId as string) ?? undefined,
   });
 
   // TODO: refactor maybe?

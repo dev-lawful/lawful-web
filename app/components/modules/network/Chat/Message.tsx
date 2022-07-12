@@ -4,29 +4,29 @@ import type { Message as MessageType } from "~/_types";
 
 const EMPTY_MSG_FALLBACK = "Empty message...";
 
-export const Message: VFC<{ message: MessageType }> = ({
-  message: { userId, text, createdAt, id },
-}) => {
-  const currentUserId = "1e1d419b-ee40-4a34-bfb8-bebf1c1a2f5f";
-  const isSender = userId === currentUserId;
+export const Message: VFC<{
+  message: MessageType;
+  currentUserId: string | undefined;
+}> = ({ message: { userId, text, createdAt, id }, currentUserId }) => {
+  const fromCurrentUser = currentUserId === userId;
 
   return (
     <VStack
       maxW="60%"
-      bgColor={isSender ? "green.600" : "blue.600"}
-      ml={isSender ? "auto" : "unset"}
+      bgColor={fromCurrentUser ? "green.600" : "blue.600"}
+      ml={fromCurrentUser ? "auto" : "unset"}
       mt="2"
       borderRadius="lg"
       alignItems="stretch"
       width="fit-content"
       p="2"
     >
-      <HStack flexDir={isSender ? "row-reverse" : "row"}>
-        <Avatar size="sm" ml={isSender ? "2" : "unset"} />
+      <HStack flexDir={fromCurrentUser ? "row-reverse" : "row"}>
+        <Avatar size="sm" ml={fromCurrentUser ? "2" : "unset"} />
         <Text>{text || EMPTY_MSG_FALLBACK}</Text>
       </HStack>
       <Text
-        align={isSender ? "left" : "right"}
+        align={fromCurrentUser ? "left" : "right"}
         fontSize="small"
         color="gray.200"
         textOverflow="clip"
