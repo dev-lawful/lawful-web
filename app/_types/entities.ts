@@ -8,3 +8,4 @@ export type Task = definitions["tasks"];
 export type Team = definitions["teams"];
 export type Message = definitions["messages"];
 export type Chat = definitions["chats"];
+export type Profile = definitions["profiles"];

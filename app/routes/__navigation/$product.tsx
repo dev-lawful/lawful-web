@@ -1,7 +1,8 @@
-import { json, redirect } from "@remix-run/node";
 import type { LoaderFunction } from "@remix-run/node";
-import { Outlet } from "@remix-run/react";
-import { Flex } from "@chakra-ui/react";
+import { json, redirect } from "@remix-run/node";
+import { Outlet, useNavigate } from "@remix-run/react";
+import { useEffect } from "react";
+import { useSupabaseClient } from "~/db";
 
 export const loader: LoaderFunction = ({ params }) => {
   if (!["decode", "network"].includes(params.product || "")) {
@@ -11,6 +12,14 @@ export const loader: LoaderFunction = ({ params }) => {
 };
 
 const ProductLayoutRoute = () => {
+  //TODO: In a perfect world, this auth check is done server side
+  const supabase = useSupabaseClient();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!supabase.auth.user()) navigate("/signin");
+  }, [supabase, navigate]);
+
   return <Outlet />;
 };
 

@@ -1,64 +1,127 @@
+import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import {
-  Flex,
-  Box,
-  FormControl,
-  FormLabel,
-  Input,
-  InputGroup,
-  HStack,
-  InputRightElement,
-  Stack,
-  Button,
-  Heading,
-  Text,
-  useColorModeValue,
-  Link,
   Alert,
   AlertIcon,
+  Box,
+  Button,
+  Flex,
+  FormControl,
+  FormLabel,
+  Heading,
+  HStack,
+  Input,
+  InputGroup,
+  InputRightElement,
+  Link,
+  Stack,
+  Text,
+  useColorModeValue,
 } from "@chakra-ui/react";
-import type { FormEventHandler } from "react";
-import { useRef, useState } from "react";
-import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
-import { Form, Link as RemixLink } from "@remix-run/react";
-import { useSupabaseClient } from "~/db";
+import type { ActionFunction } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
+import {
+  Form,
+  Link as RemixLink,
+  useActionData,
+  useTransition,
+} from "@remix-run/react";
+import { useState } from "react";
+import { supabase } from "~/db";
+import { createProfile, findProfileByEmail } from "~/models/profiles.models";
+import { commitSession, getSession } from "~/sessions";
 
-type FormState = "submitting" | "idle" | "error" | "success";
+interface SignUpForm {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+}
+
+type ActionData = {
+  formError?: string;
+  fieldErrors?: Partial<SignUpForm>;
+  //TODO use Chat type
+  fields?: SignUpForm;
+};
+
+//TODO: Repeated
+const badRequest = (data: ActionData) => json(data, { status: 400 });
+
+export const action: ActionFunction = async ({ request }) => {
+  const formData = await request.formData();
+  const email = formData.get("email");
+  const password = formData.get("password");
+  const firstName = formData.get("firstName");
+  const lastName = formData.get("lastName");
+
+  if (
+    typeof email !== "string" ||
+    typeof password !== "string" ||
+    typeof firstName !== "string" ||
+    typeof lastName !== "string"
+  ) {
+    return badRequest({
+      formError: `Form not submitted correctly.`,
+    });
+  }
+
+  const fieldErrors = {
+    email: !email ? "Email is required" : undefined,
+    password: !password ? "Password is required" : undefined,
+    firstName: !firstName ? "First name is required" : undefined,
+    lastName: !lastName ? "Last name is required" : undefined,
+  };
+  const fields = { email, password, firstName, lastName };
+  if (Object.values(fieldErrors).some(Boolean)) {
+    return badRequest({ fieldErrors, fields });
+  }
+
+  await supabase.auth.signOut();
+  const {
+    session: sessionData,
+    user,
+    error: signUpError,
+  } = await supabase.auth.signUp({
+    email,
+    password,
+  });
+
+  const userAlreadyExists = await findProfileByEmail(email);
+  if (userAlreadyExists) {
+    return badRequest({
+      formError: "Email already taken!",
+    });
+  }
+
+  if (!signUpError && user?.id) {
+    const { error: profileError } = await createProfile({
+      firstName,
+      lastName,
+      email,
+      id: user?.id,
+    });
+    if (profileError) {
+      return badRequest({
+        formError: "Oops! An unexpected error ocurred",
+      });
+    }
+  }
+
+  const session = await getSession(request.headers.get("Cookie"));
+  session.set("access_token", sessionData?.access_token);
+  return redirect("/", {
+    headers: {
+      "Set-Cookie": await commitSession(session),
+    },
+  });
+};
 
 const SignUpRoute = () => {
+  const transition = useTransition();
+  const actionData = useActionData<ActionData>();
   const [showPassword, setShowPassword] = useState(false);
-  const [formState, setFormState] = useState<FormState>("idle");
-  const firstNameRef = useRef<HTMLInputElement>(null);
-  const lastNameRef = useRef<HTMLInputElement>(null);
-  const emailRef = useRef<HTMLInputElement>(null);
-  const passwordRef = useRef<HTMLInputElement>(null);
-  const supabase = useSupabaseClient();
 
-  const shouldShowAlert = formState === "error" || formState === "success";
-
-  const handleSignUp: FormEventHandler<HTMLFormElement> = async (e) => {
-    e.preventDefault();
-    setFormState("submitting");
-
-    const email = emailRef.current?.value;
-    const password = passwordRef.current?.value;
-    const firstName = firstNameRef.current?.value;
-    const lastName = lastNameRef.current?.value;
-    //TODO: Apparently neither the password nor firstname and lastname are used
-    const { error } = await supabase.auth.signUp(
-      { email, password },
-      {
-        data: {
-          firstName,
-          lastName,
-        },
-      }
-    );
-    if (error) {
-      setFormState("error");
-    } else {
-      setFormState("success");
-    }
-  };
+  const shouldShowAlert = !!actionData?.formError;
 
   return (
     <Flex
@@ -82,45 +145,54 @@ const SignUpRoute = () => {
           boxShadow={"lg"}
           p={8}
         >
-          <Form method="post" onSubmit={handleSignUp}>
+          <Form method="post">
             <Stack spacing={4}>
               {shouldShowAlert ? (
-                <Alert status={formState} borderRadius={5}>
+                <Alert status="error" borderRadius={5}>
                   <AlertIcon />
-                  {formState === "error"
-                    ? "Oops. There has been an error!"
-                    : "Success! We've sent you a confirmation link to your email."}
+                  {actionData.formError}
                 </Alert>
               ) : null}
               <HStack>
                 <Box>
                   <FormControl id="firstName" isRequired>
                     <FormLabel>First Name</FormLabel>
-                    <Input ref={firstNameRef} name="firstName" type="text" />
+                    <Input
+                      name="firstName"
+                      type="text"
+                      defaultValue={actionData?.fields?.firstName}
+                    />
                   </FormControl>
                 </Box>
                 <Box>
                   <FormControl id="lastName">
                     <FormLabel>Last Name</FormLabel>
-                    <Input ref={lastNameRef} name="lastName" type="text" />
+                    <Input
+                      name="lastName"
+                      type="text"
+                      defaultValue={actionData?.fields?.lastName}
+                    />
                   </FormControl>
                 </Box>
               </HStack>
               <FormControl id="email" isRequired>
                 <FormLabel>Email address</FormLabel>
-                <Input ref={emailRef} name="email" type="email" />
+                <Input
+                  name="email"
+                  type="email"
+                  defaultValue={actionData?.fields?.email}
+                />
               </FormControl>
               <FormControl id="password" isRequired>
                 <FormLabel>Password</FormLabel>
                 <InputGroup>
                   <Input
-                    ref={passwordRef}
                     name="password"
                     type={showPassword ? "text" : "password"}
                   />
-                  <InputRightElement h={"full"}>
+                  <InputRightElement h="full">
                     <Button
-                      variant={"ghost"}
+                      variant="ghost"
                       onClick={() =>
                         setShowPassword((showPassword) => !showPassword)
                       }
@@ -132,7 +204,7 @@ const SignUpRoute = () => {
               </FormControl>
               <Stack spacing={10} pt={2}>
                 <Button
-                  disabled={formState !== "idle"}
+                  disabled={transition.state === "submitting"}
                   loadingText="Submitting"
                   type="submit"
                   size="lg"
