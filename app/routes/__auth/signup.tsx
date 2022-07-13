@@ -6,6 +6,7 @@ import {
   Button,
   Flex,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   Heading,
   HStack,
@@ -162,6 +163,9 @@ const SignUpRoute = () => {
                       type="text"
                       defaultValue={actionData?.fields?.firstName}
                     />
+                    <FormErrorMessage>
+                      {actionData?.fieldErrors?.firstName}
+                    </FormErrorMessage>
                   </FormControl>
                 </Box>
                 <Box>
@@ -172,6 +176,9 @@ const SignUpRoute = () => {
                       type="text"
                       defaultValue={actionData?.fields?.lastName}
                     />
+                    <FormErrorMessage>
+                      {actionData?.fieldErrors?.lastName}
+                    </FormErrorMessage>
                   </FormControl>
                 </Box>
               </HStack>
@@ -182,6 +189,9 @@ const SignUpRoute = () => {
                   type="email"
                   defaultValue={actionData?.fields?.email}
                 />
+                <FormErrorMessage>
+                  {actionData?.fieldErrors?.email}
+                </FormErrorMessage>
               </FormControl>
               <FormControl id="password" isRequired>
                 <FormLabel>Password</FormLabel>
@@ -201,6 +211,9 @@ const SignUpRoute = () => {
                     </Button>
                   </InputRightElement>
                 </InputGroup>
+                <FormErrorMessage>
+                  {actionData?.fieldErrors?.password}
+                </FormErrorMessage>
               </FormControl>
               <Stack spacing={10} pt={2}>
                 <Button

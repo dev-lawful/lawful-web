@@ -13,35 +13,82 @@ import {
   useColorModeValue,
   Alert,
   AlertIcon,
+  FormErrorMessage,
 } from "@chakra-ui/react";
-import { Form, useNavigate } from "@remix-run/react";
+import { ActionFunction, redirect } from "@remix-run/node";
+import { json } from "@remix-run/node";
+import { Form, useActionData, useTransition } from "@remix-run/react";
 import type { FormEventHandler } from "react";
-import { useState, useRef } from "react";
-import { useSupabaseClient } from "~/db";
+import { useRef } from "react";
+import { supabase, useSupabaseClient } from "~/db";
+import { commitSession, getSession } from "~/sessions";
 
-type FormState = "submitting" | "idle" | "error";
+interface SignInForm {
+  email: string;
+  password: string;
+}
+
+type ActionData = {
+  formError?: string;
+  fieldErrors?: Partial<SignInForm>;
+  //TODO use Chat type
+  fields?: SignInForm;
+};
+
+const badRequest = (data: ActionData) => json(data, { status: 400 });
+
+export const action: ActionFunction = async ({ request }) => {
+  const formData = await request.formData();
+  const email = formData.get("email");
+  const password = formData.get("password");
+
+  if (typeof email !== "string" || typeof password !== "string") {
+    return badRequest({
+      formError: `Form not submitted correctly.`,
+    });
+  }
+
+  const fieldErrors = {
+    email: !email ? "Email is required" : undefined,
+    password: !password ? "Password is required" : undefined,
+  };
+  const fields = { email, password };
+  if (Object.values(fieldErrors).some(Boolean)) {
+    return badRequest({ fieldErrors, fields });
+  }
+
+  const { session: userSession } = await supabase.auth.signIn({
+    email,
+    password,
+  });
+  if (userSession) {
+    const session = await getSession(request.headers.get("Cookie"));
+    session.set("access_token", userSession.access_token);
+    return redirect("/", {
+      headers: {
+        "Set-Cookie": await commitSession(session),
+      },
+    });
+  }
+};
 
 const SignInRoute = () => {
   const supabase = useSupabaseClient();
-  const navigate = useNavigate();
-  const [formState, setFormState] = useState<FormState>("idle");
+  const transition = useTransition();
+  const actionData = useActionData<ActionData>();
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
 
   const handleSignIn: FormEventHandler<HTMLFormElement> = async (e) => {
-    e.preventDefault();
-    setFormState("submitting");
-
     const email = emailRef.current?.value;
     const password = passwordRef.current?.value;
-    const { error, user } = await supabase.auth.signIn({ email, password });
-    if (error) {
-      setFormState("error");
-    }
-    if (user) {
-      navigate("/", { replace: true });
-    }
+    await supabase.auth.signIn({
+      email,
+      password,
+    });
   };
+
+  const shouldShowAlert = !!actionData?.formError;
 
   return (
     <Flex
@@ -65,19 +112,30 @@ const SignInRoute = () => {
         >
           <Form method="post" onSubmit={handleSignIn}>
             <Stack spacing={4}>
-              {formState === "error" ? (
-                <Alert status={formState} borderRadius={5}>
+              {shouldShowAlert ? (
+                <Alert status="error" borderRadius={5}>
                   <AlertIcon />
-                  Oops. There has been an error!
+                  {actionData.formError}
                 </Alert>
               ) : null}
               <FormControl id="email">
                 <FormLabel>Email address</FormLabel>
-                <Input ref={emailRef} name="email" type="email" />
+                <Input
+                  ref={emailRef}
+                  name="email"
+                  type="email"
+                  defaultValue={actionData?.fields?.email}
+                />
+                <FormErrorMessage>
+                  {actionData?.fieldErrors?.email}
+                </FormErrorMessage>
               </FormControl>
               <FormControl id="password">
                 <FormLabel>Password</FormLabel>
                 <Input ref={passwordRef} name="password" type="password" />
+                <FormErrorMessage>
+                  {actionData?.fieldErrors?.password}
+                </FormErrorMessage>
               </FormControl>
               <Stack spacing={10}>
                 <Stack
@@ -89,7 +147,7 @@ const SignInRoute = () => {
                   <Link color={"blue.400"}>Forgot password?</Link>
                 </Stack>
                 <Button
-                  disabled={formState === "submitting"}
+                  disabled={transition.state === "submitting"}
                   type="submit"
                   bg={"blue.400"}
                   color={"white"}
