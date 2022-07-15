@@ -2,6 +2,7 @@ import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useCatch, useLoaderData, useParams } from "@remix-run/react";
 import { Chat } from "~/components/modules/network";
+import { setAuthToken } from "~/db";
 import { getLastMessages, sendMessage } from "~/models/chats.server";
 import type { Message } from "~/_types";
 
@@ -37,6 +38,8 @@ export const action: ActionFunction = async ({ params, request }) => {
   const formData = await request.formData();
   const message = formData.get("message");
   const userId = formData.get("userId");
+
+  await setAuthToken(request);
   // TODO: validate message properties
   const { data, error } = await sendMessage({
     chatId: parseInt(chatId),

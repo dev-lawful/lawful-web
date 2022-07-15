@@ -15,10 +15,8 @@ export const Message: VFC<{
   return (
     <VStack
       maxW="60%"
-      bgColor={
-        currentUserId === supabase.auth.user()?.id ? "green.600" : "blue.600"
-      }
-      ml={currentUserId === supabase.auth.user()?.id ? "auto" : "unset"}
+      bgColor={userId === supabase.auth.user()?.id ? "green.600" : "blue.600"}
+      ml={userId === supabase.auth.user()?.id ? "auto" : "unset"}
       mt="2"
       borderRadius="lg"
       alignItems="stretch"
@@ -26,18 +24,16 @@ export const Message: VFC<{
       p="2"
     >
       <HStack
-        flexDir={
-          currentUserId === supabase.auth.user()?.id ? "row-reverse" : "row"
-        }
+        flexDir={userId === supabase.auth.user()?.id ? "row-reverse" : "row"}
       >
         <Avatar
           size="sm"
-          ml={currentUserId === supabase.auth.user()?.id ? "2" : "unset"}
+          ml={userId === supabase.auth.user()?.id ? "2" : "unset"}
         />
         <Text>{text || EMPTY_MSG_FALLBACK}</Text>
       </HStack>
       <Text
-        align={currentUserId === supabase.auth.user()?.id ? "left" : "right"}
+        align={userId === supabase.auth.user()?.id ? "left" : "right"}
         fontSize="small"
         color="gray.200"
         textOverflow="clip"
