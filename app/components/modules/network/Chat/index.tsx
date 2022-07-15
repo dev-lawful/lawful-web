@@ -22,6 +22,7 @@ export const Chat: VFC<{ chatId: string; initialMessages: Array<Message> }> = ({
   initialMessages,
 }) => {
   const supabase = useSupabaseClient();
+  const currentUserId = supabase.auth.user()?.id;
   // TODO: to be honest, I'm not sure about this approach (using props as initialState)
   // but I didn't find another way to achieve the same result (all of them broke the exhaustive-deps rule)
   const [messages, setMessages] = useState<Array<Message>>(initialMessages);
@@ -84,13 +85,18 @@ export const Chat: VFC<{ chatId: string; initialMessages: Array<Message> }> = ({
       >
         {messages.map((message) => (
           <ListItem key={message.id}>
-            <MessageBox message={message} />
+            <MessageBox message={message} currentUserId={currentUserId} />
           </ListItem>
         ))}
       </UnorderedList>
       <Box p="2" m="0">
         <Form method="post" ref={formRef}>
           <HStack>
+            <Input
+              type="hidden"
+              name="userId"
+              value={supabase.auth.user()?.id}
+            />
             <Input name="message" type="text" />
             <Button type="submit">Send 💥</Button>
           </HStack>

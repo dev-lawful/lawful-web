@@ -24,11 +24,7 @@ export const loader: LoaderFunction = async () => {
 const TeamLayoutRoute = () => {
   const { data } = useLoaderData<LoaderData>();
 
-  return (
-    <>
-      <Outlet />
-    </>
-  );
+  return <Outlet />;
 };
 
 export default TeamLayoutRoute;

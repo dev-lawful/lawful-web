@@ -55,6 +55,7 @@ export const sendMessage = async (
   messageData: Omit<Message, "id" | "createdAt">
 ): Promise<CustomResponse<Message>> => {
   try {
+    //TODO: this does not throw when there is a invalid message
     const { data }: PostgrestResponse<Message> = await supabase
       .from("messages")
       .insert(messageData);

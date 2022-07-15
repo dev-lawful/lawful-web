@@ -1,32 +1,43 @@
 import { Avatar, HStack, Text, VStack } from "@chakra-ui/react";
 import type { VFC } from "react";
+import { useSupabaseClient } from "~/db";
 import type { Message as MessageType } from "~/_types";
 
 const EMPTY_MSG_FALLBACK = "Empty message...";
 
-export const Message: VFC<{ message: MessageType }> = ({
-  message: { userId, text, createdAt, id },
-}) => {
-  const currentUserId = "1e1d419b-ee40-4a34-bfb8-bebf1c1a2f5f";
-  const isSender = userId === currentUserId;
+export const Message: VFC<{
+  message: MessageType;
+  currentUserId: string | undefined;
+}> = ({ message: { userId, text, createdAt, id }, currentUserId }) => {
+  const fromCurrentUser = currentUserId === userId;
+  const supabase = useSupabaseClient();
 
   return (
     <VStack
       maxW="60%"
-      bgColor={isSender ? "green.600" : "blue.600"}
-      ml={isSender ? "auto" : "unset"}
+      bgColor={
+        currentUserId === supabase.auth.user()?.id ? "green.600" : "blue.600"
+      }
+      ml={currentUserId === supabase.auth.user()?.id ? "auto" : "unset"}
       mt="2"
       borderRadius="lg"
       alignItems="stretch"
       width="fit-content"
       p="2"
     >
-      <HStack flexDir={isSender ? "row-reverse" : "row"}>
-        <Avatar size="sm" ml={isSender ? "2" : "unset"} />
+      <HStack
+        flexDir={
+          currentUserId === supabase.auth.user()?.id ? "row-reverse" : "row"
+        }
+      >
+        <Avatar
+          size="sm"
+          ml={currentUserId === supabase.auth.user()?.id ? "2" : "unset"}
+        />
         <Text>{text || EMPTY_MSG_FALLBACK}</Text>
       </HStack>
       <Text
-        align={isSender ? "left" : "right"}
+        align={currentUserId === supabase.auth.user()?.id ? "left" : "right"}
         fontSize="small"
         color="gray.200"
         textOverflow="clip"
