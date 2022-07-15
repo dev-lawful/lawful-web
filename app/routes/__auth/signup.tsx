@@ -16,7 +16,6 @@ import {
   Link,
   Stack,
   Text,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import type { ActionFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
@@ -140,27 +139,17 @@ const SignUpRoute = () => {
   const alert = actionData?.formResult;
 
   return (
-    <Flex
-      minH={"100vh"}
-      align={"center"}
-      justify={"center"}
-      bg={useColorModeValue("gray.50", "gray.800")}
-    >
-      <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
-        <Stack align={"center"}>
-          <Heading fontSize={"4xl"} textAlign={"center"}>
+    <Flex minH="100vh" align="center" justify="center" bg="gray.800">
+      <Stack spacing={8} mx="auto" maxW="lg" py={12} px={6}>
+        <Stack align="center">
+          <Heading fontSize="4xl" textAlign="center">
             Sign up
           </Heading>
-          <Text fontSize={"lg"} color={"gray.600"}>
+          <Text fontSize="lg" color="gray.600">
             to enjoy all of our cool features ✌️
           </Text>
         </Stack>
-        <Box
-          rounded={"lg"}
-          bg={useColorModeValue("white", "gray.700")}
-          boxShadow={"lg"}
-          p={8}
-        >
+        <Box rounded="lg" bg="gray.700" boxShadow="lg" p={8}>
           <Form method="post">
             <Stack spacing={4}>
               {alert ? (
@@ -246,10 +235,10 @@ const SignUpRoute = () => {
                 </Button>
               </Stack>
               <Stack pt={6}>
-                <Text align={"center"}>
+                <Text align="center">
                   Already a user?{" "}
                   <Link as={RemixLink} to="/signin" color={"blue.400"}>
-                    Login
+                    Sign in
                   </Link>
                 </Text>
               </Stack>

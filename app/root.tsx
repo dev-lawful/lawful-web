@@ -19,6 +19,7 @@ import {
 import React, { useContext, useEffect } from "react";
 import { ClientStyleContext, getTheme, ServerStyleContext } from "~/styles";
 import { SupabaseClientProvider, useCreateSupabaseClient } from "./db";
+import { getSession } from "./sessions";
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
@@ -90,35 +91,41 @@ interface LoaderData {
     SUPABASE_URL: string;
     SUPABASE_ANON_KEY: string;
   };
+  accessToken: string | undefined;
+  refreshToken: string | undefined;
 }
 
-export const loader: LoaderFunction = () => {
+export const loader: LoaderFunction = async ({ request }) => {
+  const session = await getSession(request.headers.get("Cookie"));
+  const accessToken = session.get("access_token");
+  const refreshToken = session.get("refresh_token");
   return json<LoaderData>({
     ENV: {
       SUPABASE_URL: process.env.SUPABASE_URL || "",
       SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY || "",
     },
+    accessToken,
+    refreshToken,
   });
 };
 
 export default function App() {
   const { product } = useParams();
 
-  const data = useLoaderData<LoaderData>();
+  const { ENV, refreshToken } = useLoaderData<LoaderData>();
 
   const supabaseClient = useCreateSupabaseClient({
-    supabaseUrl: data.ENV.SUPABASE_URL,
-    supabaseAnonKey: data.ENV.SUPABASE_ANON_KEY,
+    supabaseUrl: ENV.SUPABASE_URL,
+    supabaseAnonKey: ENV.SUPABASE_ANON_KEY,
+    refreshToken,
   });
 
   return (
     <Document>
       <ChakraProvider theme={getTheme(product)}>
-        {data ? (
-          <SupabaseClientProvider value={supabaseClient}>
-            <Outlet />
-          </SupabaseClientProvider>
-        ) : null}
+        <SupabaseClientProvider value={supabaseClient}>
+          <Outlet />
+        </SupabaseClientProvider>
       </ChakraProvider>
     </Document>
   );

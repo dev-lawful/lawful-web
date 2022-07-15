@@ -10,13 +10,14 @@ interface LoaderData {
   data: Array<Message>;
 }
 
-export const loader: LoaderFunction = async ({ params }) => {
+export const loader: LoaderFunction = async ({ params, request }) => {
   const { chatId } = params;
 
   if (!chatId) {
     throw new Response("No chat id", { status: 400 });
   }
 
+  await setAuthToken(request);
   const { error, data } = await getLastMessages({ chatId, limit: 30 });
   if (error) {
     throw new Error(error);

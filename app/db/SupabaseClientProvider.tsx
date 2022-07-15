@@ -23,14 +23,20 @@ export const useSupabaseClient = () => {
 export const useCreateSupabaseClient = ({
   supabaseUrl,
   supabaseAnonKey,
+  refreshToken,
 }: {
   supabaseUrl: string;
   supabaseAnonKey: string;
+  refreshToken?: string;
 }) => {
-  const supabaseClient = useMemo(
-    () => createClient(supabaseUrl, supabaseAnonKey),
-    [supabaseUrl, supabaseAnonKey]
-  );
+  const supabaseClient = useMemo(() => {
+    const client = createClient(supabaseUrl, supabaseAnonKey);
+    if (refreshToken) {
+      client.auth.setSession(refreshToken);
+    }
+
+    return client;
+  }, [supabaseUrl, supabaseAnonKey, refreshToken]);
 
   return supabaseClient;
 };
