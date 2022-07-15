@@ -19,7 +19,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import type { ActionFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import {
   Form,
   Link as RemixLink,
@@ -29,7 +29,6 @@ import {
 import { useState } from "react";
 import { supabase } from "~/db";
 import { createProfile, findProfileByEmail } from "~/models/profiles.models";
-import { commitSession, getSession } from "~/sessions";
 
 interface SignUpForm {
   email: string;
@@ -39,9 +38,11 @@ interface SignUpForm {
 }
 
 type ActionData = {
-  formError?: string;
+  formResult?: {
+    status: "error" | "success";
+    message: string;
+  };
   fieldErrors?: Partial<SignUpForm>;
-  //TODO use Chat type
   fields?: SignUpForm;
 };
 
@@ -62,7 +63,10 @@ export const action: ActionFunction = async ({ request }) => {
     typeof lastName !== "string"
   ) {
     return badRequest({
-      formError: `Form not submitted correctly.`,
+      formResult: {
+        status: "error",
+        message: `Form not submitted correctly.`,
+      },
     });
   }
 
@@ -77,42 +81,53 @@ export const action: ActionFunction = async ({ request }) => {
     return badRequest({ fieldErrors, fields });
   }
 
-  await supabase.auth.signOut();
-  const {
-    session: sessionData,
-    user,
-    error: signUpError,
-  } = await supabase.auth.signUp({
+  const { user, error: signUpError } = await supabase.auth.signUp({
     email,
     password,
   });
 
-  const userAlreadyExists = await findProfileByEmail(email);
+  const { data: profiles, error: profileError } = await findProfileByEmail(
+    email
+  );
+  const [userAlreadyExists] = profiles;
+  if (profileError) {
+    return badRequest({
+      formResult: {
+        status: "error",
+        message: "Oops! An unexpected error ocurred.",
+      },
+    });
+  }
   if (userAlreadyExists) {
     return badRequest({
-      formError: "Email already taken!",
+      formResult: {
+        status: "error",
+        message: "Email already taken",
+      },
     });
   }
 
   if (!signUpError && user?.id) {
-    const { error: profileError } = await createProfile({
+    const { error: creationError } = await createProfile({
       firstName,
       lastName,
       email,
       id: user?.id,
     });
-    if (profileError) {
+    if (creationError) {
       return badRequest({
-        formError: "Oops! An unexpected error ocurred",
+        formResult: {
+          status: "error",
+          message: "Oops! An unexpected error ocurred.",
+        },
       });
     }
   }
 
-  const session = await getSession(request.headers.get("Cookie"));
-  session.set("access_token", sessionData?.access_token);
-  return redirect("/", {
-    headers: {
-      "Set-Cookie": await commitSession(session),
+  return json<ActionData>({
+    formResult: {
+      status: "success",
+      message: "Great, We've sent you a confirmation email!",
     },
   });
 };
@@ -122,7 +137,7 @@ const SignUpRoute = () => {
   const actionData = useActionData<ActionData>();
   const [showPassword, setShowPassword] = useState(false);
 
-  const shouldShowAlert = !!actionData?.formError;
+  const alert = actionData?.formResult;
 
   return (
     <Flex
@@ -148,10 +163,10 @@ const SignUpRoute = () => {
         >
           <Form method="post">
             <Stack spacing={4}>
-              {shouldShowAlert ? (
-                <Alert status="error" borderRadius={5}>
+              {alert ? (
+                <Alert status={alert.status} borderRadius={5}>
                   <AlertIcon />
-                  {actionData.formError}
+                  {alert.message}
                 </Alert>
               ) : null}
               <HStack>

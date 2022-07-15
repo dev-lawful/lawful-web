@@ -15,7 +15,8 @@ import {
   AlertIcon,
   FormErrorMessage,
 } from "@chakra-ui/react";
-import { ActionFunction, redirect } from "@remix-run/node";
+import type { ActionFunction } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Form, useActionData, useTransition } from "@remix-run/react";
 import type { FormEventHandler } from "react";
@@ -57,10 +58,15 @@ export const action: ActionFunction = async ({ request }) => {
     return badRequest({ fieldErrors, fields });
   }
 
-  const { session: userSession } = await supabase.auth.signIn({
+  const { session: userSession, error } = await supabase.auth.signIn({
     email,
     password,
   });
+
+  if (error) {
+    return badRequest({ formError: error.message });
+  }
+
   if (userSession) {
     const session = await getSession(request.headers.get("Cookie"));
     session.set("access_token", userSession.access_token);
@@ -70,6 +76,10 @@ export const action: ActionFunction = async ({ request }) => {
       },
     });
   }
+
+  return badRequest({
+    formError: "Oops! We coudn't sign you in, please try again",
+  });
 };
 
 const SignInRoute = () => {
