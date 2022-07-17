@@ -1,12 +1,4 @@
-import {
-  Box,
-  Button,
-  Container,
-  createIcon,
-  Heading,
-  Stack,
-  Text,
-} from "@chakra-ui/react";
+import { Box, Button, Container, Heading, Stack, Text } from "@chakra-ui/react";
 
 import { Link as RemixLink } from "@remix-run/react";
 

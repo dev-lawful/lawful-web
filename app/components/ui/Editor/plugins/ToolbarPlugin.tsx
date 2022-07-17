@@ -1,44 +1,35 @@
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  CAN_REDO_COMMAND,
-  CAN_UNDO_COMMAND,
-  REDO_COMMAND,
-  UNDO_COMMAND,
-  SELECTION_CHANGE_COMMAND,
-  FORMAT_TEXT_COMMAND,
-  FORMAT_ELEMENT_COMMAND,
-  $getSelection,
-  $isRangeSelection,
-  $createParagraphNode,
-  $getNodeByKey,
-} from "lexical";
+  $createCodeNode,
+  $isCodeNode,
+  getCodeLanguages,
+  getDefaultCodeLanguage,
+} from "@lexical/code";
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from "@lexical/link";
 import {
-  $isParentElementRTL,
-  $wrapLeafNodesInElements,
-  $isAtNodeEnd,
-} from "@lexical/selection";
-import { $getNearestNodeOfType, mergeRegister } from "@lexical/utils";
-import {
+  $isListNode,
   INSERT_ORDERED_LIST_COMMAND,
   INSERT_UNORDERED_LIST_COMMAND,
-  REMOVE_LIST_COMMAND,
-  $isListNode,
   ListNode,
+  REMOVE_LIST_COMMAND,
 } from "@lexical/list";
-import { createPortal } from "react-dom";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import {
   $createHeadingNode,
   $createQuoteNode,
   $isHeadingNode,
 } from "@lexical/rich-text";
+import { $isAtNodeEnd, $wrapLeafNodesInElements } from "@lexical/selection";
+import { $getNearestNodeOfType, mergeRegister } from "@lexical/utils";
 import {
-  $createCodeNode,
-  $isCodeNode,
-  getDefaultCodeLanguage,
-  getCodeLanguages,
-} from "@lexical/code";
+  $createParagraphNode,
+  $getNodeByKey,
+  $getSelection,
+  $isRangeSelection,
+  FORMAT_TEXT_COMMAND,
+  SELECTION_CHANGE_COMMAND,
+} from "lexical";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 const LowPriority = 1;
 
@@ -63,13 +54,13 @@ const blockTypeToBlockName = {
   paragraph: "Normal",
   quote: "Quote",
   ul: "Bulleted List",
+} as const;
+
+const Divider = () => {
+  return <div className="divider" />;
 };
 
-function Divider() {
-  return <div className="divider" />;
-}
-
-function positionEditorElement(editor: any, rect: any) {
+const positionEditorElement = (editor: any, rect: any) => {
   if (rect === null) {
     editor.style.opacity = "0";
     editor.style.top = "-1000px";
@@ -81,9 +72,9 @@ function positionEditorElement(editor: any, rect: any) {
       rect.left + window.pageXOffset - editor.offsetWidth / 2 + rect.width / 2
     }px`;
   }
-}
+};
 
-function FloatingLinkEditor({ editor }: { editor: any }) {
+const FloatingLinkEditor = ({ editor }: { editor: any }) => {
   const editorRef = useRef(null);
   const inputRef = useRef(null);
   const mouseDownRef = useRef(false);
@@ -221,9 +212,9 @@ function FloatingLinkEditor({ editor }: { editor: any }) {
       )}
     </div>
   );
-}
+};
 
-function Select({ onChange, className, options, value }) {
+const Select = ({ onChange, className, options, value }) => {
   return (
     <select className={className} onChange={onChange} value={value}>
       <option hidden={true} value="" />
@@ -234,9 +225,9 @@ function Select({ onChange, className, options, value }) {
       ))}
     </select>
   );
-}
+};
 
-function getSelectedNode(selection) {
+const getSelectedNode = (selection) => {
   const anchor = selection.anchor;
   const focus = selection.focus;
   const anchorNode = selection.anchor.getNode();
@@ -250,14 +241,14 @@ function getSelectedNode(selection) {
   } else {
     return $isAtNodeEnd(anchor) ? focusNode : anchorNode;
   }
-}
+};
 
-function BlockOptionsDropdownList({
+const BlockOptionsDropdownList = ({
   editor,
   blockType,
   toolbarRef,
   setShowBlockOptionsDropDown,
-}) {
+}: any) => {
   const dropDownRef = useRef(null);
 
   useEffect(() => {
@@ -413,20 +404,18 @@ function BlockOptionsDropdownList({
       </button>
     </div>
   );
-}
+};
 
-export default function ToolbarPlugin() {
+export default () => {
   const [editor] = useLexicalComposerContext();
   const toolbarRef = useRef(null);
-  const [canUndo, setCanUndo] = useState(false);
-  const [canRedo, setCanRedo] = useState(false);
   const [blockType, setBlockType] = useState("paragraph");
-  const [selectedElementKey, setSelectedElementKey] = useState(null);
+  const [selectedElementKey, setSelectedElementKey] = useState<string | null>(
+    null
+  );
   const [showBlockOptionsDropDown, setShowBlockOptionsDropDown] =
     useState(false);
   const [codeLanguage, setCodeLanguage] = useState("");
-  const [isRTL, setIsRTL] = useState(false);
-  const [isLink, setIsLink] = useState(false);
   const [isBold, setIsBold] = useState(false);
   const [isItalic, setIsItalic] = useState(false);
   const [isUnderline, setIsUnderline] = useState(false);
@@ -465,16 +454,6 @@ export default function ToolbarPlugin() {
       setIsUnderline(selection.hasFormat("underline"));
       setIsStrikethrough(selection.hasFormat("strikethrough"));
       setIsCode(selection.hasFormat("code"));
-      setIsRTL($isParentElementRTL(selection));
-
-      // Update links
-      const node = getSelectedNode(selection);
-      const parent = node.getParent();
-      if ($isLinkNode(parent) || $isLinkNode(node)) {
-        setIsLink(true);
-      } else {
-        setIsLink(false);
-      }
     }
   }, [editor]);
 
@@ -489,22 +468,6 @@ export default function ToolbarPlugin() {
         SELECTION_CHANGE_COMMAND,
         (_payload, newEditor) => {
           updateToolbar();
-          return false;
-        },
-        LowPriority
-      ),
-      editor.registerCommand(
-        CAN_UNDO_COMMAND,
-        (payload) => {
-          setCanUndo(payload);
-          return false;
-        },
-        LowPriority
-      ),
-      editor.registerCommand(
-        CAN_REDO_COMMAND,
-        (payload) => {
-          setCanRedo(payload);
           return false;
         },
         LowPriority
@@ -527,37 +490,8 @@ export default function ToolbarPlugin() {
     [editor, selectedElementKey]
   );
 
-  const insertLink = useCallback(() => {
-    if (!isLink) {
-      editor.dispatchCommand(TOGGLE_LINK_COMMAND, "https://");
-    } else {
-      editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
-    }
-  }, [editor, isLink]);
-
   return (
     <div className="toolbar" ref={toolbarRef}>
-      <button
-        disabled={!canUndo}
-        onClick={() => {
-          editor.dispatchCommand(UNDO_COMMAND);
-        }}
-        className="toolbar-item spaced"
-        aria-label="Undo"
-      >
-        <i className="format undo" />
-      </button>
-      <button
-        disabled={!canRedo}
-        onClick={() => {
-          editor.dispatchCommand(REDO_COMMAND);
-        }}
-        className="toolbar-item"
-        aria-label="Redo"
-      >
-        <i className="format redo" />
-      </button>
-      <Divider />
       {supportedBlockTypes.has(blockType) && (
         <>
           <button
@@ -643,54 +577,8 @@ export default function ToolbarPlugin() {
           >
             <i className="format code" />
           </button>
-          <button
-            onClick={insertLink}
-            className={"toolbar-item spaced " + (isLink ? "active" : "")}
-            aria-label="Insert Link"
-          >
-            <i className="format link" />
-          </button>
-          {isLink &&
-            createPortal(<FloatingLinkEditor editor={editor} />, document.body)}
-          <Divider />
-          <button
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "left");
-            }}
-            className="toolbar-item spaced"
-            aria-label="Left Align"
-          >
-            <i className="format left-align" />
-          </button>
-          <button
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "center");
-            }}
-            className="toolbar-item spaced"
-            aria-label="Center Align"
-          >
-            <i className="format center-align" />
-          </button>
-          <button
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "right");
-            }}
-            className="toolbar-item spaced"
-            aria-label="Right Align"
-          >
-            <i className="format right-align" />
-          </button>
-          <button
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "justify");
-            }}
-            className="toolbar-item"
-            aria-label="Justify Align"
-          >
-            <i className="format justify-align" />
-          </button>{" "}
         </>
       )}
     </div>
   );
-}
+};

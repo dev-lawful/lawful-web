@@ -1,6 +1,9 @@
+import { PlusSquareIcon } from "@chakra-ui/icons";
+import { Button, HStack, Link, VStack, Text, Box } from "@chakra-ui/react";
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Outlet, useLoaderData } from "@remix-run/react";
+import { Link as RemixLink, Outlet, useLoaderData } from "@remix-run/react";
+import { InitiativesList } from "~/components/modules/lawful";
 import { getInitiatives } from "~/models";
 import type { Initiative } from "~/_types";
 
@@ -8,7 +11,7 @@ interface LoaderData {
   data: Array<Initiative>;
 }
 
-export const loader: LoaderFunction = async ({ request }) => {
+export const loader: LoaderFunction = async () => {
   const { data, error } = await getInitiatives();
   if (error) {
     throw new Error(error);
@@ -17,14 +20,25 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 const EditorRoute = () => {
-  const { data } = useLoaderData();
+  const { data: initiatives } = useLoaderData();
   return (
-    <>
-      <pre>Initiatives list</pre>
-      <Outlet />
-    </>
+    <HStack align={"start"} flex="1" minH="0" p="4">
+      <VStack alignItems="stretch" w="20%" minW="200px" h="full">
+        <Link as={RemixLink} to="./new">
+          <Button rounded={"md"} colorScheme={"decode"}>
+            <HStack>
+              <PlusSquareIcon />
+              <Text>New initiative</Text>
+            </HStack>
+          </Button>
+        </Link>
+        <InitiativesList initiatives={initiatives} />
+      </VStack>
+      <Box>
+        <Outlet />
+      </Box>
+    </HStack>
   );
-  // return <pre>{JSON.stringify(data, null, 2)}</pre>;
 };
 
 export default EditorRoute;

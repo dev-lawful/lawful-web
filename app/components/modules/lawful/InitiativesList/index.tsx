@@ -1,13 +1,13 @@
 import { HStack, Link, ListItem, UnorderedList } from "@chakra-ui/react";
 import { NavLink } from "@remix-run/react";
 import type { VFC } from "react";
-import type { Board } from "~/_types";
+import type { Initiative } from "~/_types";
 
 interface Props {
-  boards: Array<Board>;
+  initiatives: Array<Initiative>;
 }
 
-export const BoardsList: VFC<Props> = ({ boards }) => {
+export const InitiativesList: VFC<Props> = ({ initiatives }) => {
   return (
     <UnorderedList
       listStyleType="none"
@@ -17,13 +17,13 @@ export const BoardsList: VFC<Props> = ({ boards }) => {
       overflowY="auto"
       overflowX="hidden"
     >
-      {boards
+      {initiatives
         .sort(
           (a, b) =>
-            new Date(a.created_at!).getTime() -
-            new Date(b.created_at!).getTime()
+            new Date(a?.created_at!).getTime() -
+            new Date(b?.created_at!).getTime()
         )
-        .map(({ name, id, created_at }) => (
+        .map(({ title, id }) => (
           <ListItem key={id} py="2" px="1" w="full" textOverflow="ellipsis">
             <HStack h="full">
               <Link
@@ -33,7 +33,7 @@ export const BoardsList: VFC<Props> = ({ boards }) => {
                 textOverflow="ellipsis"
                 whiteSpace="nowrap"
               >
-                {name}
+                {title}
               </Link>
             </HStack>
           </ListItem>

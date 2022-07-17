@@ -404,7 +404,7 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters["rowFilter.initiatives.id"];
-          createdAt?: parameters["rowFilter.initiatives.createdAt"];
+          created_at?: parameters["rowFilter.initiatives.created_at"];
           title?: parameters["rowFilter.initiatives.title"];
           description?: parameters["rowFilter.initiatives.description"];
           content?: parameters["rowFilter.initiatives.content"];
@@ -461,7 +461,7 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters["rowFilter.initiatives.id"];
-          createdAt?: parameters["rowFilter.initiatives.createdAt"];
+          created_at?: parameters["rowFilter.initiatives.created_at"];
           title?: parameters["rowFilter.initiatives.title"];
           description?: parameters["rowFilter.initiatives.description"];
           content?: parameters["rowFilter.initiatives.content"];
@@ -482,7 +482,7 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters["rowFilter.initiatives.id"];
-          createdAt?: parameters["rowFilter.initiatives.createdAt"];
+          created_at?: parameters["rowFilter.initiatives.created_at"];
           title?: parameters["rowFilter.initiatives.title"];
           description?: parameters["rowFilter.initiatives.description"];
           content?: parameters["rowFilter.initiatives.content"];
@@ -1480,7 +1480,7 @@ export interface definitions {
      * Format: timestamp with time zone
      * @default now()
      */
-    createdAt?: string;
+    created_at?: string;
     /** Format: text */
     title?: string;
     /** Format: text */
@@ -1762,7 +1762,7 @@ export interface parameters {
   /** Format: bigint */
   "rowFilter.initiatives.id": string;
   /** Format: timestamp with time zone */
-  "rowFilter.initiatives.createdAt": string;
+  "rowFilter.initiatives.created_at": string;
   /** Format: text */
   "rowFilter.initiatives.title": string;
   /** Format: text */
