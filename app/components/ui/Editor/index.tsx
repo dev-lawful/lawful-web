@@ -3,9 +3,9 @@ import { CodeHighlightNode, CodeNode } from "@lexical/code";
 import { AutoLinkNode, LinkNode } from "@lexical/link";
 import { ListItemNode, ListNode } from "@lexical/list";
 import {
+  $convertFromMarkdownString,
   $convertToMarkdownString,
   TRANSFORMERS,
-  $convertFromMarkdownString,
 } from "@lexical/markdown";
 import LexicalAutoFocusPlugin from "@lexical/react/LexicalAutoFocusPlugin";
 import LexicalComposer from "@lexical/react/LexicalComposer";
@@ -18,7 +18,6 @@ import LexicalRichTextPlugin from "@lexical/react/LexicalRichTextPlugin";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
 import type { LinksFunction } from "@remix-run/node";
-import { useMatches } from "@remix-run/react";
 import type { ComponentProps, FC } from "react";
 import { forwardRef, useState } from "react";
 import AutoLinkPlugin from "./plugins/AutoLinkPlugin";
@@ -70,9 +69,7 @@ const EditorComponent = ({
   initialState?: string;
   ref?: any;
 }) => {
-  const [editorState, setEditorState] = useState("");
-
-  const matches = useMatches();
+  const [editorState, setEditorState] = useState(initialState);
 
   return (
     <LexicalComposer initialConfig={editorConfig}>

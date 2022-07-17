@@ -59,7 +59,6 @@ const EditBoardRoute = () => {
     },
   } = useLoaderData<LoaderData>();
 
-  console.log({ board });
   const { created_at, ...boardData } = board;
 
   return <BoardForm defaultValues={boardData} />;

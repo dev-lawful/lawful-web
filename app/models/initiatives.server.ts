@@ -42,12 +42,9 @@ export const createInitiative = async (
   initiativeData: Omit<Initiative, "id">
 ): Promise<CustomResponse<Initiative>> => {
   try {
-    console.log({ initiativeData });
     const { data }: PostgrestResponse<Initiative> = await supabase
       .from("initiatives")
       .insert({ ...initiativeData });
-
-    console.log({ data });
 
     return {
       data: data ?? [],
@@ -62,16 +59,17 @@ export const createInitiative = async (
 };
 
 export const updateInitiative = async ({
-  initiativeData,
+  initiativeData: { created_at, ...initiative },
+  initiativeId,
 }: {
   initiativeData: Partial<Initiative>;
+  initiativeId: string;
 }): Promise<CustomResponse<Initiative>> => {
   try {
-    const { id, created_at, teamId, ...initiative } = initiativeData;
     const { data }: PostgrestResponse<Initiative> = await supabase
       .from("initiatives")
-      .update({ ...initiative })
-      .eq("id", id);
+      .update({ ...initiative, teamId: 1 })
+      .eq("id", initiativeId);
 
     return {
       data: data ?? [],

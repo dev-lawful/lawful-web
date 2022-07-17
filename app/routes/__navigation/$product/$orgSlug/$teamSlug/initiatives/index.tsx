@@ -1,5 +1,7 @@
+import { Heading } from "@chakra-ui/react";
+
 const InitiativesIndexRoute = () => {
-  return <div>InitiativesIndexRoute</div>;
+  return <Heading>Choose an initiative and start collaborating!</Heading>;
 };
 
 export default InitiativesIndexRoute;

@@ -166,8 +166,6 @@ export const action: ActionFunction = async ({ request }) => {
     case "DELETE": {
       const _boardId = formData.get("boardId") ?? "";
 
-      console.log({ _boardId });
-
       if (_boardId == null) {
         return json<ActionData>({
           data: [],

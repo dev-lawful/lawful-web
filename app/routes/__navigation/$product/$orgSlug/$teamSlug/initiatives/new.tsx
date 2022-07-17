@@ -1,4 +1,5 @@
-import { ActionFunction, LinksFunction, redirect } from "@remix-run/node";
+import type { ActionFunction, LinksFunction } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { useCatch } from "@remix-run/react";
 import { InitiativeForm } from "~/components/modules/lawful/Forms/InitiativeForm";
 import { editorLinks } from "~/components/ui";

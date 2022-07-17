@@ -1,10 +1,12 @@
+import { ArrowBackIcon } from "@chakra-ui/icons";
+import { Button, HStack, Text, VStack } from "@chakra-ui/react";
 import type {
   ActionFunction,
   LinksFunction,
   LoaderFunction,
 } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { useCatch, useLoaderData } from "@remix-run/react";
+import { useCatch, useLoaderData, Link as RemixLink } from "@remix-run/react";
 import { InitiativeForm } from "~/components/modules/lawful";
 import { editorLinks } from "~/components/ui";
 import { getInitiativeById, updateInitiative } from "~/models";
@@ -14,7 +16,7 @@ interface LoaderData {
   data: Array<Initiative>;
 }
 
-export const action: ActionFunction = async ({ request }) => {
+export const action: ActionFunction = async ({ request, params }) => {
   const formData = await request.formData();
   const content = formData.get("content") ?? "";
   const title = formData.get("title") ?? "";
@@ -37,6 +39,7 @@ export const action: ActionFunction = async ({ request }) => {
       description,
       dueDate,
     },
+    initiativeId: params.initiativeId!,
   });
 
   if (error) {
@@ -50,7 +53,7 @@ export const action: ActionFunction = async ({ request }) => {
   return redirect(`${origin}${initiativesPath}`);
 };
 
-export const loader: LoaderFunction = async ({ request, params }) => {
+export const loader: LoaderFunction = async ({ params }) => {
   const { initiativeId } = params;
 
   if (!initiativeId) {
@@ -71,11 +74,21 @@ export const links: LinksFunction = () => {
 };
 
 const NewInitiativeRoute = () => {
-  const { data } = useLoaderData<LoaderData>();
+  const {
+    data: { 0: initiative },
+  } = useLoaderData<LoaderData>();
 
-  const { 0: initiative } = data;
-
-  return <InitiativeForm defaultValues={initiative} />;
+  return (
+    <VStack align="start">
+      <InitiativeForm defaultValues={initiative} />
+      <Button to={`../${initiative.id}`} as={RemixLink} variant="outline">
+        <HStack>
+          <ArrowBackIcon />
+          <Text>Back</Text>
+        </HStack>
+      </Button>
+    </VStack>
+  );
 };
 
 export default NewInitiativeRoute;

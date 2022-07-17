@@ -10,8 +10,9 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { Form } from "@remix-run/react";
+import { getDateInputFormattedDateString } from "~/components/modules/decode/Forms/TaskForm/getDateInputFormattedDateString";
 import { Editor } from "~/components/ui";
-import { Initiative } from "~/_types";
+import type { Initiative } from "~/_types";
 
 interface Props {
   defaultValues?: Partial<Initiative>;
@@ -19,12 +20,15 @@ interface Props {
 
 export const InitiativeForm: React.VFC<Props> = ({
   defaultValues = {
-    content: `{"_nodeMap":[["root",{"__children":["5"],"__dir":null,"__format":0,"__indent":0,"__key":"root","__parent":null,"__type":"root"}],["5",{"__type":"paragraph","__parent":"root","__key":"5","__children":[],"__format":0,"__indent":0,"__dir":null}]],"_selection":{"anchor":{"key":"5","offset":0,"type":"element"},"focus":{"key":"5","offset":0,"type":"element"},"type":"range"}}`,
+    content: ``,
     description: "",
     dueDate: new Date(),
     title: "",
   },
 }) => {
+  const formattedDueDate = getDateInputFormattedDateString(
+    defaultValues.dueDate?.toString()!
+  );
   return (
     <VStack
       as={Form}
@@ -35,12 +39,18 @@ export const InitiativeForm: React.VFC<Props> = ({
     >
       <FormControl>
         <FormLabel htmlFor="title">Title</FormLabel>
-        <Input id="title" type="text" defaultValue={defaultValues.title} />
+        <Input
+          name="title"
+          id="title"
+          type="text"
+          defaultValue={defaultValues.title}
+        />
       </FormControl>
 
       <FormControl>
         <FormLabel htmlFor="description">Description</FormLabel>
         <Input
+          name="description"
           id="description"
           type="text"
           defaultValue={defaultValues.description}
@@ -50,9 +60,10 @@ export const InitiativeForm: React.VFC<Props> = ({
       <FormControl>
         <FormLabel htmlFor="dueDate">Due date</FormLabel>
         <Input
+          name="dueDate"
           id="dueDate"
-          type="date"
-          defaultValue={defaultValues.dueDate?.toString()}
+          type="datetime-local"
+          defaultValue={formattedDueDate}
         />
       </FormControl>
       <FormControl>
