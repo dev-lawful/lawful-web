@@ -1,10 +1,10 @@
-import { json } from "@remix-run/node";
+import { Alert } from "@chakra-ui/react";
 import type { LoaderFunction } from "@remix-run/node";
+import { json } from "@remix-run/node";
+import { useCatch, useLoaderData } from "@remix-run/react";
+import { MarkdownViewer } from "~/components/ui";
 import { getInitiativeById } from "~/models";
 import type { Initiative } from "~/_types";
-import { useCatch, useLoaderData } from "@remix-run/react";
-import { Alert, Code, Text } from "@chakra-ui/react";
-import { MarkdownViewer } from "~/components/ui";
 
 interface LoaderData {
   data: Array<Initiative>;
@@ -16,7 +16,7 @@ export const loader: LoaderFunction = async ({ params }) => {
     throw new Response("No initiative id", { status: 400 });
   }
 
-  const { data, error } = await getInitiativeById(initiativeId);
+  const { data, error } = await getInitiativeById({ id: initiativeId });
   if (error) {
     throw new Error(error);
   }
