@@ -1,4 +1,5 @@
-import { Button, Heading, Stack, Text } from "@chakra-ui/react";
+import { EditIcon, InfoIcon } from "@chakra-ui/icons";
+import { Button, Heading, HStack, Stack, Text } from "@chakra-ui/react";
 import { Link, useMatches } from "@remix-run/react";
 import { useDrag } from "react-dnd";
 import type { Task } from "~/_types";
@@ -40,10 +41,20 @@ export const TaskCard: React.FC<Props> = ({ task }) => {
       <Text>{task.description}</Text>
       <Stack direction="row">
         <Link to={`${pathname}/tasks/${task.id}/edit`}>
-          <Button>Edit 🖋️</Button>
+          <Button>
+            <HStack>
+              <EditIcon />
+              <Text>Edit</Text>
+            </HStack>
+          </Button>
         </Link>
         <Link to={`${pathname}/tasks/${task.id}`}>
-          <Button>Details 📎</Button>
+          <Button variant="outline">
+            <HStack>
+              <InfoIcon />
+              <Text>Details</Text>
+            </HStack>
+          </Button>
         </Link>
       </Stack>
     </Stack>
