@@ -1,19 +1,14 @@
-import {
+import type {
   ActionFunction,
-  json,
   LinksFunction,
   LoaderFunction,
-  redirect,
 } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { useCatch, useLoaderData } from "@remix-run/react";
 import { InitiativeForm } from "~/components/modules/lawful";
 import { editorLinks } from "~/components/ui";
-import {
-  createInitiative,
-  getInitiativeById,
-  updateInitiative,
-} from "~/models";
-import { Initiative } from "~/_types";
+import { getInitiativeById, updateInitiative } from "~/models";
+import type { Initiative } from "~/_types";
 
 interface LoaderData {
   data: Array<Initiative>;
