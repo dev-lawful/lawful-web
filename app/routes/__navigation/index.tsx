@@ -1,5 +1,4 @@
 import { Box, Button, Container, Heading, Stack, Text } from "@chakra-ui/react";
-
 import { Link as RemixLink } from "@remix-run/react";
 
 export default function IndexRoute() {
@@ -49,7 +48,7 @@ export default function IndexRoute() {
             </Button>
             <Button
               as={RemixLink}
-              to="/signup"
+              to="/signin"
               variant={"link"}
               colorScheme={"blue"}
               size={"sm"}
