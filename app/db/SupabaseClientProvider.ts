@@ -1,6 +1,6 @@
-import { createContext, useContext, useMemo } from "react";
-import { createClient } from "@supabase/supabase-js";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js";
+import { createContext, useContext, useMemo } from "react";
 
 export const SupabaseClientContext = createContext<SupabaseClient | undefined>(
   undefined
