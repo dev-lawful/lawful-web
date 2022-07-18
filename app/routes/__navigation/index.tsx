@@ -57,7 +57,7 @@ export default function IndexRoute() {
             </Button>
             <Button
               as={RemixLink}
-              to="/signup"
+              to="/signin"
               variant={"link"}
               colorScheme={"blue"}
               size={"sm"}
