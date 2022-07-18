@@ -18,6 +18,9 @@ export const BoardForm: React.VFC<Props> = ({
         {defaultValues["teamId"] ? (
           <Input type="hidden" name="teamId" value={defaultValues["teamId"]} />
         ) : null}
+        {defaultValues["id"] ? (
+          <Input type="hidden" name="id" value={defaultValues["id"]} />
+        ) : null}
         <FormLabel htmlFor="name">
           Name
           <Input
