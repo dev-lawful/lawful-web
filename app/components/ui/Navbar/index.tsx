@@ -60,30 +60,63 @@ export const Navbar: VFC = () => {
           </HStack>
         </HStack>
         <Flex alignItems={"center"}>
-          <Menu>
-            <MenuButton
-              as={Button}
-              rounded="full"
-              variant="link"
-              cursor="pointer"
-              minW={0}
+          {user ? (
+            <Menu>
+              <MenuButton
+                as={Button}
+                rounded="full"
+                variant="link"
+                cursor="pointer"
+                minW={0}
+              >
+                <Avatar
+                  size="sm"
+                  src="https://avatars.githubusercontent.com/u/103387285?v=4"
+                />
+              </MenuButton>
+              <MenuList>
+                <MenuItem>Switch Org / Team</MenuItem>
+                <MenuItem>Profile</MenuItem>
+                <MenuDivider />
+                <Form action="/signout" method="post">
+                  <MenuItem role="button" type="submit">
+                    Sign out
+                  </MenuItem>
+                </Form>
+              </MenuList>
+            </Menu>
+          ) : (
+            <Stack
+              flex={{ base: 1, md: 0 }}
+              justify={"flex-end"}
+              direction={"row"}
+              spacing={6}
             >
-              <Avatar
-                size="sm"
-                src="https://avatars.githubusercontent.com/u/103387285?v=4"
-              />
-            </MenuButton>
-            <MenuList>
-              <MenuItem>Switch Org / Team</MenuItem>
-              <MenuItem>Profile</MenuItem>
-              <MenuDivider />
-              <Form action="/signout" method="post">
-                <MenuItem role="button" type="submit">
-                  Log Out
-                </MenuItem>
-              </Form>
-            </MenuList>
-          </Menu>
+              <Button
+                as={Link}
+                fontSize={"sm"}
+                fontWeight={400}
+                variant={"link"}
+                href={"/signin"}
+              >
+                Sign In
+              </Button>
+              <Button
+                as={Link}
+                display={{ base: "none", md: "inline-flex" }}
+                fontSize={"sm"}
+                fontWeight={600}
+                color={"white"}
+                bg={"pink.400"}
+                _hover={{
+                  bg: "pink.300",
+                }}
+                href="signup"
+              >
+                Sign Up
+              </Button>
+            </Stack>
+          )}
         </Flex>
       </Flex>
 
