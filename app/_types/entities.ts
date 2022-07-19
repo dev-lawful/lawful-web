@@ -9,3 +9,5 @@ export type Team = definitions["teams"];
 export type Message = definitions["messages"];
 export type Chat = definitions["chats"];
 export type Profile = definitions["profiles"];
+export type Option = definitions["options"];
+export type Vote = definitions["votes"];

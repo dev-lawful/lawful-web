@@ -1,7 +1,6 @@
-import { ArrowBackIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
+import { ArrowBackIcon, EditIcon } from "@chakra-ui/icons";
 import {
   Alert,
-  Badge,
   Box,
   Button,
   Container,
@@ -10,11 +9,14 @@ import {
   Link,
   List,
   ListItem,
+  Radio,
+  RadioGroup,
   SimpleGrid,
   Stack,
   StackDivider,
   Text,
   useColorModeValue,
+  VStack,
   Wrap,
   WrapItem,
 } from "@chakra-ui/react";
@@ -25,15 +27,21 @@ import {
   Link as RemixLink,
   useCatch,
   useLoaderData,
-  useParams,
 } from "@remix-run/react";
 import { InitiativeStatus } from "~/components/modules/lawful";
 import { MarkdownViewer } from "~/components/ui";
-import { getInitiativeById } from "~/models";
-import type { Initiative } from "~/_types";
+import { getInitiativeById, getOptionsByInitiativeId } from "~/models";
+import type { Initiative, Option, Vote } from "~/_types";
 
 interface LoaderData {
-  data: Array<Initiative>;
+  data: {
+    initiatives: Array<Initiative>;
+    options: Array<
+      Option & {
+        votes: Array<Vote>;
+      }
+    >;
+  };
 }
 
 export const loader: LoaderFunction = async ({ params }) => {
@@ -42,16 +50,34 @@ export const loader: LoaderFunction = async ({ params }) => {
     throw new Response("No initiative id", { status: 400 });
   }
 
-  const { data, error } = await getInitiativeById({ id: initiativeId });
-  if (error) {
-    throw new Error(error);
+  const { data: initiativeData, error: initiativeError } =
+    await getInitiativeById({ id: initiativeId });
+
+  if (initiativeError) {
+    throw new Error(initiativeError);
   }
-  return json<LoaderData>({ data });
+
+  const { data: optionsData, error: optionsError } =
+    await getOptionsByInitiativeId(initiativeId);
+
+  if (optionsError) {
+    throw new Error(optionsError);
+  }
+
+  return json<LoaderData>({
+    data: {
+      initiatives: initiativeData,
+      options: optionsData,
+    },
+  });
 };
 
 const InitiativeRoute = () => {
   const {
-    data: { 0: initiative },
+    data: {
+      initiatives: { 0: initiative },
+      options,
+    },
   } = useLoaderData<LoaderData>();
 
   const initiativeSubtitleColor = useColorModeValue("lawful.500", "lawful.300");
@@ -168,6 +194,23 @@ const InitiativeRoute = () => {
               </Link>
             </WrapItem>
           </Wrap>
+        </Stack>
+        <Stack spacing={{ base: 6, md: 10 }}>
+          <Heading>Voting area</Heading>
+          <Form method="post">
+            <RadioGroup name="option">
+              <VStack align="start" spacing={3}>
+                {options.map(({ votes, content, id }) => {
+                  return (
+                    <Radio colorScheme="lawful" value={`${id}`}>
+                      {content} (Votes count: {votes.length})
+                    </Radio>
+                  );
+                })}
+                <Button>Submit vote</Button>
+              </VStack>
+            </RadioGroup>
+          </Form>
         </Stack>
       </SimpleGrid>
     </Container>
