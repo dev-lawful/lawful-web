@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { Form, useTransition } from "@remix-run/react";
 import type { SupabaseRealtimePayload } from "@supabase/supabase-js";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { VFC } from "react";
 import { useSupabaseClient } from "~/db";
 import type { Message } from "~/_types";
@@ -44,18 +44,17 @@ export const Chat: VFC<{ chatId: string; initialMessages: Array<Message> }> = ({
     }
   };
 
-  const handleReceivedMessage = useCallback(
-    (message: SupabaseRealtimePayload<Message>) => {
+  useEffect(() => {
+    const handleReceivedMessage = (
+      message: SupabaseRealtimePayload<Message>
+    ) => {
       const { new: newMessage } = message;
       flushSync(() => {
         setMessages((messages) => [...messages, newMessage]);
       });
       scrollToLastMessage();
-    },
-    []
-  );
+    };
 
-  useEffect(() => {
     const subscription = supabase
       .from(`messages:chatId=eq.${chatId}`)
       .on("INSERT", handleReceivedMessage)
@@ -63,7 +62,7 @@ export const Chat: VFC<{ chatId: string; initialMessages: Array<Message> }> = ({
     return () => {
       subscription.unsubscribe();
     };
-  }, [chatId, handleReceivedMessage, supabase]);
+  }, [chatId, supabase]);
 
   useEffect(() => {
     if (!isSending) {
