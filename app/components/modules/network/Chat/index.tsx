@@ -60,7 +60,7 @@ export const Chat: VFC<{ chatId: string; initialMessages: Array<Message> }> = ({
       .on("INSERT", handleReceivedMessage)
       .subscribe();
     return () => {
-      subscription.unsubscribe();
+      supabase.removeSubscription(subscription);
     };
   }, [chatId, supabase]);
 
