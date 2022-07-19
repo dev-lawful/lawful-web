@@ -53,19 +53,26 @@ export const action: ActionFunction = async ({ request }) => {
     return badRequest({ fieldErrors, fields });
   }
 
-  const { session: userSession, error } = await supabase.auth.signIn({
+  const { data, error } = await supabase.auth.api.signInWithEmail(
     email,
-    password,
-  });
+    password
+  );
 
   if (error) {
     return badRequest({ formError: error.message });
   }
+  const userSession = data &&
+    data.user && {
+      accessToken: data.access_token,
+      refreshToken: data.refresh_token ?? "",
+      user: data.user,
+      expiresIn: data.expires_in ?? -1,
+      expiresAt: data.expires_at ?? -1,
+    };
 
   if (userSession) {
     const session = await getSession(request.headers.get("Cookie"));
-    session.set("access_token", userSession.access_token);
-    session.set("refresh_token", userSession.refresh_token);
+    session.set("authenticated", userSession);
     return redirect("/", {
       headers: {
         "Set-Cookie": await commitSession(session),

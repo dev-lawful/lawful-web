@@ -21,8 +21,9 @@ export const Chat: VFC<{ chatId: string; initialMessages: Array<Message> }> = ({
   chatId,
   initialMessages,
 }) => {
-  const supabase = useSupabaseClient();
-  const currentUserId = supabase.auth.user()?.id;
+  const { supabase, user } = useSupabaseClient();
+
+  const currentUserId = user?.id;
   // TODO: to be honest, I'm not sure about this approach (using props as initialState)
   // but I didn't find another way to achieve the same result (all of them broke the exhaustive-deps rule)
   const [messages, setMessages] = useState<Array<Message>>(initialMessages);
@@ -59,11 +60,10 @@ export const Chat: VFC<{ chatId: string; initialMessages: Array<Message> }> = ({
       .from(`messages:chatId=eq.${chatId}`)
       .on("INSERT", handleReceivedMessage)
       .subscribe();
-
     return () => {
       subscription.unsubscribe();
     };
-  }, [chatId, supabase, handleReceivedMessage]);
+  }, [chatId, handleReceivedMessage, supabase]);
 
   useEffect(() => {
     if (!isSending) {
@@ -92,11 +92,7 @@ export const Chat: VFC<{ chatId: string; initialMessages: Array<Message> }> = ({
       <Box p="2" m="0">
         <Form method="post" ref={formRef}>
           <HStack>
-            <Input
-              type="hidden"
-              name="userId"
-              value={supabase.auth.user()?.id}
-            />
+            <Input type="hidden" name="userId" value={currentUserId} />
             <Input name="message" type="text" />
             <Button type="submit">Send 💥</Button>
           </HStack>

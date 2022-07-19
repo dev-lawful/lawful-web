@@ -1,10 +1,18 @@
-import { createContext, useContext, useMemo } from "react";
+import { createContext, useContext, useMemo, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { SupabaseClient, User } from "@supabase/supabase-js";
+import type { UserSession } from "~/_types";
+import { useFetcher } from "@remix-run/react";
+import { useInterval } from "~/utils";
 
-export const SupabaseClientContext = createContext<SupabaseClient | undefined>(
-  undefined
-);
+interface SupabaseContextType {
+  supabase: SupabaseClient;
+  user?: User;
+}
+
+export const SupabaseClientContext = createContext<
+  SupabaseContextType | undefined
+>(undefined);
 
 SupabaseClientContext.displayName = "SupabaseClientContext";
 
@@ -23,20 +31,47 @@ export const useSupabaseClient = () => {
 export const useCreateSupabaseClient = ({
   supabaseUrl,
   supabaseAnonKey,
-  refreshToken,
+  userSession,
 }: {
   supabaseUrl: string;
   supabaseAnonKey: string;
-  refreshToken?: string;
+  userSession?: UserSession;
 }) => {
+  const { accessToken, expiresIn, expiresAt, user } = userSession || {};
+  const [currentExpiresAt, setCurrentExpiresAt] = useState<number>();
+  const [currentUser, setCurrentUser] = useState<User>();
+
+  const refresh = useFetcher();
+
   const supabaseClient = useMemo(() => {
-    const client = createClient(supabaseUrl, supabaseAnonKey);
-    if (refreshToken) {
-      client.auth.setSession(refreshToken);
+    const client = createClient(supabaseUrl, supabaseAnonKey, {
+      autoRefreshToken: false,
+      persistSession: false,
+    });
+
+    if (accessToken) {
+      client.auth.setAuth(accessToken);
     }
 
     return client;
-  }, [supabaseUrl, supabaseAnonKey, refreshToken]);
+  }, [supabaseUrl, supabaseAnonKey, accessToken]);
 
-  return supabaseClient;
+  useInterval(() => {
+    if (expiresIn)
+      refresh.submit(null, {
+        method: "post",
+        action: "/refreshSession",
+      });
+  }, expiresIn);
+
+  if (expiresAt !== currentExpiresAt) {
+    setCurrentExpiresAt(expiresAt);
+    setCurrentUser(user);
+  }
+
+  const memoizedValues = useMemo(() => {
+    return { supabase: supabaseClient, user: currentUser };
+  }, [currentUser, supabaseClient]);
+
+  return memoizedValues;
 };

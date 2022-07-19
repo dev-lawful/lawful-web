@@ -20,6 +20,7 @@ import React, { useContext, useEffect } from "react";
 import { ClientStyleContext, getTheme, ServerStyleContext } from "~/styles";
 import { SupabaseClientProvider, useCreateSupabaseClient } from "./db";
 import { getSession } from "./sessions";
+import type { UserSession } from "./_types";
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
@@ -91,33 +92,30 @@ interface LoaderData {
     SUPABASE_URL: string;
     SUPABASE_ANON_KEY: string;
   };
-  accessToken: string | undefined;
-  refreshToken: string | undefined;
+  userSession?: UserSession;
 }
 
 export const loader: LoaderFunction = async ({ request }) => {
   const session = await getSession(request.headers.get("Cookie"));
-  const accessToken = session.get("access_token");
-  const refreshToken = session.get("refresh_token");
+  const userSession = session.get("authenticated") as UserSession | undefined;
   return json<LoaderData>({
     ENV: {
       SUPABASE_URL: process.env.SUPABASE_URL || "",
       SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY || "",
     },
-    accessToken,
-    refreshToken,
+    userSession,
   });
 };
 
 export default function App() {
   const { product } = useParams();
 
-  const { ENV, refreshToken } = useLoaderData<LoaderData>();
+  const { ENV, userSession } = useLoaderData<LoaderData>();
 
   const supabaseClient = useCreateSupabaseClient({
     supabaseUrl: ENV.SUPABASE_URL,
     supabaseAnonKey: ENV.SUPABASE_ANON_KEY,
-    refreshToken,
+    userSession,
   });
 
   return (

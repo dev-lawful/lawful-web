@@ -12,8 +12,6 @@ export const Message: VFC<{
 
   return (
     <VStack
-      //TODO: Server side rendering problems
-      key={Math.random()}
       maxW="60%"
       bgColor={fromCurrentUser ? "green.600" : "blue.600"}
       ml={fromCurrentUser ? "auto" : "unset"}
