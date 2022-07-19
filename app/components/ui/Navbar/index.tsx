@@ -16,7 +16,9 @@ import {
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
+import { Form } from "@remix-run/react";
 import type { FC, VFC } from "react";
+import { useSupabaseClient } from "~/db";
 
 const Links = ["Initiatives", "Kanban", "Chat", "🔜"];
 
@@ -36,6 +38,7 @@ const NavLink: FC = ({ children }) => (
 );
 
 export const Navbar: VFC = () => {
+  const { user } = useSupabaseClient();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -48,9 +51,9 @@ export const Navbar: VFC = () => {
           display={{ md: "none" }}
           onClick={isOpen ? onClose : onOpen}
         />
-        <HStack spacing={8} alignItems={"center"}>
+        <HStack spacing={8} alignItems="center">
           <Box>Logo</Box>
-          <HStack as={"nav"} spacing={4} display={{ base: "none", md: "flex" }}>
+          <HStack as="nav" spacing={4} display={{ base: "none", md: "flex" }}>
             {Links.map((link) => (
               <NavLink key={link}>{link}</NavLink>
             ))}
@@ -60,22 +63,25 @@ export const Navbar: VFC = () => {
           <Menu>
             <MenuButton
               as={Button}
-              rounded={"full"}
-              variant={"link"}
-              cursor={"pointer"}
+              rounded="full"
+              variant="link"
+              cursor="pointer"
               minW={0}
             >
               <Avatar
-                size={"sm"}
-                src={"https://avatars.githubusercontent.com/u/103387285?v=4"}
+                size="sm"
+                src="https://avatars.githubusercontent.com/u/103387285?v=4"
               />
             </MenuButton>
             <MenuList>
               <MenuItem>Switch Org / Team</MenuItem>
-
               <MenuItem>Profile</MenuItem>
               <MenuDivider />
-              <MenuItem>Log out</MenuItem>
+              <Form action="/signout" method="post">
+                <MenuItem role="button" type="submit">
+                  Log Out
+                </MenuItem>
+              </Form>
             </MenuList>
           </Menu>
         </Flex>
@@ -83,7 +89,7 @@ export const Navbar: VFC = () => {
 
       {isOpen ? (
         <Box pb={4} display={{ md: "none" }}>
-          <Stack as={"nav"} spacing={4}>
+          <Stack as="nav" spacing={4}>
             {Links.map((link) => (
               <NavLink key={link}>{link}</NavLink>
             ))}
