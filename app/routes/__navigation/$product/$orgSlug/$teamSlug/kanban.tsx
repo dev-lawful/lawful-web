@@ -12,7 +12,7 @@ interface LoaderData {
     boards: Array<Board>;
   };
 }
-
+// TODO: Check if kanban belongs to this prod
 export const loader: LoaderFunction = async ({ request, params }) => {
   // TODO: make teamId dynamic given the current team
   const { data: boards, error } = await getBoardsByTeamId(1);

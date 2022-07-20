@@ -9,6 +9,7 @@ interface LoaderData {
   data: Array<Organization> | null;
 }
 
+// TODO: Check if the org belongs to selected product and if user belongs to this org
 export const loader: LoaderFunction = async () => {
   const { data }: PostgrestResponse<Organization> = await supabase
     .from("organizations")
@@ -23,11 +24,7 @@ export const loader: LoaderFunction = async () => {
 const OrganizationLayoutRoute = () => {
   const { data } = useLoaderData<LoaderData>();
 
-  return (
-    <>
-      <Outlet />
-    </>
-  );
+  return <Outlet />;
 };
 
 export default OrganizationLayoutRoute;

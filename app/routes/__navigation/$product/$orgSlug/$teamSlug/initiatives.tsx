@@ -8,6 +8,7 @@ interface LoaderData {
   data: Array<Initiative>;
 }
 
+// TODO: Check if initiatives belongs to this prod
 export const loader: LoaderFunction = async ({ request }) => {
   const { data, error } = await getInitiatives();
   if (error) {

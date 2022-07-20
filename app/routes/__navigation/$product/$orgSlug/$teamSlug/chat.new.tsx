@@ -21,6 +21,7 @@ type ActionData = {
     description: string;
   };
 };
+// TODO: Check if chat belongs to this prod
 
 const badRequest = (data: ActionData) => json(data, { status: 400 });
 

@@ -109,7 +109,10 @@ const SignInRoute = () => {
                   {actionData.formError}
                 </Alert>
               ) : null}
-              <FormControl id="email">
+              <FormControl
+                id="email"
+                isInvalid={!!actionData?.fieldErrors?.email}
+              >
                 <FormLabel>Email address</FormLabel>
                 <Input
                   name="email"
@@ -120,7 +123,10 @@ const SignInRoute = () => {
                   {actionData?.fieldErrors?.email}
                 </FormErrorMessage>
               </FormControl>
-              <FormControl id="password">
+              <FormControl
+                id="password"
+                isInvalid={!!actionData?.fieldErrors?.password}
+              >
                 <FormLabel>Password</FormLabel>
                 <Input name="password" type="password" />
                 <FormErrorMessage>

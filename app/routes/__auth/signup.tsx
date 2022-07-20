@@ -160,7 +160,11 @@ const SignUpRoute = () => {
               ) : null}
               <HStack>
                 <Box>
-                  <FormControl id="firstName" isRequired>
+                  <FormControl
+                    id="firstName"
+                    isRequired
+                    isInvalid={!!actionData?.fieldErrors?.firstName}
+                  >
                     <FormLabel>First Name</FormLabel>
                     <Input
                       name="firstName"
@@ -173,7 +177,11 @@ const SignUpRoute = () => {
                   </FormControl>
                 </Box>
                 <Box>
-                  <FormControl id="lastName">
+                  <FormControl
+                    id="lastName"
+                    isRequired
+                    isInvalid={!!actionData?.fieldErrors?.lastName}
+                  >
                     <FormLabel>Last Name</FormLabel>
                     <Input
                       name="lastName"
@@ -186,7 +194,11 @@ const SignUpRoute = () => {
                   </FormControl>
                 </Box>
               </HStack>
-              <FormControl id="email" isRequired>
+              <FormControl
+                id="email"
+                isRequired
+                isInvalid={!!actionData?.fieldErrors?.email}
+              >
                 <FormLabel>Email address</FormLabel>
                 <Input
                   name="email"
@@ -197,7 +209,11 @@ const SignUpRoute = () => {
                   {actionData?.fieldErrors?.email}
                 </FormErrorMessage>
               </FormControl>
-              <FormControl id="password" isRequired>
+              <FormControl
+                id="password"
+                isRequired
+                isInvalid={!!actionData?.fieldErrors?.password}
+              >
                 <FormLabel>Password</FormLabel>
                 <InputGroup>
                   <Input

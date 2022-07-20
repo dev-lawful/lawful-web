@@ -10,6 +10,7 @@ interface LoaderData {
   data: Array<Chat>;
 }
 
+// TODO: Check if chat belongs to this prod
 export const loader: LoaderFunction = async ({ params }) => {
   const { product, teamSlug } = params;
 
