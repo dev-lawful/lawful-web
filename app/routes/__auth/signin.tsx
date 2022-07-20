@@ -16,7 +16,12 @@ import {
 } from "@chakra-ui/react";
 import type { ActionFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Form, useActionData, useTransition } from "@remix-run/react";
+import {
+  Form,
+  useActionData,
+  useTransition,
+  Link as RemixLink,
+} from "@remix-run/react";
 import { supabase } from "~/db";
 import { commitSession, getSession } from "~/sessions";
 
@@ -153,6 +158,14 @@ const SignInRoute = () => {
                 >
                   Sign in
                 </Button>
+              </Stack>
+              <Stack pt={6}>
+                <Text align="center">
+                  I you haven't registered yet{" "}
+                  <Link as={RemixLink} to="/signup" color={"blue.400"}>
+                    Sign up
+                  </Link>
+                </Text>
               </Stack>
             </Stack>
           </Form>

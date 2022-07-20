@@ -93,7 +93,7 @@ export const Navbar: VFC = () => {
               <Link
                 as={RemixLink}
                 to="/signup"
-                display="inline-block"
+                display={{ base: "none", md: "inline-flex" }}
                 p={2}
                 ml={5}
                 borderRadius="5"
