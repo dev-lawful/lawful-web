@@ -27,7 +27,15 @@ import {
 } from "@remix-run/react";
 import { useState } from "react";
 import { supabase } from "~/db";
-import { createProfile, findProfileByEmail } from "~/models/profiles.models";
+import {
+  addUserToOrganization,
+  addUserToTeam,
+  createProfile,
+  createTeam,
+  findProfileByEmail,
+  suscribeToProduct,
+} from "~/models";
+import { createOrganization } from "~/models";
 
 interface SignUpForm {
   email: string;
@@ -80,11 +88,6 @@ export const action: ActionFunction = async ({ request }) => {
     return badRequest({ fieldErrors, fields });
   }
 
-  const { user, error: signUpError } = await supabase.auth.signUp({
-    email,
-    password,
-  });
-
   const { data: profiles, error: profileError } = await findProfileByEmail(
     email
   );
@@ -106,21 +109,191 @@ export const action: ActionFunction = async ({ request }) => {
     });
   }
 
-  if (!signUpError && user?.id) {
-    const { error: creationError } = await createProfile({
-      firstName,
-      lastName,
-      email,
-      id: user?.id,
+  const { user, error: signUpError } = await supabase.auth.signUp({
+    email,
+    password,
+  });
+  if (signUpError || !user?.id) {
+    return badRequest({
+      formResult: {
+        status: "error",
+        message: "Oops! An unexpected error ocurred.",
+      },
     });
-    if (creationError) {
-      return badRequest({
-        formResult: {
-          status: "error",
-          message: "Oops! An unexpected error ocurred.",
-        },
-      });
+  }
+
+  const { error: creationError } = await createProfile({
+    firstName,
+    lastName,
+    email,
+    id: user?.id,
+  });
+  if (creationError) {
+    return badRequest({
+      formResult: {
+        status: "error",
+        message: "Oops! An unexpected error ocurred.",
+      },
+    });
+  }
+
+  const { data: firstOrgData, error: firstOrgError } = await createOrganization(
+    {
+      ownerId: user.id,
+      slug: `${firstName}${lastName}-NET`,
+      description:
+        "Automatically created organization with a Network subscription",
+      name: `${firstName} ${lastName}'s NET trial organization`,
     }
+  );
+  const [firstOrg] = firstOrgData;
+  if (firstOrgError || !firstOrg) {
+    return badRequest({
+      formResult: {
+        status: "error",
+        message:
+          "Oops! An unexpected error ocurred creating automatic organizations",
+      },
+    });
+  }
+  const { data: addToFirstOrgData, error: addToFirstOrgError } =
+    await addUserToOrganization({
+      userId: user.id,
+      organizationId: firstOrg.id,
+    });
+  const [addToFirstOrg] = addToFirstOrgData;
+  if (addToFirstOrgError || !addToFirstOrg) {
+    return badRequest({
+      formResult: {
+        status: "error",
+        message:
+          "Oops! An unexpected error ocurred adding user to an organization",
+      },
+    });
+  }
+
+  const { data: firstSubData, error: firstSubError } = await suscribeToProduct({
+    organizationId: firstOrg.id,
+    product: "network",
+  });
+  const [firstSub] = firstSubData;
+  if (firstSubError || !firstSub) {
+    return badRequest({
+      formResult: {
+        status: "error",
+        message:
+          "Oops! An unexpected error ocurred creating automatic subscriptions",
+      },
+    });
+  }
+  const { data: firstTeamData, error: firstTeamError } = await createTeam({
+    organizationId: firstOrg.id,
+    name: "Team Network",
+    description: "Automatically created team",
+    slug: "teamnet",
+  });
+  const [firstTeam] = firstTeamData;
+  if (firstTeamError || !firstTeam) {
+    return badRequest({
+      formResult: {
+        status: "error",
+        message: "Oops! An unexpected error ocurred creating automatic team",
+      },
+    });
+  }
+  const { data: addToFirstTeamData, error: addToFirstTeamError } =
+    await addUserToTeam({
+      userId: user.id,
+      teamId: firstTeam.id,
+    });
+  const [addToFirstTeam] = addToFirstTeamData;
+  if (addToFirstTeamError || !addToFirstTeam) {
+    return badRequest({
+      formResult: {
+        status: "error",
+        message: "Oops! An unexpected error ocurred adding user to a team",
+      },
+    });
+  }
+
+  const { data: secondOrgData, error: secondOrgError } =
+    await createOrganization({
+      ownerId: user.id,
+      slug: `${firstName}${lastName}-DEC`,
+      description:
+        "Automatically created organization with a Decode subscription",
+      name: `${firstName} ${lastName}'s DEC trial organization`,
+    });
+  const [secondOrg] = secondOrgData;
+  if (secondOrgError || !secondOrg) {
+    return badRequest({
+      formResult: {
+        status: "error",
+        message:
+          "Oops! An unexpected error ocurred creating automatic organizations",
+      },
+    });
+  }
+  const { data: addToSecondOrgData, error: addToSecondOrgError } =
+    await addUserToOrganization({
+      userId: user.id,
+      organizationId: secondOrg.id,
+    });
+  const [addToSecondOrg] = addToSecondOrgData;
+  if (addToSecondOrgError || !addToSecondOrg) {
+    return badRequest({
+      formResult: {
+        status: "error",
+        message:
+          "Oops! An unexpected error ocurred adding user to an organization",
+      },
+    });
+  }
+
+  const { data: secondSubData, error: secondSubError } =
+    await suscribeToProduct({
+      organizationId: secondOrg.id,
+      product: "decode",
+    });
+  const [secondSub] = secondSubData;
+  if (secondSubError || !secondSub) {
+    return badRequest({
+      formResult: {
+        status: "error",
+        message:
+          "Oops! An unexpected error ocurred creating automatic subscriptions",
+      },
+    });
+  }
+  const { data: secondTeamData, error: secondTeamError } = await createTeam({
+    organizationId: secondOrg.id,
+    name: "Team Decode",
+    description: "Automatically created team",
+    slug: "teamdec",
+  });
+  const [secondTeam] = secondTeamData;
+  if (secondTeamError || !secondTeam) {
+    return badRequest({
+      formResult: {
+        status: "error",
+        message: "Oops! An unexpected error ocurred creating automatic team",
+      },
+    });
+  }
+
+  const { data: addToSecondTeamData, error: addToSecondTeamError } =
+    await addUserToTeam({
+      userId: user.id,
+      teamId: secondTeam.id,
+    });
+  const [addToSecondTeam] = addToSecondTeamData;
+  if (addToSecondTeamError || !addToSecondTeam) {
+    return badRequest({
+      formResult: {
+        status: "error",
+        message: "Oops! An unexpected error ocurred adding user to a team",
+      },
+    });
   }
 
   return json<ActionData>({

@@ -404,7 +404,7 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters["rowFilter.initiatives.id"];
-          createdAt?: parameters["rowFilter.initiatives.createdAt"];
+          created_at?: parameters["rowFilter.initiatives.created_at"];
           title?: parameters["rowFilter.initiatives.title"];
           description?: parameters["rowFilter.initiatives.description"];
           content?: parameters["rowFilter.initiatives.content"];
@@ -461,7 +461,7 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters["rowFilter.initiatives.id"];
-          createdAt?: parameters["rowFilter.initiatives.createdAt"];
+          created_at?: parameters["rowFilter.initiatives.created_at"];
           title?: parameters["rowFilter.initiatives.title"];
           description?: parameters["rowFilter.initiatives.description"];
           content?: parameters["rowFilter.initiatives.content"];
@@ -482,7 +482,7 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters["rowFilter.initiatives.id"];
-          createdAt?: parameters["rowFilter.initiatives.createdAt"];
+          created_at?: parameters["rowFilter.initiatives.created_at"];
           title?: parameters["rowFilter.initiatives.title"];
           description?: parameters["rowFilter.initiatives.description"];
           content?: parameters["rowFilter.initiatives.content"];
@@ -799,6 +799,7 @@ export interface paths {
           slug?: parameters["rowFilter.organizations.slug"];
           logoUrl?: parameters["rowFilter.organizations.logoUrl"];
           description?: parameters["rowFilter.organizations.description"];
+          ownerId?: parameters["rowFilter.organizations.ownerId"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -855,6 +856,7 @@ export interface paths {
           slug?: parameters["rowFilter.organizations.slug"];
           logoUrl?: parameters["rowFilter.organizations.logoUrl"];
           description?: parameters["rowFilter.organizations.description"];
+          ownerId?: parameters["rowFilter.organizations.ownerId"];
         };
         header: {
           /** Preference */
@@ -875,6 +877,7 @@ export interface paths {
           slug?: parameters["rowFilter.organizations.slug"];
           logoUrl?: parameters["rowFilter.organizations.logoUrl"];
           description?: parameters["rowFilter.organizations.description"];
+          ownerId?: parameters["rowFilter.organizations.ownerId"];
         };
         body: {
           /** organizations */
@@ -978,6 +981,102 @@ export interface paths {
         body: {
           /** profiles */
           profiles?: definitions["profiles"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
+  "/subscriptions": {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.subscriptions.id"];
+          createdAt?: parameters["rowFilter.subscriptions.createdAt"];
+          organizationId?: parameters["rowFilter.subscriptions.organizationId"];
+          product?: parameters["rowFilter.subscriptions.product"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["subscriptions"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** subscriptions */
+          subscriptions?: definitions["subscriptions"];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters["select"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.subscriptions.id"];
+          createdAt?: parameters["rowFilter.subscriptions.createdAt"];
+          organizationId?: parameters["rowFilter.subscriptions.organizationId"];
+          product?: parameters["rowFilter.subscriptions.product"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.subscriptions.id"];
+          createdAt?: parameters["rowFilter.subscriptions.createdAt"];
+          organizationId?: parameters["rowFilter.subscriptions.organizationId"];
+          product?: parameters["rowFilter.subscriptions.product"];
+        };
+        body: {
+          /** subscriptions */
+          subscriptions?: definitions["subscriptions"];
         };
         header: {
           /** Preference */
@@ -1480,7 +1579,7 @@ export interface definitions {
      * Format: timestamp with time zone
      * @default now()
      */
-    createdAt?: string;
+    created_at?: string;
     /** Format: text */
     title?: string;
     /** Format: text */
@@ -1571,6 +1670,8 @@ export interface definitions {
     logoUrl?: string;
     /** Format: text */
     description?: string;
+    /** Format: uuid */
+    ownerId?: string;
   };
   profiles: {
     /**
@@ -1590,6 +1691,27 @@ export interface definitions {
     firstName?: string;
     /** Format: text */
     lastName?: string;
+  };
+  subscriptions: {
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: number;
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    createdAt?: string;
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Foreign Key to `organizations.id`.<fk table='organizations' column='id'/>
+     */
+    organizationId?: number;
+    /** Format: text */
+    product?: string;
   };
   tasks: {
     /**
@@ -1762,7 +1884,7 @@ export interface parameters {
   /** Format: bigint */
   "rowFilter.initiatives.id": string;
   /** Format: timestamp with time zone */
-  "rowFilter.initiatives.createdAt": string;
+  "rowFilter.initiatives.created_at": string;
   /** Format: text */
   "rowFilter.initiatives.title": string;
   /** Format: text */
@@ -1815,6 +1937,8 @@ export interface parameters {
   "rowFilter.organizations.logoUrl": string;
   /** Format: text */
   "rowFilter.organizations.description": string;
+  /** Format: uuid */
+  "rowFilter.organizations.ownerId": string;
   /** @description profiles */
   "body.profiles": definitions["profiles"];
   /** Format: uuid */
@@ -1827,6 +1951,16 @@ export interface parameters {
   "rowFilter.profiles.firstName": string;
   /** Format: text */
   "rowFilter.profiles.lastName": string;
+  /** @description subscriptions */
+  "body.subscriptions": definitions["subscriptions"];
+  /** Format: bigint */
+  "rowFilter.subscriptions.id": string;
+  /** Format: timestamp with time zone */
+  "rowFilter.subscriptions.createdAt": string;
+  /** Format: bigint */
+  "rowFilter.subscriptions.organizationId": string;
+  /** Format: text */
+  "rowFilter.subscriptions.product": string;
   /** @description tasks */
   "body.tasks": definitions["tasks"];
   /** Format: bigint */
