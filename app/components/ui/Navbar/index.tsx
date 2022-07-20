@@ -16,7 +16,7 @@ import {
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
-import { Form } from "@remix-run/react";
+import { Form, Link as RemixLink } from "@remix-run/react";
 import type { FC, VFC } from "react";
 import { useSupabaseClient } from "~/db";
 
@@ -86,36 +86,26 @@ export const Navbar: VFC = () => {
               </MenuList>
             </Menu>
           ) : (
-            <Stack
-              flex={{ base: 1, md: 0 }}
-              justify={"flex-end"}
-              direction={"row"}
-              spacing={6}
-            >
-              <Button
-                as={Link}
+            <>
+              <Link as={RemixLink} to="/signin" fontSize={"sm"}>
+                Sign in
+              </Link>
+              <Link
+                as={RemixLink}
+                to="/signup"
+                display="inline-block"
+                p={2}
+                ml={5}
+                borderRadius="5"
                 fontSize={"sm"}
-                fontWeight={400}
-                variant={"link"}
-                href={"/signin"}
-              >
-                Sign In
-              </Button>
-              <Button
-                as={Link}
-                display={{ base: "none", md: "inline-flex" }}
-                fontSize={"sm"}
-                fontWeight={600}
-                color={"white"}
-                bg={"pink.400"}
+                bg="pink.400"
                 _hover={{
                   bg: "pink.300",
                 }}
-                href="signup"
               >
-                Sign Up
-              </Button>
-            </Stack>
+                Sign up
+              </Link>
+            </>
           )}
         </Flex>
       </Flex>
