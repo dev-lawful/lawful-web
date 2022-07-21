@@ -1,7 +1,7 @@
 import { PlusSquareIcon } from "@chakra-ui/icons";
 import { Button, HStack, Link, Text, VStack } from "@chakra-ui/react";
 import type { LoaderFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import { Link as RemixLink, Outlet, useLoaderData } from "@remix-run/react";
 import { BoardsList } from "~/components/modules/decode";
 import { getBoardsByTeamId } from "~/models";
@@ -12,21 +12,25 @@ interface LoaderData {
     boards: Array<Board>;
   };
 }
-// TODO: Check if kanban belongs to this prod
+
 export const loader: LoaderFunction = async ({ request, params }) => {
+  const { product } = params;
+  if (product !== "decode") {
+    throw new Response("Kanban feature doesn't belong to this product", {
+      status: 400,
+    });
+  }
+
   // TODO: make teamId dynamic given the current team
   const { data: boards, error } = await getBoardsByTeamId(1);
 
   if (error) throw new Error(error);
 
-  if (params.product === "decode")
-    return json<LoaderData>({
-      data: {
-        boards,
-      },
-    });
-
-  return redirect("/");
+  return json<LoaderData>({
+    data: {
+      boards,
+    },
+  });
 };
 
 const KanbanLayoutRoute = () => {

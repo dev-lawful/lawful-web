@@ -1,6 +1,6 @@
 import { HStack, VStack } from "@chakra-ui/react";
 import type { LoaderFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import { Link, Outlet, useCatch, useLoaderData } from "@remix-run/react";
 import { ChatList } from "~/components/modules/network";
 import { getChats } from "~/models";
@@ -10,11 +10,14 @@ interface LoaderData {
   data: Array<Chat>;
 }
 
-// TODO: Check if chat belongs to this prod
 export const loader: LoaderFunction = async ({ params }) => {
   const { product, teamSlug } = params;
 
-  if (product !== "network") redirect("/");
+  if (product !== "network") {
+    throw new Response("Chat feature doesn't belong to this product", {
+      status: 400,
+    });
+  }
 
   if (!teamSlug) {
     throw new Response("No team slug", { status: 400 });

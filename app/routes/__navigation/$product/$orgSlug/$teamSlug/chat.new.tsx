@@ -20,11 +20,17 @@ type ActionData = {
     description: string;
   };
 };
-// TODO: Check if chat belongs to this prod
 
 const badRequest = (data: ActionData) => json(data, { status: 400 });
 
-export const action: ActionFunction = async ({ request }) => {
+export const action: ActionFunction = async ({ request, params }) => {
+  const { product } = params;
+  if (product !== "network") {
+    throw new Response("Chat feature doesn't belong to this product", {
+      status: 400,
+    });
+  }
+
   const formData = await request.formData();
   const name = formData.get("name");
   const description = formData.get("description");
