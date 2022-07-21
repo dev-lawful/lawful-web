@@ -8,8 +8,7 @@ import {
 import type { ActionFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, useActionData, useParams } from "@remix-run/react";
-import { createChat } from "~/models/chats.server";
-import { getTeamBySlug } from "~/models/teams.server";
+import { createChat, getTeamBySlug } from "~/models";
 import type { Chat } from "~/_types";
 
 type ActionData = {

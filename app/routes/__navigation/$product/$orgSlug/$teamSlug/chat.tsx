@@ -3,7 +3,7 @@ import type { LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Link, Outlet, useCatch, useLoaderData } from "@remix-run/react";
 import { ChatList } from "~/components/modules/network";
-import { getChats } from "~/models/chats.server";
+import { getChats } from "~/models";
 import type { Chat } from "~/_types";
 
 interface LoaderData {

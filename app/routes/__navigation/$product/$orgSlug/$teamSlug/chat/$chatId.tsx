@@ -3,7 +3,7 @@ import { json } from "@remix-run/node";
 import { useCatch, useLoaderData, useParams } from "@remix-run/react";
 import { Chat } from "~/components/modules/network";
 import { setAuthToken } from "~/db";
-import { getLastMessages, sendMessage } from "~/models/chats.server";
+import { getLastMessages, sendMessage } from "~/models";
 import type { Message } from "~/_types";
 
 interface LoaderData {
