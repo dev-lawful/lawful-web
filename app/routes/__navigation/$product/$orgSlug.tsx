@@ -1,10 +1,15 @@
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Outlet, useCatch } from "@remix-run/react";
-import { checkActiveSubscription, getOrganizationBySlug } from "~/models";
+import {
+  checkActiveSubscription,
+  getOrganizationBySlug,
+  getOrganizationsByUserId,
+} from "~/models";
+import { getSession } from "~/sessions";
+import type { UserSession } from "~/_types";
 
-// TODO: Check if the org belongs to selected product and if user belongs to this org
-export const loader: LoaderFunction = async ({ params }) => {
+export const loader: LoaderFunction = async ({ params, request }) => {
   const { product, orgSlug } = params;
   if (!product || !orgSlug) {
     throw new Response("Product or Organization slug isn't defined", {
@@ -20,6 +25,19 @@ export const loader: LoaderFunction = async ({ params }) => {
     throw new Response("Organization not found", {
       status: 400,
     });
+  }
+
+  const session = await getSession(request.headers.get("Cookie"));
+  const { user } = (session.get("authenticated") as UserSession) || {};
+  const { data: userOrgs, error: userOrgsError } =
+    await getOrganizationsByUserId(user.id);
+  if (userOrgsError) {
+    throw new Error("There has been an error fetching organizations");
+  }
+
+  const userBelongsToOrg = userOrgs.some(({ id }) => id === organization.id);
+  if (!userBelongsToOrg) {
+    throw new Error("The signed in user doesn't belong to this organization");
   }
 
   const orgHasSubscription = await checkActiveSubscription({

@@ -10,9 +10,10 @@ export const loader: LoaderFunction = async ({ params, request }) => {
     return redirect("/");
   }
   const session = await getSession(request.headers.get("Cookie"));
-  const { accessToken } = (session.get("authenticated") as UserSession) || {};
+  const { accessToken, user: userCookie } =
+    (session.get("authenticated") as UserSession) || {};
   const { user } = await supabase.auth.api.getUser(accessToken);
-  if (!user) {
+  if (!user || !userCookie) {
     return redirect("/signin");
   }
   return json({});
