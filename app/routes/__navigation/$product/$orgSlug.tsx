@@ -35,7 +35,9 @@ export const loader: LoaderFunction = async ({ params, request }) => {
     throw new Error("There has been an error fetching organizations");
   }
 
-  const userBelongsToOrg = userOrgs.some(({ id }) => id === organization.id);
+  const userBelongsToOrg = userOrgs.some(
+    ({ organizationId }) => organizationId === organization.id
+  );
   if (!userBelongsToOrg) {
     throw new Error("The signed in user doesn't belong to this organization");
   }

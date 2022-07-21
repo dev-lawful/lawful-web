@@ -58,3 +58,21 @@ export const addUserToTeam = async (
     };
   }
 };
+
+export const getTeamsByUserId = async (
+  userId: string
+): Promise<CustomResponse<TeamMember>> => {
+  try {
+    const { data, error } = await supabase
+      .from<TeamMember>("teamMembers")
+      .select("*")
+      .eq("userId", userId);
+
+    return { data: data ?? [], error: error?.message ?? null };
+  } catch (err) {
+    return {
+      data: [],
+      error: "There has been an error trying to fetch organizations.",
+    };
+  }
+};

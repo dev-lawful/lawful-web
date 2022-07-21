@@ -8,12 +8,12 @@ import type {
 
 export const getOrganizationsByUserId = async (
   userId: string
-): Promise<CustomResponse<Organization>> => {
+): Promise<CustomResponse<OrganizationMember>> => {
   try {
     const { data, error } = await supabase
-      .from<Organization>("organizations")
+      .from<OrganizationMember>("organizationMembers")
       .select("*")
-      .eq("ownerId", userId);
+      .eq("userId", userId);
 
     return { data: data ?? [], error: error?.message ?? null };
   } catch (err) {
