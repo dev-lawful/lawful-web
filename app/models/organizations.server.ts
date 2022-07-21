@@ -24,6 +24,25 @@ export const getOrganizationsByUserId = async (
   }
 };
 
+export const getOrganizationBySlug = async (
+  slug: string
+): Promise<CustomResponse<Organization>> => {
+  try {
+    const { data, error } = await supabase
+      .from<Organization>("organizations")
+      .select("*")
+      .eq("slug", slug)
+      .limit(1);
+
+    return { data: data ?? [], error: error?.message ?? null };
+  } catch (err) {
+    return {
+      data: [],
+      error: "There has been an error trying to fetch organizations.",
+    };
+  }
+};
+
 export const createOrganization = async (
   organizationData: Omit<Organization, "id" | "createdAt">
 ): Promise<CustomResponse<Organization>> => {

@@ -20,3 +20,21 @@ export const suscribeToProduct = async (
     };
   }
 };
+
+export const checkActiveSubscription = async (
+  subscriptionData: Omit<Subscription, "id" | "createdAt">
+): Promise<boolean> => {
+  const { organizationId, product } = subscriptionData;
+  try {
+    const { data, error } = await supabase
+      .from<Subscription>("subscriptions")
+      .select("*")
+      .eq("organizationId", organizationId)
+      .eq("product", product)
+      .limit(1);
+
+    return error || data?.length < 1 ? false : true;
+  } catch (err) {
+    return false;
+  }
+};
