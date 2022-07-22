@@ -1,7 +1,6 @@
 import type { PostgrestResponse } from "@supabase/supabase-js";
-import { eq } from "lodash";
 import { supabase } from "~/db";
-import type { Initiative, CustomResponse } from "~/_types";
+import type { CustomResponse, Initiative, Vote } from "~/_types";
 
 export const getInitiatives = async (): Promise<CustomResponse<Initiative>> => {
   try {
@@ -70,6 +69,33 @@ export const updateInitiative = async ({
       .from("initiatives")
       .update({ ...initiative, teamId: 1 })
       .eq("id", initiativeId);
+
+    return {
+      data: data ?? [],
+      error: null,
+    };
+  } catch (err) {
+    return {
+      data: [],
+      error: "There has been an error trying to create this initiative.",
+    };
+  }
+};
+
+export const createVote = async ({
+  optionId,
+  userId,
+}: {
+  optionId: number;
+  userId: string;
+}): Promise<CustomResponse<Vote>> => {
+  try {
+    const { data }: PostgrestResponse<Vote> = await supabase
+      .from<Vote>("votes")
+      .insert({
+        optionId,
+        userId,
+      });
 
     return {
       data: data ?? [],

@@ -33,7 +33,11 @@ import type { Status } from "~/components/modules/lawful";
 import { InitiativeStatus } from "~/components/modules/lawful";
 import { MarkdownViewer } from "~/components/ui";
 import { supabase, useSupabaseClient } from "~/db";
-import { getInitiativeById, getOptionsByInitiativeId } from "~/models";
+import {
+  createVote,
+  getInitiativeById,
+  getOptionsByInitiativeId,
+} from "~/models";
 import type { Initiative, Option, Vote } from "~/_types";
 
 const getInitiativeStatus = ({ date }: { date: Date }) =>
@@ -53,12 +57,15 @@ interface LoaderData {
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
 
-  await supabase.from<Vote>("votes").insert({
-    optionId: parseInt(formData.get("optionId")! as string),
-    userId: formData.get("userId")! as string,
+  const optionId = parseInt(formData.get("optionId")! as string);
+  const userId = formData.get("userId")! as string;
+
+  await createVote({
+    optionId,
+    userId,
   });
 
-  return json({});
+  return json<{}>({});
 };
 
 export const loader: LoaderFunction = async ({ params }) => {
