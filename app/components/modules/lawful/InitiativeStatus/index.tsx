@@ -1,13 +1,11 @@
 import { Badge } from "@chakra-ui/react";
-import React from "react";
 
+export type Status = "active" | "closed";
 interface Props {
-  dateString: string;
+  status: Status;
 }
 
-export const InitiativeStatus = ({ dateString }: Props) => {
-  const date = new Date(dateString);
-
+export const InitiativeStatus = ({ status }: Props) => {
   const { colorScheme, label } = {
     closed: {
       colorScheme: "red",
@@ -17,7 +15,7 @@ export const InitiativeStatus = ({ dateString }: Props) => {
       colorScheme: "green",
       label: "Active",
     },
-  }[date.getTime() > new Date().getTime() ? "active" : "closed"];
+  }[status];
 
   return <Badge colorScheme={colorScheme}>{label}</Badge>;
 };

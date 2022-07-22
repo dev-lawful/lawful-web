@@ -6,6 +6,7 @@ import {
   Container,
   Heading,
   HStack,
+  Input,
   Link,
   List,
   ListItem,
@@ -20,7 +21,7 @@ import {
   Wrap,
   WrapItem,
 } from "@chakra-ui/react";
-import type { LoaderFunction } from "@remix-run/node";
+import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import {
   Form,
@@ -28,10 +29,15 @@ import {
   useCatch,
   useLoaderData,
 } from "@remix-run/react";
+import type { Status } from "~/components/modules/lawful";
 import { InitiativeStatus } from "~/components/modules/lawful";
 import { MarkdownViewer } from "~/components/ui";
+import { supabase, useSupabaseClient } from "~/db";
 import { getInitiativeById, getOptionsByInitiativeId } from "~/models";
 import type { Initiative, Option, Vote } from "~/_types";
+
+const getInitiativeStatus = ({ date }: { date: Date }) =>
+  date.getTime() > new Date().getTime() ? "active" : "closed";
 
 interface LoaderData {
   data: {
@@ -43,6 +49,17 @@ interface LoaderData {
     >;
   };
 }
+
+export const action: ActionFunction = async ({ request }) => {
+  const formData = await request.formData();
+
+  await supabase.from<Vote>("votes").insert({
+    optionId: parseInt(formData.get("optionId")! as string),
+    userId: formData.get("userId")! as string,
+  });
+
+  return json({});
+};
 
 export const loader: LoaderFunction = async ({ params }) => {
   const { initiativeId } = params;
@@ -81,6 +98,20 @@ const InitiativeRoute = () => {
   } = useLoaderData<LoaderData>();
 
   const initiativeSubtitleColor = useColorModeValue("lawful.500", "lawful.300");
+
+  const supabase = useSupabaseClient();
+
+  const flattenedVotes = options.map((i) => i.votes).flat();
+
+  const userVotes = flattenedVotes.filter(
+    (item) => item.userId === supabase.auth?.user()?.id
+  );
+
+  const hasUserAlreadyVoted = userVotes.length > 0;
+
+  const initiativeStatus: Status = getInitiativeStatus({
+    date: new Date(initiative?.dueDate!),
+  });
 
   return (
     <Container maxW={"7xl"}>
@@ -127,7 +158,7 @@ const InitiativeRoute = () => {
                 >
                   Status
                 </Text>
-                <InitiativeStatus dateString={initiative.dueDate} />
+                <InitiativeStatus status={initiativeStatus} />
               </Box>
             ) : null}
             <Box>
@@ -196,18 +227,38 @@ const InitiativeRoute = () => {
           </Wrap>
         </Stack>
         <Stack spacing={{ base: 6, md: 10 }}>
-          <Heading>Voting area</Heading>
+          <Heading>
+            {initiativeStatus === "closed" ? "Voting has ended" : "Voting area"}
+          </Heading>
           <Form method="post">
-            <RadioGroup name="option">
+            <Input
+              type="hidden"
+              value={supabase?.auth?.user()?.id}
+              name="userId"
+            ></Input>
+            <RadioGroup defaultChecked={true} name="option">
               <VStack align="start" spacing={3}>
                 {options.map(({ votes, content, id }) => {
                   return (
-                    <Radio colorScheme="lawful" value={`${id}`}>
+                    <Radio
+                      name="optionId"
+                      key={id}
+                      colorScheme="lawful"
+                      value={`${id}`}
+                      // TODO: Set default checked item to whatever the user has voted
+                    >
                       {content} (Votes count: {votes.length})
                     </Radio>
                   );
                 })}
-                <Button>Submit vote</Button>
+                <Button
+                  disabled={
+                    hasUserAlreadyVoted || initiativeStatus === "closed"
+                  }
+                  type="submit"
+                >
+                  {hasUserAlreadyVoted ? "You already voted!" : "Submit vote"}
+                </Button>
               </VStack>
             </RadioGroup>
           </Form>
