@@ -16,7 +16,7 @@ import {
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
-import type { FC, PropsWithChildren, VFC } from "react";
+import type { PropsWithChildren, FC } from "react";
 
 const Links = ["Initiatives", "Kanban", "Chat", "🔜"];
 

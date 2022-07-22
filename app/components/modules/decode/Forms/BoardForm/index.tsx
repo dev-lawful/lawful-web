@@ -6,7 +6,7 @@ interface Props {
   defaultValues?: Partial<Board>;
 }
 
-export const BoardForm: React.VFC<Props> = ({
+export const BoardForm: React.FC<Props> = ({
   defaultValues = {
     teamId: "",
     name: "",
