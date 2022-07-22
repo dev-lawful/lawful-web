@@ -16,7 +16,9 @@ import {
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
+import { Form, Link as RemixLink } from "@remix-run/react";
 import type { FC, VFC } from "react";
+import { useSupabaseClient } from "~/db";
 
 const Links = ["Initiatives", "Kanban", "Chat", "🔜"];
 
@@ -36,6 +38,7 @@ const NavLink: FC = ({ children }) => (
 );
 
 export const Navbar: VFC = () => {
+  const { user } = useSupabaseClient();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -48,42 +51,68 @@ export const Navbar: VFC = () => {
           display={{ md: "none" }}
           onClick={isOpen ? onClose : onOpen}
         />
-        <HStack spacing={8} alignItems={"center"}>
+        <HStack spacing={8} alignItems="center">
           <Box>Logo</Box>
-          <HStack as={"nav"} spacing={4} display={{ base: "none", md: "flex" }}>
+          <HStack as="nav" spacing={4} display={{ base: "none", md: "flex" }}>
             {Links.map((link) => (
               <NavLink key={link}>{link}</NavLink>
             ))}
           </HStack>
         </HStack>
         <Flex alignItems={"center"}>
-          <Menu>
-            <MenuButton
-              as={Button}
-              rounded={"full"}
-              variant={"link"}
-              cursor={"pointer"}
-              minW={0}
-            >
-              <Avatar
-                size={"sm"}
-                src={"https://avatars.githubusercontent.com/u/103387285?v=4"}
-              />
-            </MenuButton>
-            <MenuList>
-              <MenuItem>Switch Org / Team</MenuItem>
-
-              <MenuItem>Profile</MenuItem>
-              <MenuDivider />
-              <MenuItem>Log out</MenuItem>
-            </MenuList>
-          </Menu>
+          {user ? (
+            <Menu>
+              <MenuButton
+                as={Button}
+                rounded="full"
+                variant="link"
+                cursor="pointer"
+                minW={0}
+              >
+                <Avatar
+                  size="sm"
+                  src="https://avatars.githubusercontent.com/u/103387285?v=4"
+                />
+              </MenuButton>
+              <MenuList>
+                <MenuItem>Switch Org / Team</MenuItem>
+                <MenuItem>Profile</MenuItem>
+                <MenuDivider />
+                <Form action="/signout" method="post">
+                  <MenuItem role="button" type="submit">
+                    Sign out
+                  </MenuItem>
+                </Form>
+              </MenuList>
+            </Menu>
+          ) : (
+            <>
+              <Link as={RemixLink} to="/signin" fontSize={"sm"}>
+                Sign in
+              </Link>
+              <Link
+                as={RemixLink}
+                to="/signup"
+                display={{ base: "none", md: "inline-flex" }}
+                p={2}
+                ml={5}
+                borderRadius="5"
+                fontSize={"sm"}
+                bg="pink.400"
+                _hover={{
+                  bg: "pink.300",
+                }}
+              >
+                Sign up
+              </Link>
+            </>
+          )}
         </Flex>
       </Flex>
 
       {isOpen ? (
         <Box pb={4} display={{ md: "none" }}>
-          <Stack as={"nav"} spacing={4}>
+          <Stack as="nav" spacing={4}>
             {Links.map((link) => (
               <NavLink key={link}>{link}</NavLink>
             ))}

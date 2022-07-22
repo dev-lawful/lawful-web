@@ -8,8 +8,7 @@ import {
 import type { ActionFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, useActionData, useParams } from "@remix-run/react";
-import { createChat } from "~/models/chats.server";
-import { getTeamBySlug } from "~/models/teams.server";
+import { createChat, getTeamBySlug } from "~/models";
 import type { Chat } from "~/_types";
 
 type ActionData = {
@@ -24,7 +23,14 @@ type ActionData = {
 
 const badRequest = (data: ActionData) => json(data, { status: 400 });
 
-export const action: ActionFunction = async ({ request }) => {
+export const action: ActionFunction = async ({ request, params }) => {
+  const { product } = params;
+  if (product !== "network") {
+    throw new Response("Chat feature doesn't belong to this product", {
+      status: 400,
+    });
+  }
+
   const formData = await request.formData();
   const name = formData.get("name");
   const description = formData.get("description");

@@ -1,6 +1,6 @@
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Outlet, useLoaderData } from "@remix-run/react";
+import { Outlet } from "@remix-run/react";
 import { getInitiatives } from "~/models";
 import type { Initiative } from "~/_types";
 
@@ -17,7 +17,6 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 const EditorRoute = () => {
-  const { data } = useLoaderData();
   return (
     <>
       <pre>Initiatives list</pre>

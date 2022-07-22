@@ -1,27 +1,28 @@
 import {
-  Flex,
-  Box,
-  FormControl,
-  FormLabel,
-  Input,
-  Checkbox,
-  Stack,
-  Link,
-  Button,
-  Heading,
-  Text,
-  useColorModeValue,
   Alert,
   AlertIcon,
+  Box,
+  Button,
+  Checkbox,
+  Flex,
+  FormControl,
   FormErrorMessage,
+  FormLabel,
+  Heading,
+  Input,
+  Link,
+  Stack,
+  Text,
 } from "@chakra-ui/react";
 import type { ActionFunction } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
-import { json } from "@remix-run/node";
-import { Form, useActionData, useTransition } from "@remix-run/react";
-import type { FormEventHandler } from "react";
-import { useRef } from "react";
-import { supabase, useSupabaseClient } from "~/db";
+import { json, redirect } from "@remix-run/node";
+import {
+  Form,
+  useActionData,
+  useTransition,
+  Link as RemixLink,
+} from "@remix-run/react";
+import { supabase } from "~/db";
 import { commitSession, getSession } from "~/sessions";
 
 interface SignInForm {
@@ -32,7 +33,6 @@ interface SignInForm {
 type ActionData = {
   formError?: string;
   fieldErrors?: Partial<SignInForm>;
-  //TODO use Chat type
   fields?: SignInForm;
 };
 
@@ -58,18 +58,26 @@ export const action: ActionFunction = async ({ request }) => {
     return badRequest({ fieldErrors, fields });
   }
 
-  const { session: userSession, error } = await supabase.auth.signIn({
+  const { data, error } = await supabase.auth.api.signInWithEmail(
     email,
-    password,
-  });
+    password
+  );
 
   if (error) {
     return badRequest({ formError: error.message });
   }
+  const userSession = data &&
+    data.user && {
+      accessToken: data.access_token,
+      refreshToken: data.refresh_token ?? "",
+      user: data.user,
+      expiresIn: data.expires_in ?? -1,
+      expiresAt: data.expires_at ?? -1,
+    };
 
   if (userSession) {
     const session = await getSession(request.headers.get("Cookie"));
-    session.set("access_token", userSession.access_token);
+    session.set("authenticated", userSession);
     return redirect("/", {
       headers: {
         "Set-Cookie": await commitSession(session),
@@ -83,44 +91,22 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 const SignInRoute = () => {
-  const supabase = useSupabaseClient();
   const transition = useTransition();
   const actionData = useActionData<ActionData>();
-  const emailRef = useRef<HTMLInputElement>(null);
-  const passwordRef = useRef<HTMLInputElement>(null);
-
-  const handleSignIn: FormEventHandler<HTMLFormElement> = async (e) => {
-    const email = emailRef.current?.value;
-    const password = passwordRef.current?.value;
-    await supabase.auth.signIn({
-      email,
-      password,
-    });
-  };
 
   const shouldShowAlert = !!actionData?.formError;
 
   return (
-    <Flex
-      minH={"100vh"}
-      align={"center"}
-      justify={"center"}
-      bg={useColorModeValue("gray.50", "gray.800")}
-    >
-      <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
-        <Stack align={"center"}>
-          <Heading fontSize={"4xl"}>Sign in to your account</Heading>
-          <Text fontSize={"lg"} color={"gray.600"}>
-            to enjoy all of our cool <Link color={"blue.400"}>features</Link> ✌️
+    <Flex minH="100vh" align="center" justify="center" bg="gray.800">
+      <Stack spacing={8} mx="auto" maxW="lg" py={12} px={6}>
+        <Stack align="center">
+          <Heading fontSize="4xl">Sign in to your account</Heading>
+          <Text fontSize="lg" color="gray.600">
+            to enjoy all of our cool features ✌️
           </Text>
         </Stack>
-        <Box
-          rounded={"lg"}
-          bg={useColorModeValue("white", "gray.700")}
-          boxShadow={"lg"}
-          p={8}
-        >
-          <Form method="post" onSubmit={handleSignIn}>
+        <Box rounded="lg" bg="gray.700" boxShadow="lg" p={8}>
+          <Form method="post">
             <Stack spacing={4}>
               {shouldShowAlert ? (
                 <Alert status="error" borderRadius={5}>
@@ -128,10 +114,12 @@ const SignInRoute = () => {
                   {actionData.formError}
                 </Alert>
               ) : null}
-              <FormControl id="email">
+              <FormControl
+                id="email"
+                isInvalid={!!actionData?.fieldErrors?.email}
+              >
                 <FormLabel>Email address</FormLabel>
                 <Input
-                  ref={emailRef}
                   name="email"
                   type="email"
                   defaultValue={actionData?.fields?.email}
@@ -140,9 +128,12 @@ const SignInRoute = () => {
                   {actionData?.fieldErrors?.email}
                 </FormErrorMessage>
               </FormControl>
-              <FormControl id="password">
+              <FormControl
+                id="password"
+                isInvalid={!!actionData?.fieldErrors?.password}
+              >
                 <FormLabel>Password</FormLabel>
-                <Input ref={passwordRef} name="password" type="password" />
+                <Input name="password" type="password" />
                 <FormErrorMessage>
                   {actionData?.fieldErrors?.password}
                 </FormErrorMessage>
@@ -159,14 +150,22 @@ const SignInRoute = () => {
                 <Button
                   disabled={transition.state === "submitting"}
                   type="submit"
-                  bg={"blue.400"}
-                  color={"white"}
+                  bg="blue.400"
+                  color="white"
                   _hover={{
                     bg: "blue.500",
                   }}
                 >
                   Sign in
                 </Button>
+              </Stack>
+              <Stack pt={6}>
+                <Text align="center">
+                  I you haven't registered yet{" "}
+                  <Link as={RemixLink} to="/signup" color={"blue.400"}>
+                    Sign up
+                  </Link>
+                </Text>
               </Stack>
             </Stack>
           </Form>

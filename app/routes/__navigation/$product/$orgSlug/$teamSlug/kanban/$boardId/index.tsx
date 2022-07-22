@@ -34,7 +34,7 @@ import type {
   SupabaseClient,
   SupabaseRealtimePayload,
 } from "@supabase/supabase-js";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import {
@@ -42,7 +42,7 @@ import {
   StateTray,
   TaskCard,
 } from "~/components/modules/decode";
-import { SupabaseClientContext } from "~/db";
+import { useSupabaseClient } from "~/db";
 import {
   deleteBoard,
   getBoardById,
@@ -208,7 +208,7 @@ const BoardRoute: RouteComponent = () => {
   const {
     data: { boardStates, tasks, boards },
   } = useLoaderData<LoaderData>();
-  const supabase = useContext(SupabaseClientContext);
+  const { supabase } = useSupabaseClient();
   const fetcher = useFetcher();
 
   const { 0: board } = boards;

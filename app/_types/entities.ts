@@ -9,3 +9,6 @@ export type Team = definitions["teams"];
 export type Message = definitions["messages"];
 export type Chat = definitions["chats"];
 export type Profile = definitions["profiles"];
+export type Subscription = definitions["subscriptions"];
+export type OrganizationMember = definitions["organizationMembers"];
+export type TeamMember = definitions["teamMembers"];
