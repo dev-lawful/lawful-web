@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import ReactMarkdown from "react-markdown";
 
-export const MarkdownViewer: React.VFC<{ markdown: string }> = ({
+export const MarkdownViewer: React.FC<{ markdown: string }> = ({
   markdown,
 }) => {
   return (

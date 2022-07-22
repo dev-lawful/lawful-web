@@ -16,11 +16,11 @@ import {
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
-import type { FC, VFC } from "react";
+import type { FC, PropsWithChildren, VFC } from "react";
 
 const Links = ["Initiatives", "Kanban", "Chat", "🔜"];
 
-const NavLink: FC = ({ children }) => (
+const NavLink: FC<PropsWithChildren<{}>> = ({ children }) => (
   <Link
     px={2}
     py={1}

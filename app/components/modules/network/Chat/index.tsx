@@ -11,13 +11,13 @@ import {
 import { Form, useTransition } from "@remix-run/react";
 import type { SupabaseRealtimePayload } from "@supabase/supabase-js";
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { VFC } from "react";
+import type { FC } from "react";
 import { useSupabaseClient } from "~/db";
 import type { Message } from "~/_types";
 import { Message as MessageBox } from "./Message";
 import { flushSync } from "react-dom";
 
-export const Chat: VFC<{ chatId: string; initialMessages: Array<Message> }> = ({
+export const Chat: FC<{ chatId: string; initialMessages: Array<Message> }> = ({
   chatId,
   initialMessages,
 }) => {

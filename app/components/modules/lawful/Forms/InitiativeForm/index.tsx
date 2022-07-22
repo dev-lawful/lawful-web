@@ -18,7 +18,7 @@ interface Props {
   defaultValues?: Partial<Initiative>;
 }
 
-export const InitiativeForm: React.VFC<Props> = ({
+export const InitiativeForm: React.FC<Props> = ({
   defaultValues = {
     content: ``,
     description: "",

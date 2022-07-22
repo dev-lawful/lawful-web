@@ -1,13 +1,13 @@
 import { HStack, Link, ListItem, UnorderedList } from "@chakra-ui/react";
 import { NavLink } from "@remix-run/react";
-import type { VFC } from "react";
+import type { FC } from "react";
 import type { Initiative } from "~/_types";
 
 interface Props {
   initiatives: Array<Initiative>;
 }
 
-export const InitiativesList: VFC<Props> = ({ initiatives }) => {
+export const InitiativesList: FC<Props> = ({ initiatives }) => {
   return (
     <UnorderedList
       listStyleType="none"

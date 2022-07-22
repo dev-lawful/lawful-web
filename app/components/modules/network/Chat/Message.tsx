@@ -1,11 +1,11 @@
 import { Avatar, HStack, Text, VStack } from "@chakra-ui/react";
-import type { VFC } from "react";
+import type { FC } from "react";
 import { useSupabaseClient } from "~/db";
 import type { Message as MessageType } from "~/_types";
 
 const EMPTY_MSG_FALLBACK = "Empty message...";
 
-export const Message: VFC<{
+export const Message: FC<{
   message: MessageType;
   currentUserId: string | undefined;
 }> = ({ message: { userId, text, createdAt, id }, currentUserId }) => {

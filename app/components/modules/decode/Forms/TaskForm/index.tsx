@@ -8,7 +8,7 @@ interface Props {
   states: Array<BoardState>;
 }
 
-export const TaskForm: React.VFC<Props> = ({
+export const TaskForm: React.FC<Props> = ({
   states,
   defaultValues = {
     id: "",
