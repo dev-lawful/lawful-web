@@ -182,7 +182,7 @@ const TaskRoute = () => {
             <WrapItem>
               <Form method="delete">
                 <input type="hidden" value={task.id} />
-                <Button colorScheme="red">
+                <Button type="submit" colorScheme="red">
                   <HStack>
                     <DeleteIcon /> <Text>Delete</Text>
                   </HStack>
