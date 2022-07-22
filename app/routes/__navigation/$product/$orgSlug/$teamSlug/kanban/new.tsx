@@ -1,8 +1,7 @@
-import { ArrowLeftIcon } from "@chakra-ui/icons";
-import { Button, Heading, HStack, Link, Text, VStack } from "@chakra-ui/react";
+import { Heading, VStack } from "@chakra-ui/react";
 import type { ActionFunction } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
-import { Link as RemixLink, useCatch } from "@remix-run/react";
+import { useCatch } from "@remix-run/react";
 import { BoardForm } from "~/components/modules/decode/Forms/BoardForm";
 import { createBoard } from "~/models";
 

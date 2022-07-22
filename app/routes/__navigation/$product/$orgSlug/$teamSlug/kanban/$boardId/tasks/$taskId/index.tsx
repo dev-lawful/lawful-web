@@ -1,9 +1,4 @@
-import {
-  ArrowBackIcon,
-  ArrowLeftIcon,
-  DeleteIcon,
-  EditIcon,
-} from "@chakra-ui/icons";
+import { ArrowBackIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
