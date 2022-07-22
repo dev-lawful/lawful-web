@@ -32,7 +32,7 @@ import {
 import type { Status } from "~/components/modules/lawful";
 import { InitiativeStatus } from "~/components/modules/lawful";
 import { MarkdownViewer } from "~/components/ui";
-import { supabase, useSupabaseClient } from "~/db";
+import { useSupabaseClient } from "~/db";
 import {
   createVote,
   getInitiativeById,
