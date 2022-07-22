@@ -40,7 +40,7 @@ import {
 } from "~/models";
 import type { Initiative, Option, Vote } from "~/_types";
 
-const getInitiativeStatus = ({ date }: { date: Date }) =>
+const getInitiativeStatus = ({ date }: { date: Date }): Status =>
   date.getTime() > new Date().getTime() ? "active" : "closed";
 
 interface LoaderData {
