@@ -35,7 +35,7 @@ const NavLink: FC<PropsWithChildren<{}>> = ({ children }) => (
   </Link>
 );
 
-export const Navbar: VFC = () => {
+export const Navbar: FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
