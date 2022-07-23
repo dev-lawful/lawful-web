@@ -11,3 +11,6 @@ export type Chat = definitions["chats"];
 export type Profile = definitions["profiles"];
 export type Option = definitions["options"];
 export type Vote = definitions["votes"];
+export type Subscription = definitions["subscriptions"];
+export type OrganizationMember = definitions["organizationMembers"];
+export type TeamMember = definitions["teamMembers"];

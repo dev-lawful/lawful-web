@@ -10,19 +10,20 @@ import {
 } from "@chakra-ui/react";
 import { Form, useTransition } from "@remix-run/react";
 import type { SupabaseRealtimePayload } from "@supabase/supabase-js";
-import { useCallback, useEffect, useRef, useState } from "react";
 import type { FC } from "react";
+import { useEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { useSupabaseClient } from "~/db";
 import type { Message } from "~/_types";
 import { Message as MessageBox } from "./Message";
-import { flushSync } from "react-dom";
 
 export const Chat: FC<{ chatId: string; initialMessages: Array<Message> }> = ({
   chatId,
   initialMessages,
 }) => {
-  const supabase = useSupabaseClient();
-  const currentUserId = supabase.auth.user()?.id;
+  const { supabase, user } = useSupabaseClient();
+
+  const currentUserId = user?.id;
   // TODO: to be honest, I'm not sure about this approach (using props as initialState)
   // but I didn't find another way to achieve the same result (all of them broke the exhaustive-deps rule)
   const [messages, setMessages] = useState<Array<Message>>(initialMessages);
@@ -43,27 +44,25 @@ export const Chat: FC<{ chatId: string; initialMessages: Array<Message> }> = ({
     }
   };
 
-  const handleReceivedMessage = useCallback(
-    (message: SupabaseRealtimePayload<Message>) => {
+  useEffect(() => {
+    const handleReceivedMessage = (
+      message: SupabaseRealtimePayload<Message>
+    ) => {
       const { new: newMessage } = message;
       flushSync(() => {
         setMessages((messages) => [...messages, newMessage]);
       });
       scrollToLastMessage();
-    },
-    []
-  );
+    };
 
-  useEffect(() => {
     const subscription = supabase
       .from(`messages:chatId=eq.${chatId}`)
       .on("INSERT", handleReceivedMessage)
       .subscribe();
-
     return () => {
-      subscription.unsubscribe();
+      supabase.removeSubscription(subscription);
     };
-  }, [chatId, supabase, handleReceivedMessage]);
+  }, [chatId, supabase]);
 
   useEffect(() => {
     if (!isSending) {
@@ -92,11 +91,7 @@ export const Chat: FC<{ chatId: string; initialMessages: Array<Message> }> = ({
       <Box p="2" m="0">
         <Form method="post" ref={formRef}>
           <HStack>
-            <Input
-              type="hidden"
-              name="userId"
-              value={supabase.auth.user()?.id}
-            />
+            <Input type="hidden" name="userId" value={currentUserId} />
             <Input name="message" type="text" />
             <Button type="submit">Send 💥</Button>
           </HStack>

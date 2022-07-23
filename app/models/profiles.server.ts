@@ -10,7 +10,7 @@ export const createProfile = async (
       .insert(profileData);
     return {
       data: data ?? [],
-      error: error?.message || null,
+      error: error?.message ?? null,
     };
   } catch (err) {
     return {
@@ -30,7 +30,7 @@ export const findProfileByEmail = async (
       .eq("email", email);
     return {
       data: data ?? [],
-      error: error?.message || null,
+      error: error?.message ?? null,
     };
   } catch (err) {
     return {
