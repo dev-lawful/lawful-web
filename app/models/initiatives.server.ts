@@ -1,6 +1,6 @@
 import type { PostgrestResponse } from "@supabase/supabase-js";
 import { supabase } from "~/db";
-import type { CustomResponse, Initiative, Vote } from "~/_types";
+import type { CustomResponse, Initiative, Option, Vote } from "~/_types";
 
 export const getInitiatives = async (): Promise<CustomResponse<Initiative>> => {
   try {
@@ -37,16 +37,38 @@ export const getInitiativeById = async ({
   }
 };
 
-export const createInitiative = async (
-  initiativeData: Omit<Initiative, "id">
-): Promise<CustomResponse<Initiative>> => {
+export const createInitiative = async ({
+  initiativeData,
+  options,
+}: {
+  initiativeData: Omit<Initiative, "id" | "created_at">;
+  options: Array<Omit<Option, "id" | "created_at">>;
+}): Promise<CustomResponse<Initiative>> => {
   try {
-    const { data }: PostgrestResponse<Initiative> = await supabase
+    const {
+      data: initiative,
+      error: initiativeError,
+    }: PostgrestResponse<Initiative> = await supabase
       .from("initiatives")
       .insert({ ...initiativeData });
 
+    if (initiativeError) throw new Error(initiativeError.message);
+
+    if (initiative) {
+      const {
+        0: { id: initiativeId },
+      } = initiative;
+
+      await supabase.from<Option>("options").insert(
+        options.map((option) => ({
+          ...option,
+          initiativeId: initiativeId,
+        }))
+      );
+    }
+
     return {
-      data: data ?? [],
+      data: initiative ?? [],
       error: null,
     };
   } catch (err) {

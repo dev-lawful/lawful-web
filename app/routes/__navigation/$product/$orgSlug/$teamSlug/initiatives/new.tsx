@@ -1,9 +1,18 @@
+import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
+import {
+  Editable,
+  EditableInput,
+  EditablePreview,
+  HStack,
+} from "@chakra-ui/react";
 import type { ActionFunction, LinksFunction } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import { useCatch } from "@remix-run/react";
+import { useState } from "react";
 import { InitiativeForm } from "~/components/modules/lawful/Forms/InitiativeForm";
 import { editorLinks } from "~/components/ui";
 import { createInitiative } from "~/models";
+import type { Option } from "~/_types";
 
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
@@ -11,6 +20,14 @@ export const action: ActionFunction = async ({ request }) => {
   const title = formData.get("title") ?? "";
   const description = formData.get("description") ?? "";
   const dueDate = formData.get("dueDate") ?? "";
+
+  const options: Array<Omit<Option, "id" | "created_at">> = Object.entries(
+    Object.fromEntries(formData)
+  )
+    .filter(([key]) => key.includes("option"))
+    .map(([, value]) => ({
+      content: value as string,
+    }));
 
   if (
     typeof content !== "string" ||
@@ -22,10 +39,13 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   const { error } = await createInitiative({
-    content,
-    title,
-    description,
-    dueDate,
+    initiativeData: {
+      content,
+      title,
+      description,
+      dueDate,
+    },
+    options,
   });
 
   if (error) {
@@ -44,7 +64,62 @@ export const links: LinksFunction = () => {
 };
 
 const InitiativesNewRoute = () => {
-  return <InitiativeForm />;
+  const [options, setOptions] = useState<
+    Array<{ id: number; content: string }>
+  >([
+    {
+      id: 0,
+      content: "Yes",
+    },
+    {
+      id: 1,
+      content: "No",
+    },
+  ]);
+
+  return (
+    <InitiativeForm>
+      {options.map(({ id, content }, index) => {
+        return (
+          <HStack key={id}>
+            <Editable defaultValue={content}>
+              <EditablePreview />
+              <EditableInput
+                name={`option-${index}`}
+                defaultValue={content ?? "New option"}
+              />
+            </Editable>
+            {options.length !== 1 ? (
+              <DeleteIcon
+                onClick={() => {
+                  setOptions((previousState) =>
+                    previousState.filter((item) => item.id !== id)
+                  );
+                }}
+              >
+                Delete
+              </DeleteIcon>
+            ) : null}
+            {index === options.length - 1 ? (
+              <AddIcon
+                onClick={() => {
+                  setOptions((previousState) => [
+                    ...previousState,
+                    {
+                      id: previousState[previousState.length - 1].id + 1,
+                      content: "New option",
+                    },
+                  ]);
+                }}
+              >
+                Add a new option
+              </AddIcon>
+            ) : null}
+          </HStack>
+        );
+      })}
+    </InitiativeForm>
+  );
 };
 
 export default InitiativesNewRoute;

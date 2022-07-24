@@ -7,9 +7,10 @@ import {
   HStack,
   Input,
   Text,
-  VStack
+  VStack,
 } from "@chakra-ui/react";
 import { Form } from "@remix-run/react";
+import type { PropsWithChildren } from "react";
 import { getDateInputFormattedDateString } from "~/components/modules/utils";
 import { Editor } from "~/components/ui";
 import type { Initiative } from "~/_types";
@@ -25,7 +26,8 @@ export const InitiativeForm = ({
     dueDate: new Date().toString(),
     title: "",
   },
-}: Props) => {
+  children,
+}: PropsWithChildren<Props>) => {
   return (
     <VStack
       as={Form}
@@ -79,6 +81,7 @@ export const InitiativeForm = ({
           initiative's content!
         </FormHelperText>
       </FormControl>
+      {children}
       <Button type="submit">
         <HStack>
           <AddIcon />
