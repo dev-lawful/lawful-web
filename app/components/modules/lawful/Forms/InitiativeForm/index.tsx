@@ -18,17 +18,14 @@ interface Props {
   defaultValues?: Partial<Initiative>;
 }
 
-export const InitiativeForm: React.FC<Props> = ({
+export const InitiativeForm = ({
   defaultValues = {
-    content: ``,
+    content: "",
     description: "",
-    dueDate: new Date(),
+    dueDate: new Date().toString(),
     title: "",
   },
-}) => {
-  const formattedDueDate = getDateInputFormattedDateString(
-    defaultValues.dueDate?.toString()!
-  );
+}: Props) => {
   return (
     <VStack
       as={Form}
@@ -63,7 +60,9 @@ export const InitiativeForm: React.FC<Props> = ({
           name="dueDate"
           id="dueDate"
           type="datetime-local"
-          defaultValue={formattedDueDate}
+          defaultValue={getDateInputFormattedDateString(
+            defaultValues.dueDate?.toString()!
+          )}
         />
       </FormControl>
       <FormControl>

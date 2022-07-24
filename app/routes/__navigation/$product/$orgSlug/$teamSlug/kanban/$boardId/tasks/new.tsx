@@ -42,12 +42,14 @@ export const action: ActionFunction = async ({ request }) => {
   const name = (formData.get("name") as string) ?? "";
   const description = (formData.get("description") as string) ?? "";
   const stateId = (formData.get("stateId") as string) ?? "";
+  const asignee = (formData.get("asignee") as string) ?? "";
 
   const { error } = await createTask({
     taskData: {
       dueDate,
       description,
       name,
+      asignee,
       stateId: parseInt(stateId),
     },
   });

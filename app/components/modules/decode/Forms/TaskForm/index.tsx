@@ -9,23 +9,18 @@ interface Props {
   profiles: Array<Profile>;
 }
 
-export const TaskForm: React.FC<Props> = ({
+export const TaskForm = ({
   states,
+  profiles,
   defaultValues = {
-    id: "",
-    dueDate: new Date(),
+    id: 0,
+    dueDate: new Date().toString(),
     name: "",
     description: "",
-    stateId: null,
-    asignee: null,
+    stateId: undefined,
+    asignee: undefined,
   },
-  profiles,
-}) => {
-  // Date input expects "yyyy-MM-ddThh:mm" format
-  const formattedDueDate = getDateInputFormattedDateString(
-    defaultValues["dueDate"]?.toString()!
-  );
-
+}: Props) => {
   return (
     <Form method="post">
       <Stack spacing={4}>
@@ -54,7 +49,6 @@ export const TaskForm: React.FC<Props> = ({
             defaultValue={defaultValues["description"]}
           />
         </FormLabel>
-        {/* "yyyy-MM-ddThh:mm" */}
         <FormLabel htmlFor="dueDate">
           Due date
           <Input
@@ -62,7 +56,9 @@ export const TaskForm: React.FC<Props> = ({
             type="datetime-local"
             name="dueDate"
             id="dueDate"
-            defaultValue={formattedDueDate}
+            defaultValue={getDateInputFormattedDateString(
+              defaultValues["dueDate"]?.toString()!
+            )}
           />
         </FormLabel>
         <FormLabel>

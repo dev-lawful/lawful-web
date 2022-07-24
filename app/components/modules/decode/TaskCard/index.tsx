@@ -8,7 +8,7 @@ interface Props {
   task: Task;
 }
 
-export const TaskCard: React.FC<Props> = ({ task }) => {
+export const TaskCard = ({ task }: Props) => {
   const matches = useMatches();
 
   const { pathname } = matches[matches.length - 1];

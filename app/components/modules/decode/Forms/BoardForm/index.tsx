@@ -6,12 +6,11 @@ interface Props {
   defaultValues?: Partial<Board>;
 }
 
-export const BoardForm: React.FC<Props> = ({
+export const BoardForm = ({
   defaultValues = {
-    teamId: "",
     name: "",
   },
-}) => {
+}: Props) => {
   return (
     <Form method="post">
       <Stack spacing={4}>
