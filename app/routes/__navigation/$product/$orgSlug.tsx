@@ -49,7 +49,7 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   });
   if (!orgHasSubscription) {
     throw new Response(
-      "Organization doesn't have an active subscription to this product",
+      "Your organization doesn't seem have an active subscription to this product",
       {
         status: 401,
       }

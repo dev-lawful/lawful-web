@@ -6,6 +6,7 @@ import {
   Flex,
   HStack,
   IconButton,
+  Image,
   Link,
   Menu,
   MenuButton,
@@ -14,13 +15,46 @@ import {
   MenuList,
   Stack,
   useColorModeValue,
-  useDisclosure
+  useDisclosure,
 } from "@chakra-ui/react";
-import { Form, Link as RemixLink } from "@remix-run/react";
+import { Form, Link as RemixLink, useParams } from "@remix-run/react";
 import type { FC, PropsWithChildren } from "react";
 import { useSupabaseClient } from "~/db";
 
-const Links = ["Initiatives", "Kanban", "Chat", "🔜"];
+const useNavbarLinks = () => {
+  const params = useParams();
+  if (!params.product || !params.teamSlug || !params.orgSlug) return [];
+
+  switch (params.product) {
+    case "decode": {
+      return [
+        {
+          label: "Kanban",
+          to: `${params.product}/${params.orgSlug}/${params.teamSlug}/kanban`,
+        },
+        {
+          label: "Initiatives",
+          to: `${params.product}/${params.orgSlug}/${params.teamSlug}/initiatives`,
+        },
+      ];
+    }
+    case "network": {
+      return [
+        {
+          label: "Chat",
+          to: `${params.product}/${params.orgSlug}/${params.teamSlug}/chat`,
+        },
+        {
+          label: "Initiatives",
+          to: `${params.product}/${params.orgSlug}/${params.teamSlug}/initiatives`,
+        },
+      ];
+    }
+    default: {
+      return [];
+    }
+  }
+};
 
 const NavLink = ({ children }: PropsWithChildren<{}>) => (
   <Link
@@ -41,6 +75,9 @@ export const Navbar: FC = () => {
   const { user } = useSupabaseClient();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const { product } = useParams();
+  const links = useNavbarLinks();
+
   return (
     <Box bg={useColorModeValue("gray.100", "gray.900")} px={4}>
       <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
@@ -52,10 +89,17 @@ export const Navbar: FC = () => {
           onClick={isOpen ? onClose : onOpen}
         />
         <HStack spacing={8} alignItems="center">
-          <Box>Logo</Box>
+          <RemixLink to="/">
+            <Image
+              src={`/images/logos/${product ?? "lawful"}-logo-white.svg`}
+              height={10}
+            />
+          </RemixLink>
           <HStack as="nav" spacing={4} display={{ base: "none", md: "flex" }}>
-            {Links.map((link) => (
-              <NavLink key={link}>{link}</NavLink>
+            {links.map(({ label, to }) => (
+              <Link to={to} as={RemixLink} key={label}>
+                {label}
+              </Link>
             ))}
           </HStack>
         </HStack>
@@ -113,7 +157,7 @@ export const Navbar: FC = () => {
       {isOpen ? (
         <Box pb={4} display={{ md: "none" }}>
           <Stack as="nav" spacing={4}>
-            {Links.map((link) => (
+            {getLinksByProduct.map((link) => (
               <NavLink key={link}>{link}</NavLink>
             ))}
           </Stack>
