@@ -1,6 +1,6 @@
 import type { PostgrestResponse } from "@supabase/supabase-js";
 import { supabase } from "~/db";
-import type { CustomResponse, Task } from "~/_types";
+import type { CustomResponse, Profile, Task } from "~/_types";
 
 export const getTasksByBoardStateId = async (
   boardStatesIds: Array<number>
@@ -86,11 +86,24 @@ export const createTask = async ({
 
 export const getTaskById = async (
   taskId: string
-): Promise<CustomResponse<Task>> => {
+): Promise<
+  CustomResponse<
+    Task & {
+      asignee: Profile;
+    }
+  >
+> => {
   try {
     const { data } = await supabase
       .from<Task>("tasks")
-      .select("name, description, dueDate, asignee, stateId, id")
+      .select(
+        `
+        *,
+        asignee (
+          *
+        )
+      `
+      )
       .eq("id", taskId);
 
     return { data: data ?? [], error: null };

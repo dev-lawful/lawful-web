@@ -1,11 +1,12 @@
 import { Button, FormLabel, Input, Select, Stack } from "@chakra-ui/react";
 import { Form } from "@remix-run/react";
+import type { BoardState, Profile, Task } from "~/_types";
 import { getDateInputFormattedDateString } from "./getDateInputFormattedDateString";
-import type { BoardState, Task } from "~/_types";
 
 interface Props {
   defaultValues?: Partial<Task>;
   states: Array<BoardState>;
+  profiles: Array<Profile>;
 }
 
 export const TaskForm: React.FC<Props> = ({
@@ -18,6 +19,7 @@ export const TaskForm: React.FC<Props> = ({
     stateId: null,
     asignee: null,
   },
+  profiles,
 }) => {
   // Date input expects "yyyy-MM-ddThh:mm" format
   const formattedDueDate = getDateInputFormattedDateString(
@@ -63,7 +65,22 @@ export const TaskForm: React.FC<Props> = ({
             defaultValue={formattedDueDate}
           />
         </FormLabel>
-        {/* //TODO: Create asignee users dropdown  */}
+        <FormLabel>
+          Asignee
+          <Select
+            placeholder="Choose an asignee"
+            name="asignee"
+            defaultValue={defaultValues["asignee"] ?? undefined}
+          >
+            {profiles.map(({ id, lastName, firstName }) => {
+              return (
+                <option key={id} value={id}>
+                  {firstName} {lastName}
+                </option>
+              );
+            })}
+          </Select>
+        </FormLabel>
         <Input required type="hidden" name="asignee" id="asignee" />
         <FormLabel htmlFor="stateId">
           Initial state

@@ -1,6 +1,7 @@
 import type { PostgrestResponse } from "@supabase/supabase-js";
 import { supabase } from "~/db";
-import type { CustomResponse, TeamMember, Team } from "~/_types";
+import type { CustomResponse, Profile, Team, TeamMember } from "~/_types";
+import util from "util";
 
 export const getTeamBySlug = async (
   slug: string
@@ -38,6 +39,7 @@ export const createTeam = async (
     };
   }
 };
+
 //TODO: Check if user belong to teams' organization before adding them to the team
 export const addUserToTeam = async (
   teamMemberData: Omit<TeamMember, "id">

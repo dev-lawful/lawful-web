@@ -4,7 +4,7 @@ import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Link as RemixLink, Outlet, useLoaderData } from "@remix-run/react";
 import { BoardsList } from "~/components/modules/decode";
-import { getBoardsByTeamId } from "~/models";
+import { getBoardsByTeamId, getTeamBySlug } from "~/models";
 import type { Board } from "~/_types";
 
 interface LoaderData {
@@ -13,18 +13,27 @@ interface LoaderData {
   };
 }
 
-export const loader: LoaderFunction = async ({ request, params }) => {
+export const loader: LoaderFunction = async ({ params }) => {
   const { product } = params;
+
   if (product !== "decode") {
     throw new Response("Kanban feature doesn't belong to this product", {
       status: 400,
     });
   }
 
-  // TODO: make teamId dynamic given the current team
-  const { data: boards, error } = await getBoardsByTeamId(1);
+  const {
+    data: {
+      0: { id: teamId },
+    },
+    error: teamError,
+  } = await getTeamBySlug(params.teamSlug!);
 
-  if (error) throw new Error(error);
+  if (teamError) throw new Error(teamError);
+
+  const { data: boards, error: boardsError } = await getBoardsByTeamId(teamId);
+
+  if (boardsError) throw new Error(boardsError);
 
   return json<LoaderData>({
     data: {

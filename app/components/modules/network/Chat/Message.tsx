@@ -7,7 +7,7 @@ const EMPTY_MSG_FALLBACK = "Empty message...";
 export const Message: FC<{
   message: MessageType;
   currentUserId: string | undefined;
-}> = ({ message: { userId, text, createdAt, id }, currentUserId }) => {
+}> = ({ message: { userId, text, createdAt }, currentUserId }) => {
   const fromCurrentUser = currentUserId === userId;
 
   return (

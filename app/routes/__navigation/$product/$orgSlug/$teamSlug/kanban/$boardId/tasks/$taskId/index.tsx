@@ -26,11 +26,15 @@ import {
   useParams,
 } from "@remix-run/react";
 import { deleteTask, getBoardStatesByStateId, getTaskById } from "~/models";
-import type { BoardState, Task } from "~/_types";
+import type { BoardState, Profile, Task } from "~/_types";
 
 interface LoaderData {
   data: {
-    taskData: Array<Task>;
+    taskData: Array<
+      Task & {
+        asignee: Profile;
+      }
+    >;
     boardStateData: Array<Pick<BoardState, "description">>;
   };
 }
@@ -167,7 +171,9 @@ const TaskRoute = () => {
                   <Text as={"span"} fontWeight={"bold"}>
                     Asignee:
                   </Text>{" "}
-                  {task.asignee ?? "Unassigned"}
+                  {task.asignee
+                    ? `${task.asignee.firstName} ${task.asignee.lastName} `
+                    : "Unassigned"}
                 </ListItem>
               </List>
             </Box>
