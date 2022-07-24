@@ -68,8 +68,10 @@ const useNavbarLinks = () => {
   }
 };
 
-const NavLink = ({ children }: PropsWithChildren<{}>) => (
+const NavLink = ({ children, to }: PropsWithChildren<{ to: string }>) => (
   <Link
+    as={RemixLink}
+    to={to}
     px={2}
     py={1}
     rounded={"md"}
@@ -77,7 +79,6 @@ const NavLink = ({ children }: PropsWithChildren<{}>) => (
       textDecoration: "none",
       bg: useColorModeValue("gray.200", "gray.700"),
     }}
-    href={"#"}
   >
     {children}
   </Link>
@@ -109,9 +110,9 @@ export const Navbar: FC = () => {
           </RemixLink>
           <HStack as="nav" spacing={4} display={{ base: "none", md: "flex" }}>
             {links.map(({ label, to }) => (
-              <Link to={to} as={RemixLink} key={label}>
+              <NavLink to={to} key={label}>
                 {label}
-              </Link>
+              </NavLink>
             ))}
           </HStack>
         </HStack>
@@ -170,9 +171,9 @@ export const Navbar: FC = () => {
         <Box pb={4} display={{ md: "none" }}>
           <Stack as="nav" spacing={4}>
             {links.map(({ label, to }) => (
-              <Link to={to} as={RemixLink} key={label}>
+              <NavLink to={to} key={label}>
                 {label}
-              </Link>
+              </NavLink>
             ))}
           </Stack>
         </Box>
