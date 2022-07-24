@@ -169,8 +169,10 @@ export const Navbar: FC = () => {
       {isOpen ? (
         <Box pb={4} display={{ md: "none" }}>
           <Stack as="nav" spacing={4}>
-            {getLinksByProduct.map((link) => (
-              <NavLink key={link}>{link}</NavLink>
+            {links.map(({ label, to }) => (
+              <Link to={to} as={RemixLink} key={label}>
+                {label}
+              </Link>
             ))}
           </Stack>
         </Box>
