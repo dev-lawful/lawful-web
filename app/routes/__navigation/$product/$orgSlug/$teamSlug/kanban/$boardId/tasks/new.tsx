@@ -5,7 +5,7 @@ import { TaskForm } from "~/components/modules/decode";
 import {
   createTask,
   getBoardStatesByBoardId,
-  getProfilesByTeamSlug,
+  getProfilesByTeamSlug
 } from "~/models";
 import type { BoardState, Profile } from "~/_types";
 

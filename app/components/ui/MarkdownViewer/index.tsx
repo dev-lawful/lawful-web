@@ -5,7 +5,7 @@ import {
   ListItem,
   OrderedList,
   Text,
-  UnorderedList,
+  UnorderedList
 } from "@chakra-ui/react";
 import ReactMarkdown from "react-markdown";
 

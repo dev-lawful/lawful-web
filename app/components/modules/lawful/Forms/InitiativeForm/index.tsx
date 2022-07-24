@@ -7,7 +7,7 @@ import {
   HStack,
   Input,
   Text,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import { Form } from "@remix-run/react";
 import { getDateInputFormattedDateString } from "~/components/modules/utils";

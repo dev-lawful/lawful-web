@@ -14,7 +14,7 @@ import {
   MenuList,
   Stack,
   useColorModeValue,
-  useDisclosure,
+  useDisclosure
 } from "@chakra-ui/react";
 import { Form, Link as RemixLink } from "@remix-run/react";
 import type { FC, PropsWithChildren } from "react";

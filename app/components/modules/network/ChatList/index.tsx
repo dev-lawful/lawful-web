@@ -3,7 +3,7 @@ import {
   HStack,
   Link,
   ListItem,
-  UnorderedList,
+  UnorderedList
 } from "@chakra-ui/react";
 import { NavLink } from "@remix-run/react";
 import type { Chat } from "~/_types";
