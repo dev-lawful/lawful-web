@@ -7,10 +7,13 @@ import {
 } from "@chakra-ui/react";
 import type { ActionFunction, LinksFunction } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
-import { useCatch } from "@remix-run/react";
 import { useState } from "react";
-import { InitiativeForm } from "~/components/modules/lawful/Forms/InitiativeForm";
-import { editorLinks } from "~/components/ui";
+import { InitiativeForm } from "~/components/modules/lawful/";
+import {
+  editorLinks,
+  CustomCatchBoundary,
+  CustomErrorBoundary,
+} from "~/components/ui";
 import { createInitiative } from "~/models";
 import type { Option } from "~/_types";
 
@@ -124,20 +127,6 @@ const InitiativesNewRoute = () => {
 
 export default InitiativesNewRoute;
 
-export const ErrorBoundary = ({ error }: { error: Error }) => {
-  return (
-    <div>
-      <p>{error.message}</p>
-    </div>
-  );
-};
+export const ErrorBoundary = CustomErrorBoundary;
 
-export const CatchBoundary = () => {
-  const error = useCatch();
-  return (
-    <div>
-      <p>{error.status}</p>
-      <p>{error.data}</p>
-    </div>
-  );
-};
+export const CatchBoundary = CustomCatchBoundary;

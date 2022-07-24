@@ -1,6 +1,7 @@
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Outlet, useCatch } from "@remix-run/react";
+import { CustomErrorBoundary, CustomCatchBoundary } from "~/components/ui";
 import {
   checkActiveSubscription,
   getOrganizationBySlug,
@@ -64,20 +65,6 @@ const OrganizationLayoutRoute = () => {
 
 export default OrganizationLayoutRoute;
 
-export const ErrorBoundary = ({ error }: { error: Error }) => {
-  return (
-    <div>
-      <p>{error.message}</p>
-    </div>
-  );
-};
+export const ErrorBoundary = CustomErrorBoundary;
 
-export const CatchBoundary = () => {
-  const error = useCatch();
-  return (
-    <div>
-      <p>{error.status}</p>
-      <p>{error.data}</p>
-    </div>
-  );
-};
+export const CatchBoundary = CustomCatchBoundary;

@@ -8,7 +8,7 @@ import type {
 import { json, redirect } from "@remix-run/node";
 import { useCatch, useLoaderData, Link as RemixLink } from "@remix-run/react";
 import { InitiativeForm } from "~/components/modules/lawful";
-import { editorLinks } from "~/components/ui";
+import { CustomCatchBoundary, CustomErrorBoundary, editorLinks } from "~/components/ui";
 import { getInitiativeById, updateInitiative } from "~/models";
 import type { Initiative } from "~/_types";
 
@@ -93,20 +93,7 @@ const NewInitiativeRoute = () => {
 
 export default NewInitiativeRoute;
 
-export const ErrorBoundary = ({ error }: { error: Error }) => {
-  return (
-    <div>
-      <p>{error.message}</p>
-    </div>
-  );
-};
+export const ErrorBoundary = CustomErrorBoundary;
 
-export const CatchBoundary = () => {
-  const error = useCatch();
-  return (
-    <div>
-      <p>{error.status}</p>
-      <p>{error.data}</p>
-    </div>
-  );
-};
+export const CatchBoundary = CustomCatchBoundary;
+

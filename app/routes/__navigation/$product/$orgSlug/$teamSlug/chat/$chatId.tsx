@@ -2,6 +2,7 @@ import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useCatch, useLoaderData, useParams } from "@remix-run/react";
 import { Chat } from "~/components/modules/network";
+import { CustomErrorBoundary, CustomCatchBoundary } from "~/components/ui";
 import { setAuthToken } from "~/db";
 import { getLastMessages, sendMessage } from "~/models";
 import type { Message } from "~/_types";
@@ -69,21 +70,6 @@ const ChatIndexRoute = () => {
 
 export default ChatIndexRoute;
 
-//TODO: Refactor ErrorBoundary and CatchBoundary
-export const ErrorBoundary = ({ error }: { error: Error }) => {
-  return (
-    <div>
-      <p>{error.message}</p>
-    </div>
-  );
-};
+export const ErrorBoundary = CustomErrorBoundary;
 
-export const CatchBoundary = () => {
-  const error = useCatch();
-  return (
-    <div>
-      <p>{error.status}</p>
-      <p>{error.data}</p>
-    </div>
-  );
-};
+export const CatchBoundary = CustomCatchBoundary;

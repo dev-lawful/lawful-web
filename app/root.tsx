@@ -18,6 +18,7 @@ import {
 } from "@remix-run/react";
 import React, { useContext, useEffect } from "react";
 import { ClientStyleContext, getTheme, ServerStyleContext } from "~/styles";
+import { CustomErrorBoundary, CustomCatchBoundary } from "./components/ui";
 import { SupabaseClientProvider, useCreateSupabaseClient } from "./db";
 import { getSession } from "./sessions";
 import type { UserSession } from "./_types";
@@ -129,10 +130,6 @@ export default function App() {
   );
 }
 
-export const CatchBoundary = () => {
-  return <h1>Invalid Route</h1>;
-};
+export const ErrorBoundary = CustomErrorBoundary;
 
-export const ErrorBoundary = () => {
-  return <h1>Error</h1>;
-};
+export const CatchBoundary = CustomCatchBoundary;

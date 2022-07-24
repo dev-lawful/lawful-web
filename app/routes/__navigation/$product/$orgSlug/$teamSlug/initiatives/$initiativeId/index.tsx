@@ -1,6 +1,5 @@
 import { ArrowBackIcon, EditIcon } from "@chakra-ui/icons";
 import {
-  Alert,
   Box,
   Button,
   Container,
@@ -23,15 +22,14 @@ import {
 } from "@chakra-ui/react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import {
-  Form,
-  Link as RemixLink,
-  useCatch,
-  useLoaderData,
-} from "@remix-run/react";
+import { Form, Link as RemixLink, useLoaderData } from "@remix-run/react";
 import type { Status } from "~/components/modules/lawful";
 import { InitiativeStatus } from "~/components/modules/lawful";
-import { MarkdownViewer } from "~/components/ui";
+import {
+  CustomCatchBoundary,
+  CustomErrorBoundary,
+  MarkdownViewer,
+} from "~/components/ui";
 import { useSupabaseClient } from "~/db";
 import {
   createVote,
@@ -277,19 +275,6 @@ const InitiativeRoute = () => {
 
 export default InitiativeRoute;
 
-export const CatchBoundary = () => {
-  const error = useCatch();
-  return (
-    <div>
-      <Alert>{error.data}</Alert>
-    </div>
-  );
-};
+export const ErrorBoundary = CustomErrorBoundary;
 
-export function ErrorBoundary({ error }: { error: Error }) {
-  return (
-    <div>
-      <Alert variant="solid">{error.message}</Alert>
-    </div>
-  );
-}
+export const CatchBoundary = CustomCatchBoundary;

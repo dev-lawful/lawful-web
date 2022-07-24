@@ -4,6 +4,7 @@ import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Link as RemixLink, Outlet, useLoaderData } from "@remix-run/react";
 import { InitiativesList } from "~/components/modules/lawful";
+import { CustomErrorBoundary, CustomCatchBoundary } from "~/components/ui";
 import { getInitiatives } from "~/models";
 import type { Initiative } from "~/_types";
 
@@ -43,10 +44,6 @@ const EditorRoute = () => {
 
 export default EditorRoute;
 
-export const ErrorBoundary = ({ error }: { error: Error }) => {
-  return (
-    <div>
-      <p>{error.message}</p>
-    </div>
-  );
-};
+export const ErrorBoundary = CustomErrorBoundary;
+
+export const CatchBoundary = CustomCatchBoundary;

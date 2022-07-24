@@ -25,6 +25,7 @@ import {
   useLoaderData,
   useParams,
 } from "@remix-run/react";
+import { CustomErrorBoundary, CustomCatchBoundary } from "~/components/ui";
 import { deleteTask, getBoardStatesByStateId, getTaskById } from "~/models";
 import type { BoardState, Profile, Task } from "~/_types";
 
@@ -217,20 +218,6 @@ const TaskRoute = () => {
 
 export default TaskRoute;
 
-export const ErrorBoundary = ({ error }: { error: Error }) => {
-  return (
-    <div>
-      <p>{error.message}</p>
-    </div>
-  );
-};
+export const ErrorBoundary = CustomErrorBoundary;
 
-export const CatchBoundary = () => {
-  const error = useCatch();
-  return (
-    <div>
-      <p>{error.status}</p>
-      <p>{error.data}</p>
-    </div>
-  );
-};
+export const CatchBoundary = CustomCatchBoundary;
