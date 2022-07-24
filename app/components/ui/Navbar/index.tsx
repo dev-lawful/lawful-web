@@ -23,7 +23,19 @@ import { useSupabaseClient } from "~/db";
 
 const useNavbarLinks = () => {
   const params = useParams();
-  if (!params.product || !params.teamSlug || !params.orgSlug) return [];
+
+  const baseLinks = [
+    {
+      label: "Network",
+      to: "/network",
+    },
+    {
+      label: "Decode",
+      to: "/decode",
+    },
+  ];
+
+  if (!params.product || !params.teamSlug || !params.orgSlug) return baseLinks;
 
   switch (params.product) {
     case "decode": {
@@ -51,7 +63,7 @@ const useNavbarLinks = () => {
       ];
     }
     default: {
-      return [];
+      return baseLinks;
     }
   }
 };
