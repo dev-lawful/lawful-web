@@ -1,8 +1,7 @@
 {
-  "name": "remix-template-vercel",
+  "name": "lawful-web",
   "private": true,
-  "description": "",
-  "license": "",
+  "description": "One app. Many collaboration tools.",
   "sideEffects": false,
   "scripts": {
     "build": "remix build",
