@@ -36,7 +36,7 @@ export const InitiativeForm = ({
       spacing={3}
       align="start"
     >
-      <FormControl>
+      <FormControl isRequired>
         <FormLabel htmlFor="title">Title</FormLabel>
         <Input
           name="title"
@@ -46,7 +46,7 @@ export const InitiativeForm = ({
         />
       </FormControl>
 
-      <FormControl>
+      <FormControl isRequired>
         <FormLabel htmlFor="description">Description</FormLabel>
         <Input
           name="description"
@@ -56,7 +56,7 @@ export const InitiativeForm = ({
         />
       </FormControl>
 
-      <FormControl>
+      <FormControl isRequired>
         <FormLabel htmlFor="dueDate">Due date</FormLabel>
         <Input
           name="dueDate"
@@ -67,7 +67,7 @@ export const InitiativeForm = ({
           )}
         />
       </FormControl>
-      <FormControl>
+      <FormControl isRequired>
         <FormLabel htmlFor="dueDate">Content</FormLabel>
         <Editor
           inputMeta={{
