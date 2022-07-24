@@ -1,8 +1,8 @@
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { useCatch, useLoaderData, useParams } from "@remix-run/react";
+import { useLoaderData, useParams } from "@remix-run/react";
 import { Chat } from "~/components/modules/network";
-import { CustomErrorBoundary, CustomCatchBoundary } from "~/components/ui";
+import { CustomCatchBoundary, CustomErrorBoundary } from "~/components/ui";
 import { setAuthToken } from "~/db";
 import { getLastMessages, sendMessage } from "~/models";
 import type { Message } from "~/_types";

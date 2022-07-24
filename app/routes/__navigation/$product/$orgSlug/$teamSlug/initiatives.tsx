@@ -1,10 +1,10 @@
 import { PlusSquareIcon } from "@chakra-ui/icons";
-import { Button, HStack, Link, VStack, Text, Box } from "@chakra-ui/react";
+import { Box, Button, HStack, Link, Text, VStack } from "@chakra-ui/react";
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Link as RemixLink, Outlet, useLoaderData } from "@remix-run/react";
 import { InitiativesList } from "~/components/modules/lawful";
-import { CustomErrorBoundary, CustomCatchBoundary } from "~/components/ui";
+import { CustomCatchBoundary, CustomErrorBoundary } from "~/components/ui";
 import { getInitiatives } from "~/models";
 import type { Initiative } from "~/_types";
 

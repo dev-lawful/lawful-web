@@ -21,11 +21,10 @@ import { json, redirect } from "@remix-run/node";
 import {
   Form,
   Link as RemixLink,
-  useCatch,
   useLoaderData,
   useParams,
 } from "@remix-run/react";
-import { CustomErrorBoundary, CustomCatchBoundary } from "~/components/ui";
+import { CustomCatchBoundary, CustomErrorBoundary } from "~/components/ui";
 import { deleteTask, getBoardStatesByStateId, getTaskById } from "~/models";
 import type { BoardState, Profile, Task } from "~/_types";
 

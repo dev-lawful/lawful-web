@@ -1,7 +1,7 @@
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Outlet, useCatch } from "@remix-run/react";
-import { CustomErrorBoundary, CustomCatchBoundary } from "~/components/ui";
+import { Outlet } from "@remix-run/react";
+import { CustomCatchBoundary, CustomErrorBoundary } from "~/components/ui";
 import {
   checkActiveSubscription,
   getOrganizationBySlug,

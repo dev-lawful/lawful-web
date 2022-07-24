@@ -1,9 +1,9 @@
 import { HStack, VStack } from "@chakra-ui/react";
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Link, Outlet, useCatch, useLoaderData } from "@remix-run/react";
+import { Link, Outlet, useLoaderData } from "@remix-run/react";
 import { ChatList } from "~/components/modules/network";
-import { CustomErrorBoundary, CustomCatchBoundary } from "~/components/ui";
+import { CustomCatchBoundary, CustomErrorBoundary } from "~/components/ui";
 import { getChats } from "~/models";
 import type { Chat } from "~/_types";
 

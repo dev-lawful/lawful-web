@@ -18,7 +18,7 @@ import {
 } from "@remix-run/react";
 import React, { useContext, useEffect } from "react";
 import { ClientStyleContext, getTheme, ServerStyleContext } from "~/styles";
-import { CustomErrorBoundary, CustomCatchBoundary } from "./components/ui";
+import { CustomCatchBoundary, CustomErrorBoundary } from "./components/ui";
 import { SupabaseClientProvider, useCreateSupabaseClient } from "./db";
 import { getSession } from "./sessions";
 import type { UserSession } from "./_types";

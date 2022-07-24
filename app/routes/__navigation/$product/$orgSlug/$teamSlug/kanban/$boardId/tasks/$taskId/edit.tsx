@@ -1,12 +1,12 @@
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { useCatch, useLoaderData } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
 import { TaskForm } from "~/components/modules/decode/Forms/TaskForm";
-import { CustomErrorBoundary, CustomCatchBoundary } from "~/components/ui";
+import { CustomCatchBoundary, CustomErrorBoundary } from "~/components/ui";
 import {
   getBoardStatesByBoardId,
-  getTaskById,
   getProfilesByTeamSlug,
+  getTaskById,
   updateTask,
 } from "~/models";
 import type { BoardState, Profile, Task } from "~/_types";
@@ -103,4 +103,3 @@ export default EditTaskRoute;
 export const ErrorBoundary = CustomErrorBoundary;
 
 export const CatchBoundary = CustomCatchBoundary;
-

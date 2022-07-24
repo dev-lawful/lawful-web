@@ -6,9 +6,13 @@ import type {
   LoaderFunction,
 } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { useCatch, useLoaderData, Link as RemixLink } from "@remix-run/react";
+import { Link as RemixLink, useLoaderData } from "@remix-run/react";
 import { InitiativeForm } from "~/components/modules/lawful";
-import { CustomCatchBoundary, CustomErrorBoundary, editorLinks } from "~/components/ui";
+import {
+  CustomCatchBoundary,
+  CustomErrorBoundary,
+  editorLinks,
+} from "~/components/ui";
 import { getInitiativeById, updateInitiative } from "~/models";
 import type { Initiative } from "~/_types";
 
@@ -96,4 +100,3 @@ export default NewInitiativeRoute;
 export const ErrorBoundary = CustomErrorBoundary;
 
 export const CatchBoundary = CustomCatchBoundary;
-
