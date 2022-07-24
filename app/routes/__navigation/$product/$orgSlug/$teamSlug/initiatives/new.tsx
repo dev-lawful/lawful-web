@@ -3,6 +3,7 @@ import {
   Editable,
   EditableInput,
   EditablePreview,
+  Heading,
   HStack,
 } from "@chakra-ui/react";
 import type { ActionFunction, LinksFunction } from "@remix-run/node";
@@ -82,45 +83,48 @@ const InitiativesNewRoute = () => {
 
   return (
     <InitiativeForm>
-      {options.map(({ id, content }, index) => {
-        return (
-          <HStack key={id}>
-            <Editable defaultValue={content}>
-              <EditablePreview />
-              <EditableInput
-                name={`option-${index}`}
-                defaultValue={content ?? "New option"}
-              />
-            </Editable>
-            {options.length !== 1 ? (
-              <DeleteIcon
-                onClick={() => {
-                  setOptions((previousState) =>
-                    previousState.filter((item) => item.id !== id)
-                  );
-                }}
-              >
-                Delete
-              </DeleteIcon>
-            ) : null}
-            {index === options.length - 1 ? (
-              <AddIcon
-                onClick={() => {
-                  setOptions((previousState) => [
-                    ...previousState,
-                    {
-                      id: previousState[previousState.length - 1].id + 1,
-                      content: "New option",
-                    },
-                  ]);
-                }}
-              >
-                Add a new option
-              </AddIcon>
-            ) : null}
-          </HStack>
-        );
-      })}
+      <>
+        <Heading>Options</Heading>
+        {options.map(({ id, content }, index) => {
+          return (
+            <HStack key={id}>
+              <Editable defaultValue={content}>
+                <EditablePreview />
+                <EditableInput
+                  name={`option-${index}`}
+                  defaultValue={content ?? "New option"}
+                />
+              </Editable>
+              {options.length !== 1 ? (
+                <DeleteIcon
+                  onClick={() => {
+                    setOptions((previousState) =>
+                      previousState.filter((item) => item.id !== id)
+                    );
+                  }}
+                >
+                  Delete
+                </DeleteIcon>
+              ) : null}
+              {index === options.length - 1 ? (
+                <AddIcon
+                  onClick={() => {
+                    setOptions((previousState) => [
+                      ...previousState,
+                      {
+                        id: previousState[previousState.length - 1].id + 1,
+                        content: "New option",
+                      },
+                    ]);
+                  }}
+                >
+                  Add a new option
+                </AddIcon>
+              ) : null}
+            </HStack>
+          );
+        })}
+      </>
     </InitiativeForm>
   );
 };
