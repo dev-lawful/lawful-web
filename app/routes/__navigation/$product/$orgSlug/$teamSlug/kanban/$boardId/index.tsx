@@ -37,11 +37,7 @@ import type {
 import { useEffect, useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import {
-  Board as BoardContainer,
-  StateTray,
-  TaskCard,
-} from "~/components/modules/decode";
+import { StateTray, TaskCard } from "~/components/modules/decode";
 import { useSupabaseClient } from "~/db";
 import {
   deleteBoard,
@@ -288,7 +284,7 @@ const BoardRoute: RouteComponent = () => {
             )}
           </Menu>
         </HStack>
-        <BoardContainer>
+        <HStack overflowX="auto">
           {boardStates?.map((boardState) => {
             return (
               <Box as="section" key={boardState.id}>
@@ -308,7 +304,7 @@ const BoardRoute: RouteComponent = () => {
               </Box>
             );
           })}
-        </BoardContainer>
+        </HStack>
       </DndProvider>
     </Stack>
   );

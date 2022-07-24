@@ -1,9 +1,21 @@
 import { PlusSquareIcon } from "@chakra-ui/icons";
-import { Button, HStack, Link, Text, VStack } from "@chakra-ui/react";
+import {
+  Button,
+  HStack,
+  Link,
+  ListItem,
+  Text,
+  UnorderedList,
+  VStack,
+} from "@chakra-ui/react";
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Link as RemixLink, Outlet, useLoaderData } from "@remix-run/react";
-import { BoardsList } from "~/components/modules/decode";
+import {
+  Link as RemixLink,
+  NavLink,
+  Outlet,
+  useLoaderData,
+} from "@remix-run/react";
 import { getBoardsByTeamId, getTeamBySlug } from "~/models";
 import type { Board } from "~/_types";
 
@@ -58,7 +70,36 @@ const KanbanLayoutRoute = () => {
             </HStack>
           </Button>
         </Link>
-        <BoardsList boards={boards} />
+        <UnorderedList
+          listStyleType="none"
+          display="flex"
+          flexDir="column"
+          h="full"
+          overflowY="auto"
+          overflowX="hidden"
+        >
+          {boards
+            .sort(
+              (a, b) =>
+                new Date(a.created_at!).getTime() -
+                new Date(b.created_at!).getTime()
+            )
+            .map(({ name, id, created_at }) => (
+              <ListItem key={id} py="2" px="1" w="full" textOverflow="ellipsis">
+                <HStack h="full">
+                  <Link
+                    as={NavLink}
+                    to={`./${id}`}
+                    overflow="hidden"
+                    textOverflow="ellipsis"
+                    whiteSpace="nowrap"
+                  >
+                    {name}
+                  </Link>
+                </HStack>
+              </ListItem>
+            ))}
+        </UnorderedList>
       </VStack>
       <Outlet />
     </HStack>
