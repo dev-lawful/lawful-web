@@ -37,7 +37,7 @@ const DecodeAboutRoute = () => {
           <Text fontSize={{ base: "md", lg: "lg" }} color={"gray.500"}>
             Communication in modern software development is key. That's why{" "}
             <Text as="strong">Decode</Text> brings top-notch task management and
-            decision-taking features to the table.
+            decision-making features to the table.
           </Text>
         </Stack>
       </Flex>

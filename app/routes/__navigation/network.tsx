@@ -37,7 +37,7 @@ const NetworkAboutRoute = () => {
           <Text fontSize={{ base: "md", lg: "lg" }} color={"gray.500"}>
             Communication in modern business is key. That's why{" "}
             <Text as="strong">Network</Text> brings top-notch messaging and
-            decision-taking features to the table.
+            decision-making features to the table.
           </Text>
         </Stack>
       </Flex>
