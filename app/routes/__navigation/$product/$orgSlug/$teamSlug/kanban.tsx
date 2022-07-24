@@ -84,7 +84,7 @@ const KanbanLayoutRoute = () => {
                 new Date(a.created_at!).getTime() -
                 new Date(b.created_at!).getTime()
             )
-            .map(({ name, id, created_at }) => (
+            .map(({ name, id }) => (
               <ListItem key={id} py="2" px="1" w="full" textOverflow="ellipsis">
                 <HStack h="full">
                   <Link

@@ -35,6 +35,7 @@ import {
   createVote,
   getInitiativeById,
   getOptionsByInitiativeId,
+  updateInitiative,
 } from "~/models";
 import type { Initiative, Option, Vote } from "~/_types";
 
@@ -55,14 +56,24 @@ interface LoaderData {
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
 
-  const optionId = parseInt(formData.get("optionId")! as string);
-  const userId = formData.get("userId")! as string;
+  switch (request.method) {
+    case "POST": {
+      const optionId = parseInt(formData.get("optionId")! as string);
+      const userId = formData.get("userId")! as string;
 
-  await createVote({
-    optionId,
-    userId,
-  });
+      await createVote({
+        optionId,
+        userId,
+      });
+    }
 
+    case "PATCH": {
+      const status = formData.get("status") as string;
+      const id = formData.get("id") as string;
+
+      await updateInitiative({ initiativeData: { status }, initiativeId: id });
+    }
+  }
   return json<{}>({});
 };
 
@@ -109,7 +120,7 @@ const InitiativeRoute = () => {
   const flattenedVotes = options.map((i) => i.votes).flat();
 
   const userVotes = flattenedVotes.filter(
-    (item) => item.userId === supabase.auth?.user()?.id
+    (item) => item.userId === supabase?.user?.id
   );
 
   const hasUserAlreadyVoted = userVotes.length > 0;
@@ -238,8 +249,7 @@ const InitiativeRoute = () => {
           <Form method="post">
             <Input
               type="hidden"
-              // TODO: Apparently this auth property is missing on the "SupabaseContextType" context. Should we add it?
-              value={supabase?.auth?.user()?.id}
+              value={supabase?.user?.id}
               name="userId"
             ></Input>
             <RadioGroup defaultChecked={true} name="option">
@@ -268,6 +278,19 @@ const InitiativeRoute = () => {
               </VStack>
             </RadioGroup>
           </Form>
+          {initiative.owner === supabase?.user?.id ? (
+            <Form method="patch">
+              <Input
+                type="hidden"
+                name="status"
+                value={initiative.status === "draft" ? "published" : "draft"}
+              />
+              <Input type="hidden" name="id" value={initiative.id} />
+              <Button type="submit" variant="outline">
+                {initiative.status === "draft" ? "Publish" : "Unpublish"}
+              </Button>
+            </Form>
+          ) : null}
         </Stack>
       </SimpleGrid>
     </Container>
