@@ -6,13 +6,13 @@ import {
   UnorderedList,
 } from "@chakra-ui/react";
 import { NavLink } from "@remix-run/react";
-import type { FC } from "react";
 import type { Chat } from "~/_types";
 
 interface Props {
   chats: Array<Chat>;
 }
-export const ChatList: FC<Props> = ({ chats }) => {
+
+export const ChatList = ({ chats }: Props) => {
   return (
     <UnorderedList
       listStyleType="none"

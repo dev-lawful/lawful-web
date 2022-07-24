@@ -10,17 +10,18 @@ import {
 } from "@chakra-ui/react";
 import { Form, useTransition } from "@remix-run/react";
 import type { SupabaseRealtimePayload } from "@supabase/supabase-js";
-import type { FC } from "react";
 import { useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { useSupabaseClient } from "~/db";
 import type { Message } from "~/_types";
 import { Message as MessageBox } from "./Message";
 
-export const Chat: FC<{ chatId: string; initialMessages: Array<Message> }> = ({
-  chatId,
-  initialMessages,
-}) => {
+interface Props {
+  chatId: string;
+  initialMessages: Array<Message>;
+}
+
+export const Chat = ({ chatId, initialMessages }: Props) => {
   const { supabase, user } = useSupabaseClient();
 
   const currentUserId = user?.id;

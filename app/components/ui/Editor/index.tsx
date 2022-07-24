@@ -18,7 +18,7 @@ import LexicalRichTextPlugin from "@lexical/react/LexicalRichTextPlugin";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
 import type { LinksFunction } from "@remix-run/node";
-import type { ComponentProps, FC } from "react";
+import type { ComponentProps, FC, PropsWithChildren } from "react";
 import { forwardRef, useState } from "react";
 import AutoLinkPlugin from "./plugins/AutoLinkPlugin";
 import CodeHighlightPlugin from "./plugins/CodeHighlightPlugin";
@@ -59,16 +59,16 @@ export const editorLinks: LinksFunction = () => [
   { rel: "stylesheet", href: styles },
 ];
 
-//Not sure why i need a ref here, https://remix.run/docs/en/v1/guides/styling#shared-component-styles
-const EditorComponent = ({
-  ref,
-  inputMeta,
-  initialState = "",
-}: {
+interface Props {
   inputMeta: { name: string; id: string };
   initialState?: string;
   ref?: any;
-}) => {
+}
+
+const EditorComponent = ({
+  inputMeta,
+  initialState = "",
+}: PropsWithChildren<Props>) => {
   const [editorState, setEditorState] = useState(initialState);
 
   return (
@@ -127,11 +127,11 @@ const EditorComponent = ({
   );
 };
 
-//Not sure why i need a ref here, https://remix.run/docs/en/v1/guides/styling#shared-component-styles
-export const Editor: FC<ComponentProps<typeof EditorComponent>> = forwardRef(
-  ({ children, ...props }, ref) => {
-    return <EditorComponent {...props} ref={ref} />;
-  }
-);
+export const Editor = forwardRef<
+  HTMLDivElement,
+  ComponentProps<typeof EditorComponent>
+>(({ children, ...props }, ref) => {
+  return <EditorComponent {...props} ref={ref} />;
+});
 
 Editor.displayName = "Editor";

@@ -22,7 +22,7 @@ import { useSupabaseClient } from "~/db";
 
 const Links = ["Initiatives", "Kanban", "Chat", "🔜"];
 
-const NavLink: FC<PropsWithChildren<{}>> = ({ children }) => (
+const NavLink = ({ children }: PropsWithChildren<{}>) => (
   <Link
     px={2}
     py={1}
