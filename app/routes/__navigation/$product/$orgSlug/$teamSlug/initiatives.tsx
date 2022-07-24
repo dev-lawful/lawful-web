@@ -20,8 +20,7 @@ export const loader: LoaderFunction = async () => {
   return json<LoaderData>({ data });
 };
 
-const EditorRoute = () => {
-  const { data: initiatives } = useLoaderData();
+const InitiativesLayoutRoute = () => {
   return (
     <HStack align={"start"} flex="1" minH="0" p="4">
       <VStack alignItems="stretch" w="20%" minW="200px" h="full">
@@ -42,7 +41,7 @@ const EditorRoute = () => {
   );
 };
 
-export default EditorRoute;
+export default InitiativesLayoutRoute;
 
 export const ErrorBoundary = CustomErrorBoundary;
 
