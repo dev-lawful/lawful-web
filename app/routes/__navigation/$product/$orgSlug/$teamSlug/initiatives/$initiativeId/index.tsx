@@ -238,6 +238,7 @@ const InitiativeRoute = () => {
           <Form method="post">
             <Input
               type="hidden"
+              // TODO: Apparently this auth property is missing on the "SupabaseContextType" context. Should we add it?
               value={supabase?.auth?.user()?.id}
               name="userId"
             ></Input>
