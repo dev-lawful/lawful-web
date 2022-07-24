@@ -10,7 +10,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { Form } from "@remix-run/react";
-import { getDateInputFormattedDateString } from "~/components/modules/decode/Forms/TaskForm/getDateInputFormattedDateString";
+import { getDateInputFormattedDateString } from "~/components/modules/utils";
 import { Editor } from "~/components/ui";
 import type { Initiative } from "~/_types";
 

@@ -1,7 +1,7 @@
 import { Button, FormLabel, Input, Select, Stack } from "@chakra-ui/react";
 import { Form } from "@remix-run/react";
+import { getDateInputFormattedDateString } from "~/components/modules/utils";
 import type { BoardState, Profile, Task } from "~/_types";
-import { getDateInputFormattedDateString } from "./getDateInputFormattedDateString";
 
 interface Props {
   defaultValues?: Partial<Task>;
