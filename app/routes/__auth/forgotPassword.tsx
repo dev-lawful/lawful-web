@@ -52,7 +52,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   const url = new URL(request.url);
   const { data, error } = await supabase.auth.api.resetPasswordForEmail(email, {
-    redirectTo: `${url.host}/resetPassword`,
+    redirectTo: `${url.origin}/resetPassword`,
   });
   if (error || !data) {
     return badRequest({
