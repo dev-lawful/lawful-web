@@ -47,6 +47,7 @@ export const useCreateSupabaseClient = ({
     const client = createClient(supabaseUrl, supabaseAnonKey, {
       autoRefreshToken: false,
       persistSession: false,
+      detectSessionInUrl: false,
     });
 
     if (accessToken) {
