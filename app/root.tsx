@@ -19,8 +19,12 @@ import {
 import React, { useContext, useEffect } from "react";
 import { ClientStyleContext, getTheme, ServerStyleContext } from "~/styles";
 import { CustomCatchBoundary, CustomErrorBoundary } from "./components/ui";
-import { SupabaseClientProvider, useCreateSupabaseClient } from "./db";
-import { getSession } from "./sessions";
+import {
+  supabase,
+  SupabaseClientProvider,
+  useCreateSupabaseClient,
+} from "./db";
+import { destroySession, getSession } from "./sessions";
 import type { UserSession } from "./_types";
 
 export const meta: MetaFunction = () => ({
@@ -99,13 +103,23 @@ interface LoaderData {
 export const loader: LoaderFunction = async ({ request }) => {
   const session = await getSession(request.headers.get("Cookie"));
   const userSession = session.get("authenticated") as UserSession | undefined;
-  return json<LoaderData>({
-    ENV: {
-      SUPABASE_URL: process.env.SUPABASE_URL || "",
-      SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY || "",
+  const { user } = await supabase.auth.api.getUser(
+    userSession?.accessToken || ""
+  );
+  const destroySessionHeader = user
+    ? undefined
+    : { "Set-Cookie": await destroySession(session) };
+
+  return json<LoaderData>(
+    {
+      ENV: {
+        SUPABASE_URL: process.env.SUPABASE_URL || "",
+        SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY || "",
+      },
+      userSession: user ? userSession : undefined,
     },
-    userSession,
-  });
+    { headers: { ...destroySessionHeader } }
+  );
 };
 
 export default function App() {
