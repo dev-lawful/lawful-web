@@ -1,7 +1,8 @@
-import { HStack, VStack } from "@chakra-ui/react";
+import { PlusSquareIcon } from "@chakra-ui/icons";
+import { Button, HStack, Link, VStack } from "@chakra-ui/react";
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Link, Outlet, useLoaderData } from "@remix-run/react";
+import { Link as RemixLink, Outlet, useLoaderData } from "@remix-run/react";
 import { ChatList } from "~/components/modules/network";
 import { CustomCatchBoundary, CustomErrorBoundary } from "~/components/ui";
 import { getChats } from "~/models";
@@ -39,7 +40,11 @@ const ChatLayoutRoute = () => {
     // TODO: Well, it is hardcoded
     <HStack flex="1" minH="0" height="calc(100vh - 64px)">
       <VStack alignItems="stretch" w="20%" minW="200px" h="full" bg="gray.700">
-        <Link to="./new">Create chat</Link>
+        <Link as={RemixLink} to="./new" mx="auto" my="3">
+          <Button rounded={"md"} rightIcon={<PlusSquareIcon />}>
+            New Chat
+          </Button>
+        </Link>
         <ChatList chats={chats} />
       </VStack>
       <Outlet />
