@@ -1,10 +1,22 @@
 import { PlusSquareIcon } from "@chakra-ui/icons";
-import { Button, HStack, Link, Text, VStack } from "@chakra-ui/react";
+import {
+  Button,
+  HStack,
+  Link,
+  ListItem,
+  Text,
+  UnorderedList,
+  VStack,
+} from "@chakra-ui/react";
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Link as RemixLink, Outlet, useLoaderData } from "@remix-run/react";
-import { BoardsList } from "~/components/modules/decode";
-import { getBoardsByTeamId } from "~/models";
+import {
+  Link as RemixLink,
+  NavLink,
+  Outlet,
+  useLoaderData,
+} from "@remix-run/react";
+import { getBoardsByTeamId, getTeamBySlug } from "~/models";
 import type { Board } from "~/_types";
 
 interface LoaderData {
@@ -13,18 +25,27 @@ interface LoaderData {
   };
 }
 
-export const loader: LoaderFunction = async ({ request, params }) => {
+export const loader: LoaderFunction = async ({ params }) => {
   const { product } = params;
+
   if (product !== "decode") {
     throw new Response("Kanban feature doesn't belong to this product", {
       status: 400,
     });
   }
 
-  // TODO: make teamId dynamic given the current team
-  const { data: boards, error } = await getBoardsByTeamId(1);
+  const {
+    data: {
+      0: { id: teamId },
+    },
+    error: teamError,
+  } = await getTeamBySlug(params.teamSlug!);
 
-  if (error) throw new Error(error);
+  if (teamError) throw new Error(teamError);
+
+  const { data: boards, error: boardsError } = await getBoardsByTeamId(teamId);
+
+  if (boardsError) throw new Error(boardsError);
 
   return json<LoaderData>({
     data: {
@@ -49,7 +70,36 @@ const KanbanLayoutRoute = () => {
             </HStack>
           </Button>
         </Link>
-        <BoardsList boards={boards} />
+        <UnorderedList
+          listStyleType="none"
+          display="flex"
+          flexDir="column"
+          h="full"
+          overflowY="auto"
+          overflowX="hidden"
+        >
+          {boards
+            .sort(
+              (a, b) =>
+                new Date(a.created_at!).getTime() -
+                new Date(b.created_at!).getTime()
+            )
+            .map(({ name, id }) => (
+              <ListItem key={id} py="2" px="1" w="full" textOverflow="ellipsis">
+                <HStack h="full">
+                  <Link
+                    as={NavLink}
+                    to={`./${id}`}
+                    overflow="hidden"
+                    textOverflow="ellipsis"
+                    whiteSpace="nowrap"
+                  >
+                    {name}
+                  </Link>
+                </HStack>
+              </ListItem>
+            ))}
+        </UnorderedList>
       </VStack>
       <Outlet />
     </HStack>

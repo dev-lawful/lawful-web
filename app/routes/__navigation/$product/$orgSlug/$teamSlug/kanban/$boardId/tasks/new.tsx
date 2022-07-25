@@ -1,39 +1,56 @@
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { useCatch, useLoaderData } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
 import { TaskForm } from "~/components/modules/decode";
-import { createTask, getBoardStatesByBoardId } from "~/models";
-import type { BoardState } from "~/_types";
+import { CustomCatchBoundary, CustomErrorBoundary } from "~/components/ui";
+import {
+  createTask,
+  getBoardStatesByBoardId,
+  getProfilesByTeamSlug,
+} from "~/models";
+import type { BoardState, Profile } from "~/_types";
 
 interface LoaderData {
-  data: Array<BoardState>;
+  data: {
+    boardStatesData: Array<BoardState>;
+    profilesData: Array<Profile>;
+  };
 }
 
 export const loader: LoaderFunction = async ({ params }) => {
-  const { data, error } = await getBoardStatesByBoardId(
-    parseInt(params.boardId as string)
-  );
+  const { data: boardStatesData, error: boardStatesError } =
+    await getBoardStatesByBoardId(parseInt(params.boardId as string));
 
-  if (error) throw new Error(error);
+  if (boardStatesError) throw new Error(boardStatesError);
+
+  const { data: profilesData, error: teamMembersError } =
+    await getProfilesByTeamSlug({ teamSlug: params.teamSlug! });
+
+  if (teamMembersError) throw new Error(teamMembersError);
 
   return json<LoaderData>({
-    data,
+    data: {
+      boardStatesData,
+      profilesData,
+    },
   });
 };
 
-export const action: ActionFunction = async ({ request, context }) => {
+export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
 
   const dueDate = (formData.get("dueDate") as string) ?? "";
   const name = (formData.get("name") as string) ?? "";
   const description = (formData.get("description") as string) ?? "";
   const stateId = (formData.get("stateId") as string) ?? "";
+  const asignee = (formData.get("asignee") as string) ?? "";
 
   const { error } = await createTask({
     taskData: {
       dueDate,
       description,
       name,
+      asignee,
       stateId: parseInt(stateId),
     },
   });
@@ -48,26 +65,14 @@ export const action: ActionFunction = async ({ request, context }) => {
 };
 
 const NewTaskRoute = () => {
-  const { data: states } = useLoaderData<LoaderData>();
-  return <TaskForm states={states} />;
+  const {
+    data: { boardStatesData, profilesData },
+  } = useLoaderData<LoaderData>();
+  return <TaskForm profiles={profilesData} states={boardStatesData} />;
 };
 
 export default NewTaskRoute;
 
-export const ErrorBoundary = ({ error }: { error: Error }) => {
-  return (
-    <div>
-      <p>{error.message}</p>
-    </div>
-  );
-};
+export const ErrorBoundary = CustomErrorBoundary;
 
-export const CatchBoundary = () => {
-  const error = useCatch();
-  return (
-    <div>
-      <p>{error.status}</p>
-      <p>{error.data}</p>
-    </div>
-  );
-};
+export const CatchBoundary = CustomCatchBoundary;

@@ -1,13 +1,17 @@
 import { Avatar, HStack, Text, VStack } from "@chakra-ui/react";
-import type { VFC } from "react";
 import type { Message as MessageType } from "~/_types";
 
 const EMPTY_MSG_FALLBACK = "Empty message...";
 
-export const Message: VFC<{
+interface Props {
   message: MessageType;
   currentUserId: string | undefined;
-}> = ({ message: { userId, text, createdAt, id }, currentUserId }) => {
+}
+
+export const Message = ({
+  message: { userId, text, createdAt },
+  currentUserId,
+}: Props) => {
   const fromCurrentUser = currentUserId === userId;
 
   return (

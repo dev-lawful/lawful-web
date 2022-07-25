@@ -1,7 +1,12 @@
+import { Box } from "@chakra-ui/react";
 import { CodeHighlightNode, CodeNode } from "@lexical/code";
 import { AutoLinkNode, LinkNode } from "@lexical/link";
 import { ListItemNode, ListNode } from "@lexical/list";
-import { $convertToMarkdownString, TRANSFORMERS } from "@lexical/markdown";
+import {
+  $convertFromMarkdownString,
+  $convertToMarkdownString,
+  TRANSFORMERS
+} from "@lexical/markdown";
 import LexicalAutoFocusPlugin from "@lexical/react/LexicalAutoFocusPlugin";
 import LexicalComposer from "@lexical/react/LexicalComposer";
 import LexicalContentEditable from "@lexical/react/LexicalContentEditable";
@@ -13,7 +18,7 @@ import LexicalRichTextPlugin from "@lexical/react/LexicalRichTextPlugin";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
 import type { LinksFunction } from "@remix-run/node";
-import type { ComponentProps, FC } from "react";
+import type { ComponentProps, PropsWithChildren } from "react";
 import { forwardRef, useState } from "react";
 import AutoLinkPlugin from "./plugins/AutoLinkPlugin";
 import CodeHighlightPlugin from "./plugins/CodeHighlightPlugin";
@@ -54,23 +59,42 @@ export const editorLinks: LinksFunction = () => [
   { rel: "stylesheet", href: styles },
 ];
 
-//Not sure why i need a ref here, https://remix.run/docs/en/v1/guides/styling#shared-component-styles
-const EditorComponent = ({
-  initialState,
-  ref,
-}: {
+interface Props {
+  inputMeta: { name: string; id: string };
   initialState?: string;
   ref?: any;
-}) => {
-  const [editorState, setEditorState] = useState("");
+}
+
+const EditorComponent = ({
+  inputMeta,
+  initialState = "",
+}: PropsWithChildren<Props>) => {
+  const [editorState, setEditorState] = useState(initialState);
 
   return (
     <LexicalComposer initialConfig={editorConfig}>
-      <div className="editor-container">
+      <Box
+        m="1rem"
+        maxW="37.5rem"
+        color="blackAlpha.900"
+        position="relative"
+        lineHeight="1.25rem"
+        textAlign="left"
+        borderTopLeftRadius="0.625"
+        borderTopRightRadius="0.625"
+      >
         <ToolbarPlugin />
-        <div className="editor-inner">
+        <Box
+          bgColor="white"
+          position="relative"
+          borderBottomRightRadius={"10px"}
+          borderBottomLeftRadius={"10px"}
+          className="editor-inner"
+        >
           <LexicalRichTextPlugin
-            initialEditorState={initialState}
+            initialEditorState={() => {
+              $convertFromMarkdownString(initialState, TRANSFORMERS);
+            }}
             contentEditable={
               <LexicalContentEditable className="editor-input" />
             }
@@ -85,8 +109,8 @@ const EditorComponent = ({
           />
           <input
             type="hidden"
-            name="content"
-            id="content"
+            name={inputMeta.name}
+            id={inputMeta.id}
             value={editorState}
           />
           <LexicalAutoFocusPlugin />
@@ -97,17 +121,17 @@ const EditorComponent = ({
           <ListMaxIndentLevelPlugin maxDepth={7} />
           {/* @ts-ignore */}
           <LexicalMarkdownShortcutPlugin transformers={TRANSFORMERS} />
-        </div>
-      </div>
+        </Box>
+      </Box>
     </LexicalComposer>
   );
 };
 
-//Not sure why i need a ref here, https://remix.run/docs/en/v1/guides/styling#shared-component-styles
-export const Editor: FC<ComponentProps<typeof EditorComponent>> = forwardRef(
-  ({ children, ...props }, ref) => {
-    return <EditorComponent {...props} ref={ref} />;
-  }
-);
+export const Editor = forwardRef<
+  HTMLDivElement,
+  ComponentProps<typeof EditorComponent>
+>(({ children, ...props }, ref) => {
+  return <EditorComponent {...props} ref={ref} />;
+});
 
 Editor.displayName = "Editor";

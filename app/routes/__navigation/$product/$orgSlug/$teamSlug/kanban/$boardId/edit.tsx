@@ -1,7 +1,8 @@
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { useCatch, useLoaderData } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
 import { BoardForm } from "~/components/modules/decode";
+import { CustomCatchBoundary, CustomErrorBoundary } from "~/components/ui";
 import { getBoardById, updateBoard } from "~/models";
 import type { Board } from "~/_types";
 
@@ -59,7 +60,6 @@ const EditBoardRoute = () => {
     },
   } = useLoaderData<LoaderData>();
 
-  console.log({ board });
   const { created_at, ...boardData } = board;
 
   return <BoardForm defaultValues={boardData} />;
@@ -67,20 +67,6 @@ const EditBoardRoute = () => {
 
 export default EditBoardRoute;
 
-export const ErrorBoundary = ({ error }: { error: Error }) => {
-  return (
-    <div>
-      <p>{error.message}</p>
-    </div>
-  );
-};
+export const ErrorBoundary = CustomErrorBoundary;
 
-export const CatchBoundary = () => {
-  const error = useCatch();
-  return (
-    <div>
-      <p>{error.status}</p>
-      <p>{error.data}</p>
-    </div>
-  );
-};
+export const CatchBoundary = CustomCatchBoundary;

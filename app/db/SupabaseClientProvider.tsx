@@ -1,9 +1,9 @@
-import { createContext, useContext, useMemo, useState } from "react";
-import { createClient } from "@supabase/supabase-js";
-import type { SupabaseClient, User } from "@supabase/supabase-js";
-import type { UserSession } from "~/_types";
 import { useFetcher } from "@remix-run/react";
+import type { SupabaseClient, User } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js";
+import { createContext, useContext, useMemo, useState } from "react";
 import { useInterval } from "~/utils";
+import type { UserSession } from "~/_types";
 
 interface SupabaseContextType {
   supabase: SupabaseClient;

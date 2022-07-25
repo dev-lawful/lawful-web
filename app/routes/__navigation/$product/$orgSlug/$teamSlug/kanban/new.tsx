@@ -1,12 +1,31 @@
-import { ArrowLeftIcon } from "@chakra-ui/icons";
-import { Button, Heading, HStack, Link, Text, VStack } from "@chakra-ui/react";
-import type { ActionFunction } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
-import { Link as RemixLink, useCatch } from "@remix-run/react";
-import { BoardForm } from "~/components/modules/decode/Forms/BoardForm";
-import { createBoard } from "~/models";
+import { Heading, VStack } from "@chakra-ui/react";
+import type { ActionFunction, LoaderFunction } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
+import { BoardForm } from "~/components/modules/decode";
+import { CustomCatchBoundary, CustomErrorBoundary } from "~/components/ui";
+import { createBoard, getTeamBySlug } from "~/models";
 
-export const action: ActionFunction = async ({ request, context, params }) => {
+interface LoaderData {
+  data: {
+    teamId: number;
+  };
+}
+
+export const loader: LoaderFunction = async ({ params }) => {
+  const {
+    data: {
+      0: { id: teamId },
+    },
+    error: teamError,
+  } = await getTeamBySlug(params.teamSlug!);
+
+  if (teamError) throw new Error(teamError);
+
+  return json<LoaderData>({ data: { teamId } });
+};
+
+export const action: ActionFunction = async ({ request, params }) => {
   const formData = await request.formData();
 
   const name = formData.get("name");
@@ -17,10 +36,19 @@ export const action: ActionFunction = async ({ request, context, params }) => {
     });
   }
 
+  const {
+    data: {
+      0: { id: teamId },
+    },
+    error: teamError,
+  } = await getTeamBySlug(params.teamSlug!);
+
+  if (teamError) throw new Error(teamError);
+
   const { error } = await createBoard({
     boardData: {
       name,
-      teamId: 1, // TODO: Un-hardcode this teamId to get the user's current team id
+      teamId,
     },
   });
 
@@ -34,30 +62,20 @@ export const action: ActionFunction = async ({ request, context, params }) => {
 };
 
 const NewBoardRoute = () => {
+  const {
+    data: { teamId },
+  } = useLoaderData<LoaderData>();
+
   return (
     <VStack justify="start" alignItems="start" p="5">
       <Heading as="h1">New board</Heading>
-      <BoardForm defaultValues={{ teamId: 1, name: "" }} />
+      <BoardForm defaultValues={{ teamId, name: "" }} />
     </VStack>
   );
 };
 
 export default NewBoardRoute;
 
-export const ErrorBoundary = ({ error }: { error: Error }) => {
-  return (
-    <div>
-      <p>{error.message}</p>
-    </div>
-  );
-};
+export const ErrorBoundary = CustomErrorBoundary;
 
-export const CatchBoundary = () => {
-  const error = useCatch();
-  return (
-    <div>
-      <p>{error.status}</p>
-      <p>{error.data}</p>
-    </div>
-  );
-};
+export const CatchBoundary = CustomCatchBoundary;

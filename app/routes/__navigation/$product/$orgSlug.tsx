@@ -1,6 +1,7 @@
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Outlet, useCatch } from "@remix-run/react";
+import { Outlet } from "@remix-run/react";
+import { CustomCatchBoundary, CustomErrorBoundary } from "~/components/ui";
 import {
   checkActiveSubscription,
   getOrganizationBySlug,
@@ -48,7 +49,7 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   });
   if (!orgHasSubscription) {
     throw new Response(
-      "Organization doesn't have an active subscription to this product",
+      "Your organization doesn't seem have an active subscription to this product",
       {
         status: 401,
       }
@@ -64,20 +65,6 @@ const OrganizationLayoutRoute = () => {
 
 export default OrganizationLayoutRoute;
 
-export const ErrorBoundary = ({ error }: { error: Error }) => {
-  return (
-    <div>
-      <p>{error.message}</p>
-    </div>
-  );
-};
+export const ErrorBoundary = CustomErrorBoundary;
 
-export const CatchBoundary = () => {
-  const error = useCatch();
-  return (
-    <div>
-      <p>{error.status}</p>
-      <p>{error.data}</p>
-    </div>
-  );
-};
+export const CatchBoundary = CustomCatchBoundary;

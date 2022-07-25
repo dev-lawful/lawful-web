@@ -1,6 +1,4 @@
-import { Box, Button, Container, Heading, Stack, Text } from "@chakra-ui/react";
-
-import { Link as RemixLink } from "@remix-run/react";
+import { Box, Container, Heading, Stack, Text } from "@chakra-ui/react";
 
 export default function IndexRoute() {
   return (
@@ -27,36 +25,6 @@ export default function IndexRoute() {
             to move <strong>fast</strong>, spend <strong>less</strong> and get
             more things <strong>done</strong>.
           </Text>
-          <Stack
-            direction={"column"}
-            spacing={3}
-            align={"center"}
-            alignSelf={"center"}
-            position={"relative"}
-          >
-            <Button
-              as={RemixLink}
-              to="/signup"
-              colorScheme={"lawful"}
-              bg={"lawful.400"}
-              rounded={"full"}
-              px={6}
-              _hover={{
-                bg: "lawful.500",
-              }}
-            >
-              Sign up
-            </Button>
-            <Button
-              as={RemixLink}
-              to="/signin"
-              variant={"link"}
-              colorScheme={"blue"}
-              size={"sm"}
-            >
-              Already an user? Sign in
-            </Button>
-          </Stack>
         </Stack>
       </Container>
     </>

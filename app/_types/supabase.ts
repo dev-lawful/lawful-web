@@ -410,6 +410,8 @@ export interface paths {
           content?: parameters["rowFilter.initiatives.content"];
           teamId?: parameters["rowFilter.initiatives.teamId"];
           dueDate?: parameters["rowFilter.initiatives.dueDate"];
+          owner?: parameters["rowFilter.initiatives.owner"];
+          status?: parameters["rowFilter.initiatives.status"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -467,6 +469,8 @@ export interface paths {
           content?: parameters["rowFilter.initiatives.content"];
           teamId?: parameters["rowFilter.initiatives.teamId"];
           dueDate?: parameters["rowFilter.initiatives.dueDate"];
+          owner?: parameters["rowFilter.initiatives.owner"];
+          status?: parameters["rowFilter.initiatives.status"];
         };
         header: {
           /** Preference */
@@ -488,6 +492,8 @@ export interface paths {
           content?: parameters["rowFilter.initiatives.content"];
           teamId?: parameters["rowFilter.initiatives.teamId"];
           dueDate?: parameters["rowFilter.initiatives.dueDate"];
+          owner?: parameters["rowFilter.initiatives.owner"];
+          status?: parameters["rowFilter.initiatives.status"];
         };
         body: {
           /** initiatives */
@@ -1594,6 +1600,17 @@ export interface definitions {
     teamId?: number;
     /** Format: timestamp with time zone */
     dueDate?: string;
+    /**
+     * Format: uuid
+     * @description Note:
+     * This is a Foreign Key to `profiles.id`.<fk table='profiles' column='id'/>
+     */
+    owner?: string;
+    /**
+     * Format: text
+     * @default draft
+     */
+    status?: string;
   };
   messages: {
     /**
@@ -1731,7 +1748,11 @@ export interface definitions {
     description?: string;
     /** Format: timestamp with time zone */
     dueDate?: string;
-    /** Format: uuid */
+    /**
+     * Format: uuid
+     * @description Note:
+     * This is a Foreign Key to `profiles.id`.<fk table='profiles' column='id'/>
+     */
     asignee?: string;
     /**
      * Format: bigint
@@ -1895,6 +1916,10 @@ export interface parameters {
   "rowFilter.initiatives.teamId": string;
   /** Format: timestamp with time zone */
   "rowFilter.initiatives.dueDate": string;
+  /** Format: uuid */
+  "rowFilter.initiatives.owner": string;
+  /** Format: text */
+  "rowFilter.initiatives.status": string;
   /** @description messages */
   "body.messages": definitions["messages"];
   /** Format: bigint */

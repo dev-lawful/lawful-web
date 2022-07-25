@@ -1,9 +1,4 @@
-import {
-  ArrowBackIcon,
-  ArrowLeftIcon,
-  DeleteIcon,
-  EditIcon,
-} from "@chakra-ui/icons";
+import { ArrowBackIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -26,16 +21,20 @@ import { json, redirect } from "@remix-run/node";
 import {
   Form,
   Link as RemixLink,
-  useCatch,
   useLoaderData,
   useParams,
 } from "@remix-run/react";
+import { CustomCatchBoundary, CustomErrorBoundary } from "~/components/ui";
 import { deleteTask, getBoardStatesByStateId, getTaskById } from "~/models";
-import type { BoardState, Task } from "~/_types";
+import type { BoardState, Profile, Task } from "~/_types";
 
 interface LoaderData {
   data: {
-    taskData: Array<Task>;
+    taskData: Array<
+      Task & {
+        asignee: Profile;
+      }
+    >;
     boardStateData: Array<Pick<BoardState, "description">>;
   };
 }
@@ -172,7 +171,9 @@ const TaskRoute = () => {
                   <Text as={"span"} fontWeight={"bold"}>
                     Asignee:
                   </Text>{" "}
-                  {task.asignee ?? "Unassigned"}
+                  {task.asignee
+                    ? `${task.asignee.firstName} ${task.asignee.lastName} `
+                    : "Unassigned"}
                 </ListItem>
               </List>
             </Box>
@@ -182,7 +183,7 @@ const TaskRoute = () => {
             <WrapItem>
               <Form method="delete">
                 <input type="hidden" value={task.id} />
-                <Button colorScheme="red">
+                <Button type="submit" colorScheme="red">
                   <HStack>
                     <DeleteIcon /> <Text>Delete</Text>
                   </HStack>
@@ -216,20 +217,6 @@ const TaskRoute = () => {
 
 export default TaskRoute;
 
-export const ErrorBoundary = ({ error }: { error: Error }) => {
-  return (
-    <div>
-      <p>{error.message}</p>
-    </div>
-  );
-};
+export const ErrorBoundary = CustomErrorBoundary;
 
-export const CatchBoundary = () => {
-  const error = useCatch();
-  return (
-    <div>
-      <p>{error.status}</p>
-      <p>{error.data}</p>
-    </div>
-  );
-};
+export const CatchBoundary = CustomCatchBoundary;

@@ -1,8 +1,9 @@
 import { HStack, VStack } from "@chakra-ui/react";
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Link, Outlet, useCatch, useLoaderData } from "@remix-run/react";
+import { Link, Outlet, useLoaderData } from "@remix-run/react";
 import { ChatList } from "~/components/modules/network";
+import { CustomCatchBoundary, CustomErrorBoundary } from "~/components/ui";
 import { getChats } from "~/models";
 import type { Chat } from "~/_types";
 
@@ -48,21 +49,6 @@ const ChatLayoutRoute = () => {
 
 export default ChatLayoutRoute;
 
-// TODO: repeated code
-export const ErrorBoundary = ({ error }: { error: Error }) => {
-  return (
-    <div>
-      <p>{error.message}</p>
-    </div>
-  );
-};
+export const ErrorBoundary = CustomErrorBoundary;
 
-export const CatchBoundary = () => {
-  const error = useCatch();
-  return (
-    <div>
-      <p>{error.status}</p>
-      <p>{error.data}</p>
-    </div>
-  );
-};
+export const CatchBoundary = CustomCatchBoundary;

@@ -8,7 +8,7 @@ interface Props {
   task: Task;
 }
 
-export const TaskCard: React.FC<Props> = ({ task }) => {
+export const TaskCard = ({ task }: Props) => {
   const matches = useMatches();
 
   const { pathname } = matches[matches.length - 1];
@@ -39,7 +39,7 @@ export const TaskCard: React.FC<Props> = ({ task }) => {
         {task.name}
       </Heading>
       <Text>{task.description}</Text>
-      <Stack direction="row">
+      <HStack>
         <Link to={`${pathname}/tasks/${task.id}/edit`}>
           <Button>
             <HStack>
@@ -56,7 +56,7 @@ export const TaskCard: React.FC<Props> = ({ task }) => {
             </HStack>
           </Button>
         </Link>
-      </Stack>
+      </HStack>
     </Stack>
   );
 };

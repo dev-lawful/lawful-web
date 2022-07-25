@@ -5,13 +5,15 @@ import {
   ListItem,
   OrderedList,
   Text,
-  UnorderedList,
+  UnorderedList
 } from "@chakra-ui/react";
 import ReactMarkdown from "react-markdown";
 
-export const MarkdownViewer: React.VFC<{ markdown: string }> = ({
-  markdown,
-}) => {
+interface Props {
+  markdown: string;
+}
+
+export const MarkdownViewer = ({ markdown }: Props) => {
   return (
     <ReactMarkdown
       children={markdown}

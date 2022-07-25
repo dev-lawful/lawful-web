@@ -1,29 +1,26 @@
 import { Button, FormLabel, Input, Select, Stack } from "@chakra-ui/react";
 import { Form } from "@remix-run/react";
-import { getDateInputFormattedDateString } from "./getDateInputFormattedDateString";
-import type { BoardState, Task } from "~/_types";
+import { getDateInputFormattedDateString } from "~/components/modules/utils";
+import type { BoardState, Profile, Task } from "~/_types";
 
 interface Props {
   defaultValues?: Partial<Task>;
   states: Array<BoardState>;
+  profiles: Array<Profile>;
 }
 
-export const TaskForm: React.VFC<Props> = ({
+export const TaskForm = ({
   states,
+  profiles,
   defaultValues = {
-    id: "",
-    dueDate: new Date(),
+    id: 0,
+    dueDate: new Date().toString(),
     name: "",
     description: "",
-    stateId: null,
-    asignee: null,
+    stateId: undefined,
+    asignee: undefined,
   },
-}) => {
-  // Date input expects "yyyy-MM-ddThh:mm" format
-  const formattedDueDate = getDateInputFormattedDateString(
-    defaultValues["dueDate"]?.toString()!
-  );
-
+}: Props) => {
   return (
     <Form method="post">
       <Stack spacing={4}>
@@ -52,7 +49,6 @@ export const TaskForm: React.VFC<Props> = ({
             defaultValue={defaultValues["description"]}
           />
         </FormLabel>
-        {/* "yyyy-MM-ddThh:mm" */}
         <FormLabel htmlFor="dueDate">
           Due date
           <Input
@@ -60,10 +56,27 @@ export const TaskForm: React.VFC<Props> = ({
             type="datetime-local"
             name="dueDate"
             id="dueDate"
-            defaultValue={formattedDueDate}
+            defaultValue={getDateInputFormattedDateString(
+              defaultValues["dueDate"]?.toString()!
+            )}
           />
         </FormLabel>
-        {/* //TODO: Create asignee users dropdown  */}
+        <FormLabel>
+          Asignee
+          <Select
+            placeholder="Choose an asignee"
+            name="asignee"
+            defaultValue={defaultValues["asignee"] ?? undefined}
+          >
+            {profiles.map(({ id, lastName, firstName }) => {
+              return (
+                <option key={id} value={id}>
+                  {firstName} {lastName}
+                </option>
+              );
+            })}
+          </Select>
+        </FormLabel>
         <Input required type="hidden" name="asignee" id="asignee" />
         <FormLabel htmlFor="stateId">
           Initial state

@@ -25,7 +25,6 @@ import type {
 import { json, redirect } from "@remix-run/node";
 import {
   Link as RemixLink,
-  useCatch,
   useFetcher,
   useLoaderData,
   useParams,
@@ -37,11 +36,8 @@ import type {
 import { useEffect, useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import {
-  Board as BoardContainer,
-  StateTray,
-  TaskCard,
-} from "~/components/modules/decode";
+import { StateTray, TaskCard } from "~/components/modules/decode";
+import { CustomCatchBoundary, CustomErrorBoundary } from "~/components/ui";
 import { useSupabaseClient } from "~/db";
 import {
   deleteBoard,
@@ -166,8 +162,6 @@ export const action: ActionFunction = async ({ request }) => {
     case "DELETE": {
       const _boardId = formData.get("boardId") ?? "";
 
-      console.log({ _boardId });
-
       if (_boardId == null) {
         return json<ActionData>({
           data: [],
@@ -290,7 +284,7 @@ const BoardRoute: RouteComponent = () => {
             )}
           </Menu>
         </HStack>
-        <BoardContainer>
+        <HStack overflowX="auto">
           {boardStates?.map((boardState) => {
             return (
               <Box as="section" key={boardState.id}>
@@ -310,7 +304,7 @@ const BoardRoute: RouteComponent = () => {
               </Box>
             );
           })}
-        </BoardContainer>
+        </HStack>
       </DndProvider>
     </Stack>
   );
@@ -318,20 +312,6 @@ const BoardRoute: RouteComponent = () => {
 
 export default BoardRoute;
 
-export const ErrorBoundary = ({ error }: { error: Error }) => {
-  return (
-    <div>
-      <p>{error.message}</p>
-    </div>
-  );
-};
+export const ErrorBoundary = CustomErrorBoundary;
 
-export const CatchBoundary = () => {
-  const error = useCatch();
-  return (
-    <div>
-      <p>{error.status}</p>
-      <p>{error.data}</p>
-    </div>
-  );
-};
+export const CatchBoundary = CustomCatchBoundary;

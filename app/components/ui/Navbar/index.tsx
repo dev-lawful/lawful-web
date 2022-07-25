@@ -6,6 +6,7 @@ import {
   Flex,
   HStack,
   IconButton,
+  Image,
   Link,
   Menu,
   MenuButton,
@@ -16,14 +17,61 @@ import {
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
-import { Form, Link as RemixLink } from "@remix-run/react";
-import type { FC, VFC } from "react";
+import { Form, Link as RemixLink, useParams } from "@remix-run/react";
+import type { FC, PropsWithChildren } from "react";
 import { useSupabaseClient } from "~/db";
 
-const Links = ["Initiatives", "Kanban", "Chat", "🔜"];
+const useNavbarLinks = () => {
+  const params = useParams();
 
-const NavLink: FC = ({ children }) => (
+  const baseLinks = [
+    {
+      label: "Network",
+      to: "/network",
+    },
+    {
+      label: "Decode",
+      to: "/decode",
+    },
+  ];
+
+  if (!params.product || !params.teamSlug || !params.orgSlug) return baseLinks;
+
+  switch (params.product) {
+    case "decode": {
+      return [
+        {
+          label: "Kanban",
+          to: `${params.product}/${params.orgSlug}/${params.teamSlug}/kanban`,
+        },
+        {
+          label: "Initiatives",
+          to: `${params.product}/${params.orgSlug}/${params.teamSlug}/initiatives`,
+        },
+      ];
+    }
+    case "network": {
+      return [
+        {
+          label: "Chat",
+          to: `${params.product}/${params.orgSlug}/${params.teamSlug}/chat`,
+        },
+        {
+          label: "Initiatives",
+          to: `${params.product}/${params.orgSlug}/${params.teamSlug}/initiatives`,
+        },
+      ];
+    }
+    default: {
+      return baseLinks;
+    }
+  }
+};
+
+const NavLink = ({ children, to }: PropsWithChildren<{ to: string }>) => (
   <Link
+    as={RemixLink}
+    to={to}
     px={2}
     py={1}
     rounded={"md"}
@@ -31,15 +79,17 @@ const NavLink: FC = ({ children }) => (
       textDecoration: "none",
       bg: useColorModeValue("gray.200", "gray.700"),
     }}
-    href={"#"}
   >
     {children}
   </Link>
 );
 
-export const Navbar: VFC = () => {
+export const Navbar: FC = () => {
   const { user } = useSupabaseClient();
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const { product } = useParams();
+  const links = useNavbarLinks();
 
   return (
     <Box bg={useColorModeValue("gray.100", "gray.900")} px={4}>
@@ -52,10 +102,17 @@ export const Navbar: VFC = () => {
           onClick={isOpen ? onClose : onOpen}
         />
         <HStack spacing={8} alignItems="center">
-          <Box>Logo</Box>
+          <RemixLink to="/">
+            <Image
+              src={`/images/logos/${product ?? "lawful"}-logo-white.svg`}
+              height={10}
+            />
+          </RemixLink>
           <HStack as="nav" spacing={4} display={{ base: "none", md: "flex" }}>
-            {Links.map((link) => (
-              <NavLink key={link}>{link}</NavLink>
+            {links.map(({ label, to }) => (
+              <NavLink to={to} key={label}>
+                {label}
+              </NavLink>
             ))}
           </HStack>
         </HStack>
@@ -113,8 +170,10 @@ export const Navbar: VFC = () => {
       {isOpen ? (
         <Box pb={4} display={{ md: "none" }}>
           <Stack as="nav" spacing={4}>
-            {Links.map((link) => (
-              <NavLink key={link}>{link}</NavLink>
+            {links.map(({ label, to }) => (
+              <NavLink to={to} key={label}>
+                {label}
+              </NavLink>
             ))}
           </Stack>
         </Box>

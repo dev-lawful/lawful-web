@@ -3,16 +3,16 @@ import {
   HStack,
   Link,
   ListItem,
-  UnorderedList,
+  UnorderedList
 } from "@chakra-ui/react";
 import { NavLink } from "@remix-run/react";
-import type { VFC } from "react";
 import type { Chat } from "~/_types";
 
 interface Props {
   chats: Array<Chat>;
 }
-export const ChatList: VFC<Props> = ({ chats }) => {
+
+export const ChatList = ({ chats }: Props) => {
   return (
     <UnorderedList
       listStyleType="none"
