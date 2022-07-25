@@ -16,7 +16,11 @@ import {
   Outlet,
   useLoaderData,
 } from "@remix-run/react";
-import { getBoardsByTeamId, getTeamBySlug } from "~/models";
+import {
+  getBoardsByTeamId,
+  getOrganizationBySlug,
+  getTeamBySlug,
+} from "~/models";
 import type { Board } from "~/_types";
 
 interface LoaderData {
@@ -26,11 +30,26 @@ interface LoaderData {
 }
 
 export const loader: LoaderFunction = async ({ params }) => {
-  const { product } = params;
+  const { product, orgSlug } = params;
 
   if (product !== "decode") {
     throw new Response("Kanban feature doesn't belong to this product", {
       status: 400,
+    });
+  }
+
+  if (!orgSlug) {
+    throw new Response("Organization not found", {
+      status: 400,
+    });
+  }
+  const { data: orgData, error: orgError } = await getOrganizationBySlug(
+    orgSlug
+  );
+  const [organization] = orgData;
+  if (!organization || orgError) {
+    throw new Response("Organization not found", {
+      status: 404,
     });
   }
 
@@ -39,7 +58,10 @@ export const loader: LoaderFunction = async ({ params }) => {
       0: { id: teamId },
     },
     error: teamError,
-  } = await getTeamBySlug(params.teamSlug!);
+  } = await getTeamBySlug({
+    slug: params.teamSlug!,
+    organizationId: organization.id,
+  });
 
   if (teamError) throw new Error(teamError);
 

@@ -4,7 +4,7 @@ import { json, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { BoardForm } from "~/components/modules/decode";
 import { CustomCatchBoundary, CustomErrorBoundary } from "~/components/ui";
-import { createBoard, getTeamBySlug } from "~/models";
+import { createBoard, getOrganizationBySlug, getTeamBySlug } from "~/models";
 
 interface LoaderData {
   data: {
@@ -13,12 +13,31 @@ interface LoaderData {
 }
 
 export const loader: LoaderFunction = async ({ params }) => {
+  const { orgSlug } = params;
+  if (!orgSlug) {
+    throw new Response("Organization not found", {
+      status: 400,
+    });
+  }
+  const { data: orgData, error: orgError } = await getOrganizationBySlug(
+    orgSlug
+  );
+  const [organization] = orgData;
+  if (!organization || orgError) {
+    throw new Response("Organization not found", {
+      status: 404,
+    });
+  }
+
   const {
     data: {
       0: { id: teamId },
     },
     error: teamError,
-  } = await getTeamBySlug(params.teamSlug!);
+  } = await getTeamBySlug({
+    slug: params.teamSlug!,
+    organizationId: organization.id,
+  });
 
   if (teamError) throw new Error(teamError);
 
@@ -26,6 +45,7 @@ export const loader: LoaderFunction = async ({ params }) => {
 };
 
 export const action: ActionFunction = async ({ request, params }) => {
+  const { orgSlug } = params;
   const formData = await request.formData();
 
   const name = formData.get("name");
@@ -36,12 +56,30 @@ export const action: ActionFunction = async ({ request, params }) => {
     });
   }
 
+  if (!orgSlug) {
+    throw new Response("Organization not found", {
+      status: 400,
+    });
+  }
+  const { data: orgData, error: orgError } = await getOrganizationBySlug(
+    orgSlug
+  );
+  const [organization] = orgData;
+  if (!organization || orgError) {
+    throw new Response("Organization not found", {
+      status: 404,
+    });
+  }
+
   const {
     data: {
       0: { id: teamId },
     },
     error: teamError,
-  } = await getTeamBySlug(params.teamSlug!);
+  } = await getTeamBySlug({
+    slug: params.teamSlug!,
+    organizationId: organization.id,
+  });
 
   if (teamError) throw new Error(teamError);
 
