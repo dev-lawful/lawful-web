@@ -18,6 +18,7 @@ import {
   useLocation,
   useTransition,
 } from "@remix-run/react";
+import { useEffect, useState } from "react";
 import { CustomCatchBoundary, CustomErrorBoundary } from "~/components/ui";
 import { supabase } from "~/db";
 
@@ -81,12 +82,18 @@ export const action: ActionFunction = async ({ request }) => {
 const ResetPasswordPage = () => {
   const transition = useTransition();
   const actionData = useActionData<ActionData>();
+  const [accessToken, setAccessToken] = useState("");
 
   const { hash } = useLocation();
-  const [, fromAccessTokenToEndHash] = hash.split("access_token=", 2);
-  const [accessToken] = fromAccessTokenToEndHash?.split("&", 1) || [
-    fromAccessTokenToEndHash,
-  ];
+  useEffect(() => {
+    //TODO: This can be done without useEffect but SSR doesn't have the hash so I get a dissabled button and an error always
+    const [, fromAccessTokenToEndHash] = hash.split("access_token=", 2);
+    const [token] = fromAccessTokenToEndHash?.split("&", 1) || [
+      fromAccessTokenToEndHash,
+    ];
+    setAccessToken(token);
+  }, [hash]);
+
   const accessTokenAlert: FormResult | undefined = accessToken
     ? undefined
     : {
