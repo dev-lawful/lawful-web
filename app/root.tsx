@@ -4,8 +4,7 @@ import type {
   LinksFunction,
   LoaderFunction,
   MetaFunction,
-} from "@remix-run/node"; // Depends on the runtime you choose
-import { redirect } from "@remix-run/node";
+} from "@remix-run/node";
 import { json } from "@remix-run/node";
 import {
   Links,
@@ -98,12 +97,6 @@ interface LoaderData {
 }
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const url = new URL(request.url);
-  const type = url.searchParams.get("type");
-  if (type === "recovery") {
-    redirect(`/resetPassword?${url.search}`);
-  }
-
   const session = await getSession(request.headers.get("Cookie"));
   const userSession = session.get("authenticated") as UserSession | undefined;
   return json<LoaderData>({

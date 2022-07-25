@@ -8,13 +8,23 @@ import {
   Stack,
   useColorModeValue,
 } from "@chakra-ui/react";
+import type { LoaderFunction } from "@remix-run/node";
+import { json } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
 
 interface ResetPasswordForm {
   email: string;
   password: string;
 }
 
+export const loader: LoaderFunction = ({ request }) => {
+  const url = new URL(request.url);
+  return json({ url });
+};
+
 const ResetPasswordPage = () => {
+  const url = useLoaderData();
+  console.log(url);
   return (
     <Flex
       minH={"100vh"}

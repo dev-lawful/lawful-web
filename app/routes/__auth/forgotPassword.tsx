@@ -50,7 +50,10 @@ export const action: ActionFunction = async ({ request }) => {
     return badRequest({ fieldErrors, fields });
   }
 
-  const { data, error } = await supabase.auth.api.resetPasswordForEmail(email);
+  const url = new URL(request.url);
+  const { data, error } = await supabase.auth.api.resetPasswordForEmail(email, {
+    redirectTo: `${url.origin}/resetPassword`,
+  });
   if (error || !data) {
     return badRequest({
       formResult: {
