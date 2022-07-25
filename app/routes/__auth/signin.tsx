@@ -145,7 +145,9 @@ const SignInRoute = () => {
                   justify={"space-between"}
                 >
                   <Checkbox>Remember me</Checkbox>
-                  <Link color={"blue.400"}>Forgot password?</Link>
+                  <Link as={RemixLink} to="/forgotPassword" color={"blue.400"}>
+                    Forgot password?
+                  </Link>
                 </Stack>
                 <Button
                   disabled={transition.state === "submitting"}
