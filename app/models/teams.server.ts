@@ -1,15 +1,20 @@
 import type { PostgrestResponse } from "@supabase/supabase-js";
 import { supabase } from "~/db";
-import type { CustomResponse, Profile, Team, TeamMember } from "~/_types";
-import util from "util";
+import type { CustomResponse, Team, TeamMember } from "~/_types";
 
-export const getTeamBySlug = async (
-  slug: string
-): Promise<CustomResponse<Team>> => {
+export const getTeamBySlug = async ({
+  slug,
+  organizationId,
+}: {
+  slug: string;
+  organizationId: number;
+}): Promise<CustomResponse<Team>> => {
   try {
+    //TODO: Update Type
     const { data }: PostgrestResponse<Team> = await supabase
       .from("teams")
-      .select("*")
+      .select("*,organizations!inner(*)")
+      .eq("organizations.id", organizationId)
       .eq("slug", slug);
 
     return { data: data ?? [], error: null };

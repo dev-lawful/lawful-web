@@ -26,14 +26,16 @@ export const loader: LoaderFunction = async ({ params, request }) => {
     });
   }
 
-  const { data: teamData, error: teamError } = await getTeamBySlug(teamSlug);
+  const { data: teamData, error: teamError } = await getTeamBySlug({
+    slug: teamSlug,
+    organizationId: organization.id,
+  });
   const [team] = teamData;
   if (!team || teamError) {
     throw new Response("Team not found", {
       status: 404,
     });
   }
-
   const teamBelongsToOrg = team.organizationId === organization.id;
   if (!teamBelongsToOrg) {
     throw new Response("This Team doesn't belong to this organization", {
