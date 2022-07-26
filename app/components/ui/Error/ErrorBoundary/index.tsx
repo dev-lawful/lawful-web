@@ -5,7 +5,14 @@ import { Link as RemixLink } from "@remix-run/react";
 
 export const CustomErrorBoundary: ErrorBoundaryComponent = ({ error }) => {
   return (
-    <VStack align="center" justify="center" textAlign="center" py={10} px={6}>
+    <VStack
+      align="center"
+      justify="center"
+      textAlign="center"
+      py={10}
+      px={6}
+      flex={1}
+    >
       <Box display="inline-block">
         <Flex
           flexDirection="column"

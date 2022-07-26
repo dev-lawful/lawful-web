@@ -4,7 +4,13 @@ import { useLoaderData, useParams } from "@remix-run/react";
 import { Chat } from "~/components/modules/network";
 import { CustomCatchBoundary, CustomErrorBoundary } from "~/components/ui";
 import { setAuthToken } from "~/db";
-import { getLastMessages, sendMessage } from "~/models";
+import {
+  getChatById,
+  getLastMessages,
+  getOrganizationBySlug,
+  getTeamBySlug,
+  sendMessage,
+} from "~/models";
 import type { Message } from "~/_types";
 
 interface LoaderData {
@@ -12,10 +18,42 @@ interface LoaderData {
 }
 
 export const loader: LoaderFunction = async ({ params, request }) => {
-  const { chatId } = params;
+  const { chatId, teamSlug, orgSlug } = params;
 
-  if (!chatId) {
-    throw new Response("No chat id", { status: 400 });
+  if (!chatId || !teamSlug || !orgSlug) {
+    throw new Response("No chatId or teamSlug provided", { status: 400 });
+  }
+  const { data: orgData, error: orgError } = await getOrganizationBySlug(
+    orgSlug!
+  );
+  const [organization] = orgData;
+  if (!organization || orgError) {
+    throw new Response("Organization not found", {
+      status: 404,
+    });
+  }
+
+  const { data: teamData, error: teamError } = await getTeamBySlug({
+    slug: teamSlug,
+    organizationId: organization.id,
+  });
+  const [team] = teamData;
+  if (!team || teamError) {
+    throw new Response("Team not found", {
+      status: 404,
+    });
+  }
+
+  const {
+    data: { 0: chatData },
+    error: chatError,
+  } = await getChatById({
+    chatId,
+    teamId: team.id,
+  });
+
+  if (!chatData || chatError) {
+    throw new Response("Chat not found", { status: 404 });
   }
 
   await setAuthToken(request);
@@ -33,10 +71,10 @@ interface ActionData {
 
 export const action: ActionFunction = async ({ params, request }) => {
   const { chatId } = params;
-
   if (!chatId) {
-    throw new Response("No chatId provided", { status: 400 });
+    throw new Response("No chat id", { status: 400 });
   }
+
   const formData = await request.formData();
   const message = formData.get("message");
   const userId = formData.get("userId");

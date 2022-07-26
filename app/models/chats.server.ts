@@ -29,20 +29,44 @@ export const getLastMessages = async ({
 };
 
 export const getChats = async ({
-  teamSlug,
+  teamId,
   limit,
 }: {
-  teamSlug: string;
+  teamId: number;
   limit: number;
 }): Promise<CustomResponse<Chat>> => {
   try {
     const { data }: PostgrestResponse<Chat> = await supabase
       .from("chats")
       .select("*,teams!inner(*)")
-      .eq("teams.slug", teamSlug)
+      .eq("teams.id", teamId)
       .limit(limit);
 
     return { data: data ?? [], error: null };
+  } catch (err) {
+    return {
+      data: [],
+      error: "There has been an error trying to fetch chats.",
+    };
+  }
+};
+
+export const getChatById = async ({
+  chatId,
+  teamId,
+}: {
+  chatId: string;
+  teamId: number;
+}): Promise<CustomResponse<Chat>> => {
+  try {
+    //TODO: Update type
+    const { data, error }: PostgrestResponse<Chat> = await supabase
+      .from("chats")
+      .select("*,teams!inner(*)")
+      .eq("teams.id", teamId)
+      .eq("id", chatId);
+
+    return { data: data ?? [], error: error?.message ?? null };
   } catch (err) {
     return {
       data: [],

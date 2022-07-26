@@ -5,7 +5,7 @@ import { json } from "@remix-run/node";
 import { Link as RemixLink, Outlet, useLoaderData } from "@remix-run/react";
 import { ChatList } from "~/components/modules/network";
 import { CustomCatchBoundary, CustomErrorBoundary } from "~/components/ui";
-import { getChats } from "~/models";
+import { getChats, getOrganizationBySlug, getTeamBySlug } from "~/models";
 import type { Chat } from "~/_types";
 
 interface LoaderData {
@@ -13,7 +13,7 @@ interface LoaderData {
 }
 
 export const loader: LoaderFunction = async ({ params }) => {
-  const { product, teamSlug } = params;
+  const { product, teamSlug, orgSlug } = params;
 
   if (product !== "network") {
     throw new Response("Chat feature doesn't belong to this product", {
@@ -25,7 +25,28 @@ export const loader: LoaderFunction = async ({ params }) => {
     throw new Response("No team slug", { status: 400 });
   }
 
-  const { data, error } = await getChats({ teamSlug, limit: 20 });
+  const { data: orgData, error: orgError } = await getOrganizationBySlug(
+    orgSlug!
+  );
+  const [organization] = orgData;
+  if (!organization || orgError) {
+    throw new Response("Organization not found", {
+      status: 404,
+    });
+  }
+
+  const { data: teamData, error: teamError } = await getTeamBySlug({
+    slug: teamSlug,
+    organizationId: organization.id,
+  });
+  const [team] = teamData;
+  if (!team || teamError) {
+    throw new Response("Team not found", {
+      status: 404,
+    });
+  }
+
+  const { data, error } = await getChats({ teamId: team.id, limit: 20 });
 
   if (error) {
     throw new Error(error);
