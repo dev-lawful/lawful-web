@@ -13,6 +13,7 @@ import { Form } from "@remix-run/react";
 import type { PropsWithChildren } from "react";
 import { getDateInputFormattedDateString } from "~/components/modules/utils";
 import { Editor } from "~/components/ui";
+import { useSupabaseClient } from "~/db";
 import type { Initiative } from "~/_types";
 
 interface Props {
@@ -28,6 +29,7 @@ export const InitiativeForm = ({
   },
   children,
 }: PropsWithChildren<Props>) => {
+  const supabase = useSupabaseClient();
   return (
     <VStack
       as={Form}
@@ -36,6 +38,13 @@ export const InitiativeForm = ({
       spacing={3}
       align="start"
     >
+      <Input
+        name="owner"
+        id="owner"
+        type="hidden"
+        defaultValue={supabase.user?.id}
+      />
+
       <FormControl isRequired>
         <FormLabel htmlFor="title">Title</FormLabel>
         <Input

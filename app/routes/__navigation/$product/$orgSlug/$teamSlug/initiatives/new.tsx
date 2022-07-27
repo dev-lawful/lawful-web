@@ -11,9 +11,9 @@ import { redirect } from "@remix-run/node";
 import { useState } from "react";
 import { InitiativeForm } from "~/components/modules/lawful/";
 import {
-  editorLinks,
   CustomCatchBoundary,
   CustomErrorBoundary,
+  editorLinks,
 } from "~/components/ui";
 import { createInitiative } from "~/models";
 import type { Option } from "~/_types";
@@ -24,6 +24,7 @@ export const action: ActionFunction = async ({ request }) => {
   const title = formData.get("title") ?? "";
   const description = formData.get("description") ?? "";
   const dueDate = formData.get("dueDate") ?? "";
+  const owner = formData.get("owner") ?? "";
 
   const options: Array<Omit<Option, "id" | "created_at">> = Object.entries(
     Object.fromEntries(formData)
@@ -42,12 +43,13 @@ export const action: ActionFunction = async ({ request }) => {
     throw new Response("Form not submitted correcty", { status: 400 });
   }
 
-  const { error } = await createInitiative({
+  const { data, error } = await createInitiative({
     initiativeData: {
       content,
       title,
       description,
       dueDate,
+      owner: owner as string,
     },
     options,
   });

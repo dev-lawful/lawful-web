@@ -222,15 +222,17 @@ const InitiativeRoute = () => {
           </Stack>
 
           <Wrap spacing="3">
-            <WrapItem>
-              <Link as={RemixLink} to="./edit">
-                <Button>
-                  <HStack>
-                    <EditIcon /> <Text>Edit</Text>
-                  </HStack>
-                </Button>
-              </Link>
-            </WrapItem>
+            {initiative.owner === supabase?.user?.id ? (
+              <WrapItem>
+                <Link as={RemixLink} to="./edit">
+                  <Button>
+                    <HStack>
+                      <EditIcon /> <Text>Edit</Text>
+                    </HStack>
+                  </Button>
+                </Link>
+              </WrapItem>
+            ) : null}
             <WrapItem>
               <Link as={RemixLink} to={`../`}>
                 <Button variant="outline">
