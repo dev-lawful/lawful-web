@@ -249,11 +249,7 @@ const InitiativeRoute = () => {
             {initiativeStatus === "closed" ? "Voting has ended" : "Voting area"}
           </Heading>
           <Form method="post">
-            <Input
-              type="hidden"
-              value={supabase?.user?.id}
-              name="userId"
-            ></Input>
+            <Input type="hidden" value={supabase?.user?.id} name="userId" />
             <RadioGroup defaultChecked={true} name="option">
               <VStack align="start" spacing={3}>
                 {options.map(({ votes, content, id }) => {
