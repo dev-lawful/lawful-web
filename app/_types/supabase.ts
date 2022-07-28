@@ -702,6 +702,102 @@ export interface paths {
       };
     };
   };
+  "/organizationInvitations": {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.organizationInvitations.id"];
+          createdAt?: parameters["rowFilter.organizationInvitations.createdAt"];
+          userEmail?: parameters["rowFilter.organizationInvitations.userEmail"];
+          organizationId?: parameters["rowFilter.organizationInvitations.organizationId"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["organizationInvitations"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** organizationInvitations */
+          organizationInvitations?: definitions["organizationInvitations"];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters["select"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.organizationInvitations.id"];
+          createdAt?: parameters["rowFilter.organizationInvitations.createdAt"];
+          userEmail?: parameters["rowFilter.organizationInvitations.userEmail"];
+          organizationId?: parameters["rowFilter.organizationInvitations.organizationId"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.organizationInvitations.id"];
+          createdAt?: parameters["rowFilter.organizationInvitations.createdAt"];
+          userEmail?: parameters["rowFilter.organizationInvitations.userEmail"];
+          organizationId?: parameters["rowFilter.organizationInvitations.organizationId"];
+        };
+        body: {
+          /** organizationInvitations */
+          organizationInvitations?: definitions["organizationInvitations"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
   "/organizationMembers": {
     get: {
       parameters: {
@@ -1651,6 +1747,27 @@ export interface definitions {
     /** Format: text */
     content?: string;
   };
+  organizationInvitations: {
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: number;
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    createdAt?: string;
+    /** Format: character varying */
+    userEmail?: string;
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Foreign Key to `organizations.id`.<fk table='organizations' column='id'/>
+     */
+    organizationId?: number;
+  };
   organizationMembers: {
     /**
      * Format: bigint
@@ -1940,6 +2057,16 @@ export interface parameters {
   "rowFilter.options.initiativeId": string;
   /** Format: text */
   "rowFilter.options.content": string;
+  /** @description organizationInvitations */
+  "body.organizationInvitations": definitions["organizationInvitations"];
+  /** Format: bigint */
+  "rowFilter.organizationInvitations.id": string;
+  /** Format: timestamp with time zone */
+  "rowFilter.organizationInvitations.createdAt": string;
+  /** Format: character varying */
+  "rowFilter.organizationInvitations.userEmail": string;
+  /** Format: bigint */
+  "rowFilter.organizationInvitations.organizationId": string;
   /** @description organizationMembers */
   "body.organizationMembers": definitions["organizationMembers"];
   /** Format: bigint */
