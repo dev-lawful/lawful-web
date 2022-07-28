@@ -1,11 +1,13 @@
-import type { LoaderFunction } from "@remix-run/node";
+import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
 import { CustomCatchBoundary, CustomErrorBoundary } from "~/components/ui";
+import { supabase } from "~/db";
 import {
   checkActiveSubscription,
   getOrganizationBySlug,
   getOrganizationsByUserId,
+  inviteToOrganization,
 } from "~/models";
 import { getSession } from "~/sessions";
 import type { UserSession } from "~/_types";
@@ -57,6 +59,66 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   }
 
   return json({});
+};
+
+interface ActionData {
+  formResult?: {
+    status: "error" | "success";
+    message: string;
+  };
+}
+const badRequest = (data: ActionData) => json(data, { status: 400 });
+
+export const action: ActionFunction = async ({ request }) => {
+  const formData = await request.formData();
+  const email = formData.get("email");
+  const organizationId = formData.get("organizationId");
+  if (!email || typeof email !== "string") {
+    return badRequest({
+      formResult: { message: "Invalid email", status: "error" },
+    });
+  }
+  if (!organizationId || typeof email !== "string") {
+    return badRequest({
+      formResult: { message: "Invalid organization", status: "error" },
+    });
+  }
+
+  const { error: inviteError } = await inviteToOrganization({
+    userEmail: email,
+    organizationId: Number(organizationId),
+  });
+  if (inviteError) {
+    return badRequest({
+      formResult: {
+        status: "error",
+        message: inviteError,
+      },
+    });
+  }
+
+  const { error } = await supabase.auth.api.inviteUserByEmail(email);
+  if (error) {
+    if (error.status === 422) {
+      return json<ActionData>({
+        formResult: {
+          status: "success",
+          message:
+            "Great, this user already has an account, so we won't send any emails",
+        },
+      });
+    }
+    return badRequest({
+      formResult: {
+        status: "error",
+        message: error.message,
+      },
+    });
+  }
+
+  return badRequest({
+    formResult: { status: "error", message: "An unexpected error occurred" },
+  });
 };
 
 const OrganizationLayoutRoute = () => {
