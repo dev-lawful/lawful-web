@@ -38,13 +38,13 @@ export const getPendingInvitations = async (
   }
 };
 
-export const acceptInvitation = async (
+export const deleteInvitation = async (
   invitationId: number
 ): Promise<CustomResponse<OrganizationInvitation>> => {
   try {
     const { data, error }: PostgrestResponse<OrganizationInvitation> =
       await supabase
-        .from("organizationInvitations")
+        .from<OrganizationInvitation>("organizationInvitations")
         .delete()
         .match({ id: invitationId });
     return {
