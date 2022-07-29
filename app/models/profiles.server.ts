@@ -2,6 +2,7 @@ import { supabase } from "~/db";
 import type {
   CustomResponse,
   Organization,
+  OrganizationMember,
   Profile,
   TeamMember,
 } from "~/_types";
@@ -117,6 +118,75 @@ export const getProfilesByTeamSlug = async ({
     return {
       data: [],
       error: "There has been an error trying to get team members.",
+    };
+  }
+};
+
+export const getProfilesByOrganizationId = async ({
+  id,
+}: {
+  id: string;
+}): Promise<CustomResponse<Profile>> => {
+  try {
+    const { data: members, error: membersError } = await supabase
+      .from<OrganizationMember>("organizationMembers")
+      .select("*")
+      .eq("organizationId", id);
+
+    if (membersError) throw new Error(membersError.message);
+
+    const membersIds = members?.map((item) => item.userId);
+
+    const { data, error } = await supabase
+      .from<Profile>("profiles")
+      .select("*")
+      .in("id", membersIds);
+
+    if (error) throw new Error(error.message);
+
+    return {
+      data: data ?? [],
+      error: null,
+    };
+  } catch (err) {
+    return {
+      data: [],
+      error:
+        "There has been an error trying to get profiles by organization id.",
+    };
+  }
+};
+
+export const getProfilesByTeamId = async ({
+  id,
+}: {
+  id: string;
+}): Promise<CustomResponse<Profile>> => {
+  try {
+    const { data: members, error: membersError } = await supabase
+      .from<TeamMember>("teamMembers")
+      .select("*")
+      .eq("teamId", id);
+
+    if (membersError) throw new Error(membersError.message);
+
+    const membersIds = members?.map((item) => item.userId);
+
+    const { data, error } = await supabase
+      .from<Profile>("profiles")
+      .select("*")
+      .in("id", membersIds);
+
+    if (error) throw new Error(error.message);
+
+    return {
+      data: data ?? [],
+      error: null,
+    };
+  } catch (err) {
+    return {
+      data: [],
+      error: "There has been an error trying to get profiles by team id.",
     };
   }
 };

@@ -25,6 +25,7 @@ import {
 } from "@remix-run/react";
 import type { FC, PropsWithChildren } from "react";
 import { useSupabaseClient } from "~/db";
+import { useProduct } from "~/utils";
 
 const useNavbarLinks = () => {
   const params = useParams();
@@ -93,18 +94,7 @@ export const Navbar: FC = () => {
   const { user } = useSupabaseClient();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const { product } = useParams();
-
-  const {
-    length,
-    [length - 1]: { pathname },
-  } = useMatches();
-
-  const urlProduct = pathname.includes("decode")
-    ? "decode"
-    : pathname.includes("network")
-    ? "network"
-    : "lawful";
+  const product = useProduct();
 
   const links = useNavbarLinks();
 
@@ -112,7 +102,7 @@ export const Navbar: FC = () => {
     <Box bg={useColorModeValue("gray.100", "gray.900")} px={4}>
       <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
         <IconButton
-          colorScheme={urlProduct}
+          colorScheme={product}
           size={"md"}
           icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
           aria-label={"Open Menu"}
@@ -121,10 +111,7 @@ export const Navbar: FC = () => {
         />
         <HStack spacing={8} alignItems="center">
           <RemixLink to="/">
-            <Img
-              src={`/images/logos/${product ?? urlProduct}-logo-white.svg`}
-              height={10}
-            />
+            <Img src={`/images/logos/${product}-logo-white.svg`} height={10} />
           </RemixLink>
           <HStack as="nav" spacing={4} display={{ base: "none", md: "flex" }}>
             {links.map(({ label, to }) => (
@@ -147,8 +134,8 @@ export const Navbar: FC = () => {
                 <Avatar size="sm" name={user.email} />
               </MenuButton>
               <MenuList zIndex={2}>
-                {["decode", "network"].includes(urlProduct) ? (
-                  <MenuItem as={RemixLink} to={`./${urlProduct}/organizations`}>
+                {["decode", "network"].includes(product) ? (
+                  <MenuItem as={RemixLink} to={`./${product}/organizations`}>
                     Switch organization
                   </MenuItem>
                 ) : null}
@@ -174,9 +161,9 @@ export const Navbar: FC = () => {
                 ml={5}
                 borderRadius="5"
                 fontSize={"sm"}
-                bg={`${urlProduct}.300`}
+                bg={`${product}.300`}
                 _hover={{
-                  bg: `${urlProduct}.400`,
+                  bg: `${product}.400`,
                 }}
               >
                 Sign up

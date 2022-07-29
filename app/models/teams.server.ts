@@ -66,7 +66,7 @@ export const addUserToTeam = async (
   }
 };
 
-export const getTeamsByUserId = async (
+export const getTeamMembershipsByUserId = async (
   userId: string
 ): Promise<CustomResponse<TeamMember>> => {
   try {

@@ -5,7 +5,7 @@ import {
   ListItem,
   OrderedList,
   Text,
-  UnorderedList
+  UnorderedList,
 } from "@chakra-ui/react";
 import ReactMarkdown from "react-markdown";
 
@@ -19,10 +19,10 @@ export const MarkdownViewer = ({ markdown }: Props) => {
       children={markdown}
       components={{
         h1: ({ node, level, ...props }) => (
-          <Heading as="h1" size="xl" {...props} />
+          <Heading as="h1" size="md" {...props} />
         ),
         h2: ({ node, level, ...props }) => (
-          <Heading as="h2" size="lg" {...props} />
+          <Heading as="h2" size="sm" {...props} />
         ),
         code: ({ node, ...props }) => <Code {...props} />,
         p: ({ node, ...props }) => <Text {...props} />,

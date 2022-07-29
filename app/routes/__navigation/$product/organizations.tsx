@@ -19,6 +19,7 @@ import { supabase } from "~/db";
 import { getOrganizationsByUserId } from "~/models";
 import { getSession } from "~/sessions";
 import type { Organization, Team, UserSession } from "~/_types";
+import { MarkdownViewer } from "~/components/ui";
 
 interface LoaderData {
   organizations: Array<
@@ -88,7 +89,7 @@ const SwitchOrganizationRoute = () => {
               rounded={10}
               p={5}
             >
-              <VStack spacing={3}>
+              <VStack spacing={3} align="start">
                 <HStack>
                   <Avatar name={org.name} />
                   <Link as={RemixLink} to={`../${org.slug}`}>
@@ -100,7 +101,7 @@ const SwitchOrganizationRoute = () => {
                 </HStack>
                 {org.description ? (
                   <Text size="md" color="gray.500">
-                    {org.description}
+                    <MarkdownViewer markdown={org.description} />
                   </Text>
                 ) : null}
               </VStack>

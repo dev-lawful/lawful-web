@@ -4,7 +4,7 @@ import { Outlet } from "@remix-run/react";
 import {
   getOrganizationBySlug,
   getTeamBySlug,
-  getTeamsByUserId,
+  getTeamMembershipsByUserId,
 } from "~/models";
 import { getSession } from "~/sessions";
 import type { UserSession } from "~/_types";
@@ -19,7 +19,9 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   const { data: orgData, error: orgError } = await getOrganizationBySlug(
     orgSlug
   );
+
   const [organization] = orgData;
+
   if (!organization || orgError) {
     throw new Response("Organization not found", {
       status: 404,
@@ -30,13 +32,17 @@ export const loader: LoaderFunction = async ({ params, request }) => {
     slug: teamSlug,
     organizationId: organization.id,
   });
+
   const [team] = teamData;
+
   if (!team || teamError) {
     throw new Response("Team not found", {
       status: 404,
     });
   }
+
   const teamBelongsToOrg = team.organizationId === organization.id;
+
   if (!teamBelongsToOrg) {
     throw new Response("This Team doesn't belong to this organization", {
       status: 400,
@@ -45,14 +51,16 @@ export const loader: LoaderFunction = async ({ params, request }) => {
 
   const session = await getSession(request.headers.get("Cookie"));
   const { user } = (session.get("authenticated") as UserSession) || {};
-  const { data: userTeams, error: userTeamsError } = await getTeamsByUserId(
-    user.id
-  );
+
+  const { data: userTeams, error: userTeamsError } =
+    await getTeamMembershipsByUserId(user.id);
+
   if (userTeamsError) {
     throw new Error("There has been an error fetching teams");
   }
 
   const userBelongsToTeam = userTeams.some(({ teamId }) => teamId === team.id);
+
   if (!userBelongsToTeam) {
     throw new Error("The signed in user doesn't belong to this team");
   }

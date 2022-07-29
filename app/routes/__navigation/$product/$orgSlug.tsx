@@ -37,7 +37,7 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   const { user } = (session.get("authenticated") as UserSession) || {};
 
   const { data: userOrgs, error: userOrgsError } =
-    await getOrganizationMembershipsByUserId(user.id);
+    await getOrganizationMembershipsByUserId(user?.id);
 
   if (userOrgsError) {
     throw new Error("There has been an error fetching organizations");

@@ -93,7 +93,7 @@ export const action: ActionFunction = async ({ request }) => {
   const { data: profiles, error: profileError } = await findProfileByEmail(
     email
   );
-  
+
   const [userAlreadyExists] = profiles;
   if (profileError) {
     return badRequest({
@@ -143,7 +143,7 @@ export const action: ActionFunction = async ({ request }) => {
   const { data: firstOrgData, error: firstOrgError } = await createOrganization(
     {
       ownerId: user.id,
-      slug: `${firstName}${lastName}-NET`,
+      slug: `${firstName}${lastName}-NET`.toLowerCase(),
       description:
         "Automatically created organization with a Network subscription",
       name: `${firstName} ${lastName}'s NET trial organization`,
@@ -222,7 +222,7 @@ export const action: ActionFunction = async ({ request }) => {
   const { data: secondOrgData, error: secondOrgError } =
     await createOrganization({
       ownerId: user.id,
-      slug: `${firstName}${lastName}-DEC`,
+      slug: `${firstName}${lastName}-DEC`.toLowerCase(),
       description:
         "Automatically created organization with a Decode subscription",
       name: `${firstName} ${lastName}'s DEC trial organization`,
