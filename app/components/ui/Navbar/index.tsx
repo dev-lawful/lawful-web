@@ -6,7 +6,7 @@ import {
   Flex,
   HStack,
   IconButton,
-  Image,
+  Img,
   Link,
   Menu,
   MenuButton,
@@ -103,7 +103,7 @@ export const Navbar: FC = () => {
         />
         <HStack spacing={8} alignItems="center">
           <RemixLink to="/">
-            <Image
+            <Img
               src={`/images/logos/${product ?? "lawful"}-logo-white.svg`}
               height={10}
             />
