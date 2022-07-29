@@ -2,11 +2,16 @@ import type { PostgrestResponse } from "@supabase/supabase-js";
 import { supabase } from "~/db";
 import type { CustomResponse, Initiative, Option, Vote } from "~/_types";
 
-export const getInitiatives = async (): Promise<CustomResponse<Initiative>> => {
+export const getInitiativesByTeamId = async ({
+  teamId,
+}: {
+  teamId: number;
+}): Promise<CustomResponse<Initiative>> => {
   try {
     const { data }: PostgrestResponse<Initiative> = await supabase
       .from("initiatives")
-      .select("*");
+      .select("*")
+      .eq("teamId", teamId);
 
     return { data: data ?? [], error: null };
   } catch (err) {

@@ -1,6 +1,10 @@
 import type { PostgrestResponse } from "@supabase/supabase-js";
 import { supabase } from "~/db";
-import type { CustomResponse, OrganizationInvitation } from "~/_types";
+import type {
+  CustomResponse,
+  Organization,
+  OrganizationInvitation,
+} from "~/_types";
 
 export const inviteToOrganization = async (
   invitationData: Omit<OrganizationInvitation, "id" | "createdAt">
@@ -22,11 +26,21 @@ export const inviteToOrganization = async (
 
 export const getPendingInvitations = async (
   email: string
-): Promise<CustomResponse<OrganizationInvitation>> => {
+): Promise<
+  CustomResponse<
+    OrganizationInvitation & {
+      organization: Organization;
+    }
+  >
+> => {
   try {
     const { data, error } = await supabase
-      .from<OrganizationInvitation>("organizationInvitations")
-      .select("*")
+      .from<
+        OrganizationInvitation & {
+          organization: Organization;
+        }
+      >("organizationInvitations")
+      .select("*, organization:organizations (*)")
       .eq("userEmail", email);
 
     return { data: data ?? [], error: error?.message ?? null };

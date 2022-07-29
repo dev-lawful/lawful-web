@@ -1,5 +1,9 @@
 import { Outlet } from "@remix-run/react";
-import { Navbar } from "~/components/ui";
+import {
+  CustomCatchBoundary,
+  CustomErrorBoundary,
+  Navbar,
+} from "~/components/ui";
 
 const NavigationLayoutRoute = () => {
   return (
@@ -11,3 +15,9 @@ const NavigationLayoutRoute = () => {
 };
 
 export default NavigationLayoutRoute;
+
+export const ErrorBoundary = () => {
+  return <div>Hola</div>;
+};
+
+export const CatchBoundary = CustomCatchBoundary;

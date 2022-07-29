@@ -19,15 +19,41 @@ import {
 } from "@remix-run/react";
 import { CustomCatchBoundary, CustomErrorBoundary } from "~/components/ui";
 import { useSupabaseClient } from "~/db";
-import { getInitiatives } from "~/models";
+import {
+  getInitiativesByTeamId,
+  getOrganizationBySlug,
+  getTeamBySlug,
+} from "~/models";
 import type { Initiative } from "~/_types";
 
 interface LoaderData {
   data: Array<Initiative>;
 }
 
-export const loader: LoaderFunction = async () => {
-  const { data, error } = await getInitiatives();
+export const loader: LoaderFunction = async ({ params }) => {
+  const {
+    data: {
+      0: { id: organizationId },
+    },
+    error: organizationError,
+  } = await getOrganizationBySlug(params.orgSlug!);
+
+  if (organizationError) throw new Error(organizationError);
+
+  const {
+    data: {
+      0: { id: teamId },
+    },
+    error: teamError,
+  } = await getTeamBySlug({
+    slug: params.teamSlug!,
+    organizationId,
+  });
+
+  if (teamError) throw new Error(teamError);
+
+  const { data, error } = await getInitiativesByTeamId({ teamId });
+
   if (error) {
     throw new Error(error);
   }

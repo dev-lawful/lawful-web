@@ -3,7 +3,7 @@ import {
   HStack,
   Link,
   ListItem,
-  UnorderedList
+  UnorderedList,
 } from "@chakra-ui/react";
 import { NavLink } from "@remix-run/react";
 import type { Chat } from "~/_types";
@@ -26,7 +26,7 @@ export const ChatList = ({ chats }: Props) => {
       {chats.map(({ name, id }) => (
         <ListItem key={id} py="2" px="1" textOverflow="ellipsis">
           <HStack h="full">
-            <Avatar size="md" mr="2" />
+            <Avatar name={name} size="md" mr="2" />
             <Link
               as={NavLink}
               to={`${id}`}

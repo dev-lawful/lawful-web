@@ -5,7 +5,7 @@ import {
   Icon,
   Img,
   Text,
-  useColorModeValue,
+  useColorModeValue
 } from "@chakra-ui/react";
 import { Link } from "@remix-run/react";
 

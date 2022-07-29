@@ -45,6 +45,35 @@ export const getOrganizationBySlug = async (
   }
 };
 
+export const getOrganizationById = async (
+  id: number
+): Promise<
+  CustomResponse<
+    Organization & {
+      teams: Array<Team>;
+    }
+  >
+> => {
+  try {
+    const { data, error } = await supabase
+      .from<
+        Organization & {
+          teams: Array<Team>;
+        }
+      >("organizations")
+      .select("*, teams(*)")
+      .eq("id", id)
+      .limit(1);
+
+    return { data: data ?? [], error: error?.message ?? null };
+  } catch (err) {
+    return {
+      data: [],
+      error: "There has been an error trying to fetch the organization.",
+    };
+  }
+};
+
 export const createOrganization = async (
   organizationData: Omit<Organization, "id" | "createdAt">
 ): Promise<CustomResponse<Organization>> => {
@@ -66,10 +95,12 @@ export const createOrganization = async (
 
 export const addUserToOrganization = async (
   organizationMemberData: Omit<OrganizationMember, "id">
-): Promise<CustomResponse<Organization>> => {
+): Promise<CustomResponse<OrganizationMember>> => {
   try {
     const { data, error }: PostgrestResponse<OrganizationMember> =
-      await supabase.from("organizationMembers").insert(organizationMemberData);
+      await supabase
+        .from<OrganizationMember>("organizationMembers")
+        .insert(organizationMemberData);
     return {
       data: data ?? [],
       error: error?.message ?? null,
@@ -121,7 +152,7 @@ export const getOrganizationsByUserId = async ({
 
     const { data, error } = await supabase
       .from("organizations")
-      .select("*,teams!inner(*)")
+      .select("*,teams(*)")
       .in("teams.id", teamIds)
       .in("id", orgIds);
 

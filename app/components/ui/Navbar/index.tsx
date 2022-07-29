@@ -139,7 +139,9 @@ export const Navbar: FC = () => {
                     Switch organization
                   </MenuItem>
                 ) : null}
-                <MenuItem>Profile</MenuItem>
+                <MenuItem as={RemixLink} to="/me">
+                  Profile
+                </MenuItem>
                 <MenuDivider />
                 <Form action="/signout" method="post">
                   <MenuItem role="button" type="submit">

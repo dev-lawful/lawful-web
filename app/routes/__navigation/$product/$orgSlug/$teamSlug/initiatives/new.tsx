@@ -15,11 +15,16 @@ import {
   CustomErrorBoundary,
   editorLinks,
 } from "~/components/ui";
-import { createInitiative } from "~/models";
+import {
+  createInitiative,
+  getOrganizationBySlug,
+  getTeamBySlug,
+} from "~/models";
 import type { Option } from "~/_types";
 
-export const action: ActionFunction = async ({ request }) => {
+export const action: ActionFunction = async ({ request, params }) => {
   const formData = await request.formData();
+
   const content = formData.get("content") ?? "";
   const title = formData.get("title") ?? "";
   const description = formData.get("description") ?? "";
@@ -43,12 +48,34 @@ export const action: ActionFunction = async ({ request }) => {
     throw new Response("Form not submitted correcty", { status: 400 });
   }
 
-  const { data, error } = await createInitiative({
+  const {
+    data: {
+      0: { id: organizationId },
+    },
+    error: organizationError,
+  } = await getOrganizationBySlug(params.orgSlug!);
+
+  if (organizationError) throw new Error(organizationError);
+
+  const {
+    data: {
+      0: { id: teamId },
+    },
+    error: teamError,
+  } = await getTeamBySlug({
+    slug: params.teamSlug!,
+    organizationId,
+  });
+
+  if (teamError) throw new Error(teamError);
+
+  const { error } = await createInitiative({
     initiativeData: {
       content,
       title,
       description,
       dueDate,
+      teamId,
       owner: owner as string,
     },
     options,
