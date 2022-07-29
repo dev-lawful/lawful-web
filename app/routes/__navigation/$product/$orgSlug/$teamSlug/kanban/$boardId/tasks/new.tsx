@@ -6,6 +6,7 @@ import { CustomCatchBoundary, CustomErrorBoundary } from "~/components/ui";
 import {
   createTask,
   getBoardStatesByBoardId,
+  getOrganizationBySlug,
   getProfilesByTeamSlug,
 } from "~/models";
 import type { BoardState, Profile } from "~/_types";
@@ -23,10 +24,22 @@ export const loader: LoaderFunction = async ({ params }) => {
 
   if (boardStatesError) throw new Error(boardStatesError);
 
-  const { data: profilesData, error: teamMembersError } =
-    await getProfilesByTeamSlug({ teamSlug: params.teamSlug! });
+  const {
+    data: {
+      0: { id: organizationId },
+    },
+    error: organizationError,
+  } = await getOrganizationBySlug(params.orgSlug!);
 
-  if (teamMembersError) throw new Error(teamMembersError);
+  if (organizationError) throw new Error(organizationError);
+
+  const { data: profilesData, error: profilesError } =
+    await getProfilesByTeamSlug({
+      slug: params.teamSlug!,
+      organizationId,
+    });
+
+  if (profilesError) throw new Error(profilesError);
 
   return json<LoaderData>({
     data: {

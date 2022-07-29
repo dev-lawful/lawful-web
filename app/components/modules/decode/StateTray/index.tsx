@@ -29,8 +29,6 @@ export const StateTray = ({
       <Stack
         width="20rem"
         minWidth="max-content"
-        height="60vh"
-        maxHeight="60vh"
         scrollBehavior="smooth"
         spacing={5}
         overflowY="auto"

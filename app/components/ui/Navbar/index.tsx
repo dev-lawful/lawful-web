@@ -17,7 +17,12 @@ import {
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
-import { Form, Link as RemixLink, useParams } from "@remix-run/react";
+import {
+  Form,
+  Link as RemixLink,
+  useMatches,
+  useParams,
+} from "@remix-run/react";
 import type { FC, PropsWithChildren } from "react";
 import { useSupabaseClient } from "~/db";
 
@@ -89,12 +94,25 @@ export const Navbar: FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const { product } = useParams();
+
+  const {
+    length,
+    [length - 1]: { pathname },
+  } = useMatches();
+
+  const urlProduct = pathname.includes("decode")
+    ? "decode"
+    : pathname.includes("network")
+    ? "network"
+    : "lawful";
+
   const links = useNavbarLinks();
 
   return (
     <Box bg={useColorModeValue("gray.100", "gray.900")} px={4}>
       <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
         <IconButton
+          colorScheme={urlProduct}
           size={"md"}
           icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
           aria-label={"Open Menu"}
@@ -104,7 +122,7 @@ export const Navbar: FC = () => {
         <HStack spacing={8} alignItems="center">
           <RemixLink to="/">
             <Img
-              src={`/images/logos/${product ?? "lawful"}-logo-white.svg`}
+              src={`/images/logos/${product ?? urlProduct}-logo-white.svg`}
               height={10}
             />
           </RemixLink>
@@ -126,13 +144,14 @@ export const Navbar: FC = () => {
                 cursor="pointer"
                 minW={0}
               >
-                <Avatar
-                  size="sm"
-                  src="https://avatars.githubusercontent.com/u/103387285?v=4"
-                />
+                <Avatar size="sm" name={user.email} />
               </MenuButton>
-              <MenuList>
-                <MenuItem>Switch Org / Team</MenuItem>
+              <MenuList zIndex={2}>
+                {["decode", "network"].includes(urlProduct) ? (
+                  <MenuItem as={RemixLink} to={`./${urlProduct}/organizations`}>
+                    Switch organization
+                  </MenuItem>
+                ) : null}
                 <MenuItem>Profile</MenuItem>
                 <MenuDivider />
                 <Form action="/signout" method="post">
@@ -155,9 +174,9 @@ export const Navbar: FC = () => {
                 ml={5}
                 borderRadius="5"
                 fontSize={"sm"}
-                bg="pink.400"
+                bg={`${urlProduct}.300`}
                 _hover={{
-                  bg: "pink.300",
+                  bg: `${urlProduct}.400`,
                 }}
               >
                 Sign up

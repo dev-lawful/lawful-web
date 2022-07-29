@@ -6,8 +6,9 @@ import {
   PlusSquareIcon,
 } from "@chakra-ui/icons";
 import {
-  Box,
   Button,
+  Grid,
+  GridItem,
   Heading,
   HStack,
   Link,
@@ -241,9 +242,13 @@ const BoardRoute: RouteComponent = () => {
   }, [fetcher, supabase]);
 
   return (
-    <Stack direction="column" spacing="2">
+    <Stack direction="column" spacing="2" overflowY="auto">
       <DndProvider backend={HTML5Backend}>
-        <HStack alignItems="start" justifyContent="space-between" mb="3">
+        <HStack
+          alignItems="start"
+          justifyContent={["start", "space-between"]}
+          mb="3"
+        >
           <Heading>{board.name}</Heading>
           <Menu isOpen={isMenuOpen}>
             {({ isOpen }) => (
@@ -284,10 +289,14 @@ const BoardRoute: RouteComponent = () => {
             )}
           </Menu>
         </HStack>
-        <HStack overflowX="auto">
+        <Grid
+          gridAutoFlow="row"
+          gridTemplateColumns={"min-content min-content min-content"}
+          gap={3}
+        >
           {boardStates?.map((boardState) => {
             return (
-              <Box as="section" key={boardState.id}>
+              <GridItem as="section" key={boardState.id}>
                 <fetcher.Form method="patch">
                   <StateTray
                     boardState={boardState}
@@ -301,10 +310,10 @@ const BoardRoute: RouteComponent = () => {
                       })}
                   </StateTray>
                 </fetcher.Form>
-              </Box>
+              </GridItem>
             );
           })}
-        </HStack>
+        </Grid>
       </DndProvider>
     </Stack>
   );

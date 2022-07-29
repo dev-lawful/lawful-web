@@ -161,7 +161,7 @@ const IndexPage = () => {
           h={[56, 72, 96, "full"]}
           w="full"
           objectFit="cover"
-          src="/images/illustrative/lawful-hero"
+          src="/images/illustrative/lawful-hero.avif"
           loading="lazy"
         />
       </Box>

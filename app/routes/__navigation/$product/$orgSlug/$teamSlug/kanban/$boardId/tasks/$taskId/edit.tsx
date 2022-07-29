@@ -5,6 +5,7 @@ import { TaskForm } from "~/components/modules/decode/Forms/TaskForm";
 import { CustomCatchBoundary, CustomErrorBoundary } from "~/components/ui";
 import {
   getBoardStatesByBoardId,
+  getOrganizationBySlug,
   getProfilesByTeamSlug,
   getTaskById,
   updateTask,
@@ -35,8 +36,17 @@ export const loader: LoaderFunction = async ({ params }) => {
 
   if (taskError) throw new Error(taskError);
 
+  const {
+    data: {
+      0: { id: organizationId },
+    },
+    error: orgError,
+  } = await getOrganizationBySlug(params.orgSlug!);
+
+  if (orgError) throw new Error(orgError);
+
   const { data: profilesData, error: teamMembersError } =
-    await getProfilesByTeamSlug({ teamSlug: params.teamSlug! });
+    await getProfilesByTeamSlug({ slug: params.teamSlug!, organizationId });
 
   if (teamMembersError) throw new Error(teamMembersError);
 

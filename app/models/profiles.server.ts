@@ -1,5 +1,10 @@
 import { supabase } from "~/db";
-import type { CustomResponse, Profile, TeamMember } from "~/_types";
+import type {
+  CustomResponse,
+  Organization,
+  Profile,
+  TeamMember,
+} from "~/_types";
 import { getTeamBySlug } from "./teams.server";
 
 export const createProfile = async (
@@ -64,9 +69,11 @@ export const findProfileByUserId = async ({
 };
 
 export const getProfilesByTeamSlug = async ({
-  teamSlug,
+  slug,
+  organizationId,
 }: {
-  teamSlug: string;
+  slug: string;
+  organizationId: Organization["id"];
 }): Promise<CustomResponse<Profile>> => {
   try {
     const {
@@ -74,7 +81,7 @@ export const getProfilesByTeamSlug = async ({
         0: { id: teamId },
       },
       error: teamError,
-    } = await getTeamBySlug(teamSlug);
+    } = await getTeamBySlug({ slug, organizationId });
 
     if (teamError) throw new Error(teamError);
 
@@ -92,9 +99,7 @@ export const getProfilesByTeamSlug = async ({
     const { data: profilesData, error: profilesError } = await supabase
       .from<Profile>("profiles")
       .select("*")
-      .match({
-        id: teamMembersIds,
-      });
+      .in("id", teamMembersIds);
 
     const data = teamMembersData
       ?.map((teamMember) => {

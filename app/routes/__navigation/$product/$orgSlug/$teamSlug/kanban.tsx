@@ -82,7 +82,7 @@ const KanbanLayoutRoute = () => {
   } = useLoaderData<LoaderData>();
 
   return (
-    <HStack align={"start"} flex="1" minH="0" p="4">
+    <HStack align={"start"} p="4" height="calc(100vh - 4rem)">
       <VStack alignItems="stretch" w="20%" minW="200px" h="full">
         <Link as={RemixLink} to="./new">
           <Button rounded={"md"} colorScheme={"decode"}>
