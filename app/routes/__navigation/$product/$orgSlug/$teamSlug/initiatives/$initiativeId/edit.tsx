@@ -13,7 +13,12 @@ import {
   CustomErrorBoundary,
   editorLinks,
 } from "~/components/ui";
-import { getInitiativeById, updateInitiative } from "~/models";
+import {
+  getInitiativeById,
+  getOrganizationBySlug,
+  getTeamBySlug,
+  updateInitiative,
+} from "~/models";
 import type { Initiative } from "~/_types";
 
 interface LoaderData {
@@ -36,12 +41,34 @@ export const action: ActionFunction = async ({ request, params }) => {
     throw new Response("Form not submitted correcty", { status: 400 });
   }
 
+  const {
+    data: {
+      0: { id: organizationId },
+    },
+    error: organizationError,
+  } = await getOrganizationBySlug(params.orgSlug!);
+
+  if (organizationError) throw new Error(organizationError);
+
+  const {
+    data: {
+      0: { id: teamId },
+    },
+    error: teamError,
+  } = await getTeamBySlug({
+    slug: params.teamSlug!,
+    organizationId,
+  });
+
+  if (teamError) throw new Error(teamError);
+
   const { error } = await updateInitiative({
     initiativeData: {
       content,
       title,
       description,
       dueDate,
+      teamId,
     },
     initiativeId: params.initiativeId!,
   });
