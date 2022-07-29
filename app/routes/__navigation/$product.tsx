@@ -9,13 +9,18 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   if (!["decode", "network"].includes(params.product || "")) {
     return redirect("/");
   }
+
   const session = await getSession(request.headers.get("Cookie"));
+
   const { accessToken, user: userCookie } =
     (session.get("authenticated") as UserSession) || {};
+
   const { user } = await supabase.auth.api.getUser(accessToken);
+
   if (!user || !userCookie) {
     return redirect("/signin");
   }
+  
   return json({});
 };
 
