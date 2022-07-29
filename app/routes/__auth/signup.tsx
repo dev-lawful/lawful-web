@@ -83,7 +83,9 @@ export const action: ActionFunction = async ({ request }) => {
     firstName: !firstName ? "First name is required" : undefined,
     lastName: !lastName ? "Last name is required" : undefined,
   };
+
   const fields = { email, password, firstName, lastName };
+
   if (Object.values(fieldErrors).some(Boolean)) {
     return badRequest({ fieldErrors, fields });
   }
@@ -91,6 +93,7 @@ export const action: ActionFunction = async ({ request }) => {
   const { data: profiles, error: profileError } = await findProfileByEmail(
     email
   );
+  
   const [userAlreadyExists] = profiles;
   if (profileError) {
     return badRequest({

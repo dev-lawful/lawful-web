@@ -42,18 +42,23 @@ export const action: ActionFunction = async ({ request }) => {
       },
     });
   }
+
   const fieldErrors = {
     email: !email ? "Email is required" : undefined,
   };
+
   const fields = { email };
+
   if (Object.values(fieldErrors).some(Boolean)) {
     return badRequest({ fieldErrors, fields });
   }
 
   const url = new URL(request.url);
+
   const { data, error } = await supabase.auth.api.resetPasswordForEmail(email, {
     redirectTo: `${url.origin}/resetPassword`,
   });
+
   if (error || !data) {
     return badRequest({
       formResult: {
@@ -107,7 +112,7 @@ const ForgotPasswordPage = () => {
           fontSize={{ base: "sm", sm: "md" }}
           color={useColorModeValue("gray.800", "gray.400")}
         >
-          You&apos;ll get an email with a reset link
+          {`You'll get an email with a reset link`}
         </Text>
         <Form method="post">
           <Stack spacing={6}>

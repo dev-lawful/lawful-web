@@ -33,6 +33,7 @@ export const action: ActionFunction = async ({ request }) => {
     expiresIn: data.expires_in ?? -1,
     expiresAt: data.expires_at ?? -1,
   };
+
   session.set("authenticated", newUserSession);
 
   return json(

@@ -85,12 +85,15 @@ const ResetPasswordPage = () => {
   const [accessToken, setAccessToken] = useState("");
 
   const { hash } = useLocation();
+
   useEffect(() => {
     //TODO: This can be done without useEffect but SSR doesn't have the hash so I get a dissabled button and an error always
     const [, fromAccessTokenToEndHash] = hash.split("access_token=", 2);
+    
     const [token] = fromAccessTokenToEndHash?.split("&", 1) || [
       fromAccessTokenToEndHash,
     ];
+
     setAccessToken(token);
   }, [hash]);
 
@@ -100,6 +103,7 @@ const ResetPasswordPage = () => {
         status: "error",
         message: "Access token not found",
       };
+      
   const formAlert = actionData?.formResult || accessTokenAlert;
 
   const buttonDisabled =

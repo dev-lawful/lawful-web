@@ -53,7 +53,9 @@ export const action: ActionFunction = async ({ request }) => {
     email: !email ? "Email is required" : undefined,
     password: !password ? "Password is required" : undefined,
   };
+  
   const fields = { email, password };
+
   if (Object.values(fieldErrors).some(Boolean)) {
     return badRequest({ fieldErrors, fields });
   }
@@ -66,6 +68,7 @@ export const action: ActionFunction = async ({ request }) => {
   if (error) {
     return badRequest({ formError: error.message });
   }
+
   const userSession = data &&
     data.user && {
       accessToken: data.access_token,
@@ -78,6 +81,7 @@ export const action: ActionFunction = async ({ request }) => {
   if (userSession) {
     const session = await getSession(request.headers.get("Cookie"));
     session.set("authenticated", userSession);
+
     return redirect("/", {
       headers: {
         "Set-Cookie": await commitSession(session),
