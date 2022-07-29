@@ -1,7 +1,7 @@
 import {
   Flex,
   Heading,
-  Image,
+  Img,
   Stack,
   Text,
   useBreakpointValue,
@@ -42,12 +42,12 @@ const DecodeAboutRoute = () => {
         </Stack>
       </Flex>
       <Flex flex={1}>
-        <Image
-          alt={"Login Image"}
-          objectFit={"cover"}
-          src={
-            "https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+        <Img
+          alt={
+            "A group of people sitting together at a table, probably working together."
           }
+          objectFit={"cover"}
+          src={`/images/illustrative/decode-hero.avif`}
         />
       </Flex>
     </Stack>
