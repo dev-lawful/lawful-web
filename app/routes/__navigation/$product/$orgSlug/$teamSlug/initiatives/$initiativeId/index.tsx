@@ -234,7 +234,7 @@ const InitiativeRoute = () => {
               </WrapItem>
             ) : null}
             <WrapItem>
-              <Link as={RemixLink} to={`../`}>
+              <Link as={RemixLink} to={`./../../initiatives`}>
                 <Button variant="outline">
                   <HStack>
                     <ArrowBackIcon /> <Text>Back to list</Text>
