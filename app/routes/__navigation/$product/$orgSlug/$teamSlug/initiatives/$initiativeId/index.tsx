@@ -117,13 +117,11 @@ const InitiativeRoute = () => {
 
   const supabase = useSupabaseClient();
 
-  const flattenedVotes = options.map((i) => i.votes).flat();
-
-  const userVotes = flattenedVotes.filter(
-    (item) => item.userId === supabase?.user?.id
-  );
-
-  const hasUserAlreadyVoted = userVotes.length > 0;
+  const hasUserAlreadyVoted =
+    options
+      .map((i) => i.votes)
+      .flat()
+      .filter((item) => item.userId === supabase?.user?.id).length > 0;
 
   const initiativeStatus: Status = getInitiativeStatus({
     date: new Date(initiative?.dueDate!),
@@ -259,7 +257,6 @@ const InitiativeRoute = () => {
                       key={id}
                       colorScheme="lawful"
                       value={`${id}`}
-                      // TODO: Set default checked item to whatever the user has voted
                     >
                       {content} (Votes count: {votes.length})
                     </Radio>
