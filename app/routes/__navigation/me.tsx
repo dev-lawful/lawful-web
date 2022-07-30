@@ -1,24 +1,24 @@
 import {
-  Box,
-  useColorModeValue,
-  Flex,
   Avatar,
-  Stack,
-  Heading,
+  Box,
   Button,
-  Text,
+  Flex,
+  Heading,
+  HStack,
   Img,
+  Input,
+  Stack,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
+  Text,
+  useColorModeValue,
   Wrap,
-  Input,
-  HStack,
 } from "@chakra-ui/react";
-import { ActionFunction, LoaderFunction, redirect } from "@remix-run/node";
-import { json } from "@remix-run/node";
+import type { ActionFunction, LoaderFunction } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
 import { CustomCatchBoundary, CustomErrorBoundary } from "~/components/ui";
 import { supabase, useSupabaseClient } from "~/db";
@@ -28,7 +28,6 @@ import {
   deleteInvitation,
   findProfileByUserId,
   getOrganizationById,
-  getOrganizationBySlug,
   getPendingInvitations,
 } from "~/models";
 import { getSession } from "~/sessions";
@@ -195,27 +194,26 @@ const MeRoute = () => {
           </Box>
         </TabPanel>
         <TabPanel>
-          <Heading>Invitations</Heading>
-          {invitations.map(({ id, organization: { name } }) => {
-            return (
-              <Flex gap={3} flexDir="row" key={id} align="center">
-                <HStack>
-                  <Avatar name={name} />
-                  <Text as="strong">{name}</Text>
-                </HStack>
-                <Form method="post">
-                  <Input type="hidden" name="invitationId" value={id} />
-                  <Input type="hidden" name="userId" value={user?.id} />
-                  <Button type="submit" variant={"ghost"}>
-                    Accept
-                  </Button>
-                </Form>
-              </Flex>
-            );
-          })}
-        </TabPanel>
-        <TabPanel>
-          <p>three!</p>
+          <Flex flexDir="column" gap={3}>
+            <Heading>Invitations</Heading>
+            {invitations.map(({ id, organization: { name } }) => {
+              return (
+                <Flex gap={3} flexDir="row" key={id} align="center">
+                  <HStack>
+                    <Avatar name={name} />
+                    <Text as="strong">{name}</Text>
+                  </HStack>
+                  <Form method="post">
+                    <Input type="hidden" name="invitationId" value={id} />
+                    <Input type="hidden" name="userId" value={user?.id} />
+                    <Button type="submit" variant={"ghost"}>
+                      Accept
+                    </Button>
+                  </Form>
+                </Flex>
+              );
+            })}
+          </Flex>
         </TabPanel>
       </TabPanels>
     </Tabs>
