@@ -15,11 +15,12 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { Link as RemixLink, useLoaderData } from "@remix-run/react";
-import { supabase } from "~/db";
-import { getOrganizationsByUserId } from "~/models";
-import { getSession } from "~/sessions";
-import type { Organization, Team, UserSession } from "~/_types";
 import { MarkdownViewer } from "~/components/ui";
+import { supabase } from "~/db";
+import { checkActiveSubscription, getOrganizationsByUserId } from "~/models";
+import { getSession } from "~/sessions";
+import { asyncFilter } from "~/utils";
+import type { Organization, Team, UserSession } from "~/_types";
 
 interface LoaderData {
   organizations: Array<
@@ -29,7 +30,7 @@ interface LoaderData {
   >;
 }
 
-export const loader: LoaderFunction = async ({ request, context }) => {
+export const loader: LoaderFunction = async ({ request, params }) => {
   const session = await getSession(request.headers.get("Cookie"));
 
   const { accessToken } = (session.get("authenticated") as UserSession) || {};
@@ -41,7 +42,27 @@ export const loader: LoaderFunction = async ({ request, context }) => {
       status: 401,
     });
 
-  const { data, error } = await getOrganizationsByUserId({ id: user.id });
+  const { data: organizations, error } = await getOrganizationsByUserId({
+    id: user.id,
+  });
+
+  const data: LoaderData["organizations"] = await asyncFilter<
+    Organization & {
+      teams: Array<Team>;
+    }
+  >(
+    organizations,
+    async (
+      org: Organization & {
+        teams: Array<Team>;
+      }
+    ) => {
+      return await checkActiveSubscription({
+        organizationId: org.id,
+        product: params.product,
+      });
+    }
+  );
 
   if (error) throw new Error(error);
 
