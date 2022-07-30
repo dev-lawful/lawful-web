@@ -94,7 +94,7 @@ export const updateInitiative = async ({
   try {
     const { data }: PostgrestResponse<Initiative> = await supabase
       .from("initiatives")
-      .update({ ...initiative, teamId: 1 })
+      .update({ ...initiative })
       .eq("id", initiativeId);
 
     return {
