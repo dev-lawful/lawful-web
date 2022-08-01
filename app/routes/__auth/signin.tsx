@@ -53,7 +53,7 @@ export const action: ActionFunction = async ({ request }) => {
     email: !email ? "Email is required" : undefined,
     password: !password ? "Password is required" : undefined,
   };
-  
+
   const fields = { email, password };
 
   if (Object.values(fieldErrors).some(Boolean)) {

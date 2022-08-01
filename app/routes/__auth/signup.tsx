@@ -120,7 +120,8 @@ export const action: ActionFunction = async ({ request }) => {
     return badRequest({
       formResult: {
         status: "error",
-        message: "Oops! Sign up error or there is no user ID.",
+        message:
+          signUpError?.message ?? "Oops! Sign up error or there is no user ID.",
       },
     });
   }
