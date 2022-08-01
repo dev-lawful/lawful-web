@@ -99,7 +99,7 @@ export const action: ActionFunction = async ({ request }) => {
     return badRequest({
       formResult: {
         status: "error",
-        message: "Oops! An unexpected error ocurred.",
+        message: "Oops! There has been an error finding the profile by email.",
       },
     });
   }
@@ -120,7 +120,7 @@ export const action: ActionFunction = async ({ request }) => {
     return badRequest({
       formResult: {
         status: "error",
-        message: "Oops! An unexpected error ocurred.",
+        message: "Oops! Sign up error or there is no user ID.",
       },
     });
   }
@@ -135,7 +135,7 @@ export const action: ActionFunction = async ({ request }) => {
     return badRequest({
       formResult: {
         status: "error",
-        message: "Oops! An unexpected error ocurred.",
+        message: "Oops! There has been an error creating your Profile.",
       },
     });
   }
