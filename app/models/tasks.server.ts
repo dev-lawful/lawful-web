@@ -95,7 +95,11 @@ export const getTaskById = async (
 > => {
   try {
     const { data } = await supabase
-      .from<Task>("tasks")
+      .from<
+        Task & {
+          asignee: Profile;
+        }
+      >("tasks")
       .select(
         `
         *,
