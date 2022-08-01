@@ -8,7 +8,7 @@ import {
 import type { ActionFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, useActionData, useParams } from "@remix-run/react";
-import { createChat, getTeamBySlug } from "~/models";
+import { createChat, getOrganizationBySlug, getTeamBySlug } from "~/models";
 import type { Chat } from "~/_types";
 
 type ActionData = {
@@ -54,7 +54,19 @@ export const action: ActionFunction = async ({ request, params }) => {
     return badRequest({ fieldErrors, fields });
   }
 
-  const { data: teamData, error: teamError } = await getTeamBySlug(teamSlug);
+  const {
+    data: {
+      0: { id: organizationId },
+    },
+    error: organizationError,
+  } = await getOrganizationBySlug(params.orgSlug!);
+
+  if (organizationError) throw new Error(organizationError);
+
+  const { data: teamData, error: teamError } = await getTeamBySlug({
+    slug: teamSlug,
+    organizationId,
+  });
   const teamId = teamData[0]?.id;
   if (teamError || !teamId) {
     throw new Response(teamError);
