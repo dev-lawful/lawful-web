@@ -39,8 +39,14 @@ import {
 } from "~/models";
 import type { Initiative, Option, Vote } from "~/_types";
 
-const getInitiativeStatus = ({ date }: { date: Date }): Status =>
-  date.getTime() > new Date().getTime() ? "active" : "closed";
+const getInitiativeStatus = ({
+  date,
+  draft,
+}: {
+  date: Date;
+  draft: boolean;
+}): Status =>
+  draft ? "draft" : date.getTime() > new Date().getTime() ? "active" : "closed";
 
 interface LoaderData {
   data: {
@@ -125,6 +131,7 @@ const InitiativeRoute = () => {
 
   const initiativeStatus: Status = getInitiativeStatus({
     date: new Date(initiative?.dueDate!),
+    draft: initiative?.status === "draft",
   });
 
   return (

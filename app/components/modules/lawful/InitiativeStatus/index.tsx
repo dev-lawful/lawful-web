@@ -1,6 +1,6 @@
 import { Badge } from "@chakra-ui/react";
 
-export type Status = "active" | "closed";
+export type Status = "active" | "closed" | "draft";
 interface Props {
   status: Status;
 }
@@ -14,6 +14,10 @@ export const InitiativeStatus = ({ status }: Props) => {
     active: {
       colorScheme: "green",
       label: "Active",
+    },
+    draft: {
+      colorScheme: "yellow",
+      label: "Draft",
     },
   }[status];
 
