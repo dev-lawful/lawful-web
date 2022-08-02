@@ -77,7 +77,7 @@ export const InitiativeForm = ({
         />
       </FormControl>
       <FormControl isRequired>
-        <FormLabel htmlFor="dueDate">Content</FormLabel>
+        <FormLabel htmlFor="content">Content</FormLabel>
         <Editor
           inputMeta={{
             name: "content",

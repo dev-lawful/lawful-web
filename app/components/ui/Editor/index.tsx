@@ -5,7 +5,7 @@ import { ListItemNode, ListNode } from "@lexical/list";
 import {
   $convertFromMarkdownString,
   $convertToMarkdownString,
-  TRANSFORMERS
+  TRANSFORMERS,
 } from "@lexical/markdown";
 import LexicalAutoFocusPlugin from "@lexical/react/LexicalAutoFocusPlugin";
 import LexicalComposer from "@lexical/react/LexicalComposer";

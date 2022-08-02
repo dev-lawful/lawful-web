@@ -67,7 +67,7 @@ export const action: ActionFunction = async ({ request, params }) => {
       content,
       title,
       description,
-      dueDate,
+      dueDate: new Date(dueDate).toJSON(),
       teamId,
     },
     initiativeId: params.initiativeId!,
