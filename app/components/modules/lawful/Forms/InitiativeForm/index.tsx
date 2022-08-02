@@ -30,6 +30,7 @@ export const InitiativeForm = ({
   children,
 }: PropsWithChildren<Props>) => {
   const supabase = useSupabaseClient();
+
   return (
     <VStack
       as={Form}
@@ -50,6 +51,7 @@ export const InitiativeForm = ({
         <Input
           name="title"
           id="title"
+          placeholder="Some title"
           type="text"
           defaultValue={defaultValues.title}
         />
@@ -60,6 +62,7 @@ export const InitiativeForm = ({
         <Input
           name="description"
           id="description"
+          placeholder="Some description"
           type="text"
           defaultValue={defaultValues.description}
         />

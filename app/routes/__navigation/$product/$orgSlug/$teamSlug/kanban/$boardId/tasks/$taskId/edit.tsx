@@ -71,7 +71,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   const { error } = await updateTask({
     taskData: {
-      dueDate,
+      dueDate: new Date(dueDate).toJSON(),
       description,
       name,
       asignee,

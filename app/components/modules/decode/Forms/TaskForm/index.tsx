@@ -1,4 +1,11 @@
-import { Button, FormLabel, Input, Select, Stack } from "@chakra-ui/react";
+import {
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
+  Select,
+  Stack,
+} from "@chakra-ui/react";
 import { Form } from "@remix-run/react";
 import { getDateInputFormattedDateString } from "~/components/modules/utils";
 import type { BoardState, Profile, Task } from "~/_types";
@@ -27,46 +34,50 @@ export const TaskForm = ({
         {defaultValues["id"] ? (
           <Input type="hidden" name="id" value={defaultValues["id"]} />
         ) : null}
-        <FormLabel htmlFor="name">
-          Name
+
+        <FormControl isRequired>
+          <FormLabel htmlFor="name">Name</FormLabel>
           <Input
-            required
-            placeholder="Some name"
-            type="text"
             name="name"
+            placeholder="Some name"
             id="name"
-            defaultValue={defaultValues["name"]}
-          />
-        </FormLabel>
-        <FormLabel htmlFor="description">
-          Description
-          <Input
-            required
             type="text"
-            placeholder="Some description"
-            name="description"
-            id="description"
-            defaultValue={defaultValues["description"]}
+            defaultValue={defaultValues?.name}
           />
-        </FormLabel>
-        <FormLabel htmlFor="dueDate">
-          Due date
+        </FormControl>
+
+        <FormControl isRequired>
+          <FormLabel htmlFor="description">Description</FormLabel>
+          <Input
+            name="description"
+            placeholder="Some description"
+            id="description"
+            type="text"
+            defaultValue={defaultValues?.description}
+          />
+        </FormControl>
+
+        <FormControl isRequired>
+          <FormLabel htmlFor="dueDate">Due date</FormLabel>
           <Input
             required
             type="datetime-local"
             name="dueDate"
             id="dueDate"
             defaultValue={getDateInputFormattedDateString(
-              defaultValues["dueDate"]?.toString()!
+              defaultValues.dueDate?.toString()!
             )}
           />
-        </FormLabel>
-        <FormLabel>
-          Asignee
+        </FormControl>
+
+        <FormControl isRequired>
+          <FormLabel htmlFor="asignee">Asignee</FormLabel>
           <Select
-            placeholder="Choose an asignee"
+            isRequired
+            placeholder="Select an asignee"
             name="asignee"
-            defaultValue={defaultValues["asignee"] ?? undefined}
+            id="asignee"
+            defaultValue={defaultValues?.asignee ?? profiles[0]?.id}
           >
             {profiles.map(({ id, lastName, firstName }) => {
               return (
@@ -76,15 +87,16 @@ export const TaskForm = ({
               );
             })}
           </Select>
-        </FormLabel>
+        </FormControl>
+
         <Input required type="hidden" name="asignee" id="asignee" />
-        <FormLabel htmlFor="stateId">
-          Initial state
+        <FormControl isRequired>
+          <FormLabel htmlFor="stateId">Initial state</FormLabel>
           <Select
             name="stateId"
             id="stateId"
             placeholder="Select the task's state"
-            defaultValue={defaultValues["stateId"]?.toString()}
+            defaultValue={defaultValues.stateId?.toString() ?? states[0]?.id}
           >
             {states.map((state) => {
               return (
@@ -94,7 +106,8 @@ export const TaskForm = ({
               );
             })}
           </Select>
-        </FormLabel>
+        </FormControl>
+
         <Stack direction="row">
           <Button type="submit">Submit</Button>
           <Button variant="outline" type="reset">
