@@ -14,7 +14,7 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import type { ActionFunction } from "@remix-run/node";
+import type { ActionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import {
   Form,
@@ -47,9 +47,10 @@ type ActionData = SignInFormErrors & SignInForm;
 
 const badRequest = (data: ActionData) => json(data, { status: 400 });
 
-export const action: ActionFunction = async ({ request }) => {
+export const action = async ({ request }: ActionArgs) => {
   const formData = await request.formData();
 
+  //Validate fields
   const fields = Object.fromEntries(formData.entries());
   const result = SignInFormSchema.safeParse(fields);
   if (!result.success) {
@@ -57,6 +58,8 @@ export const action: ActionFunction = async ({ request }) => {
       ...result.error.flatten(),
     });
   }
+
+  //SignIn
   const { email, password } = result.data;
   const { data, error } = await supabase.auth.api.signInWithEmail(
     email,
@@ -66,6 +69,7 @@ export const action: ActionFunction = async ({ request }) => {
     return badRequest({ formErrors: [error.message], fieldErrors: {} });
   }
 
+  //TODO: Repeated code
   const userSession = data &&
     data.user && {
       accessToken: data.access_token,
@@ -94,7 +98,7 @@ export const action: ActionFunction = async ({ request }) => {
 
 const SignInRoute = () => {
   const transition = useTransition();
-  const actionData = useActionData<ActionData>();
+  const actionData = useActionData<typeof action>();
 
   const shouldShowAlert = !!actionData?.formErrors?.length;
 
