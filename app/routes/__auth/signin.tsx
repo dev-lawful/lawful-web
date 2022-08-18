@@ -18,22 +18,14 @@ import type { ActionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import {
   Form,
+  Link as RemixLink,
   useActionData,
   useTransition,
-  Link as RemixLink,
 } from "@remix-run/react";
+import { z } from "zod";
 import { supabase } from "~/db";
 import { commitSession, getSession } from "~/sessions";
-import { z } from "zod";
-
-//TODO: move, will be used everywhere
-type inferSafeParseErrors<T extends z.ZodType<any, any, any>, U = string> = {
-  formErrors: U[];
-  //TODO: should this be optional??
-  fieldErrors: {
-    [P in keyof z.infer<T>]?: U[];
-  };
-};
+import type { inferSafeParseErrors } from "~/_types";
 
 const SignInFormSchema = z.object({
   email: z.string().min(1, "Email is required"),
