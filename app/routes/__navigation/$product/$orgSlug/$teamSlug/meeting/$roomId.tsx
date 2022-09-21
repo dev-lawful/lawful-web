@@ -4,14 +4,16 @@ import {
   useHMSActions,
   useHMSStore,
   useVideo,
+  useAVToggle,
 } from "@100mslive/react-sdk";
 import type { HMSPeer } from "@100mslive/react-sdk";
 import { useEffect } from "react";
 import { json, Response } from "@remix-run/node";
 import type { LoaderFunction } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, Link as RemixLink } from "@remix-run/react";
 import { useSupabaseClient } from "~/db";
 import { UUID4, JWT } from "~/utils";
+import { Button, Link } from "@chakra-ui/react";
 
 interface LoaderData {
   authToken: string;
@@ -56,6 +58,9 @@ const RoomPage = () => {
   const peers = useHMSStore(selectPeers);
   const isConnected = useHMSStore(selectIsConnectedToRoom);
 
+  const { isLocalAudioEnabled, isLocalVideoEnabled, toggleAudio, toggleVideo } =
+    useAVToggle();
+
   useEffect(() => {
     const joinRoom = async () => {
       await hmsActions.join({
@@ -66,7 +71,6 @@ const RoomPage = () => {
     joinRoom();
 
     return () => {
-      //TODO: Not sure about this
       hmsActions.leave();
     };
   }, [authToken, hmsActions, user]);
@@ -81,6 +85,17 @@ const RoomPage = () => {
           ))}
         </>
       ) : null}
+      <div>
+        <Button onClick={toggleAudio}>
+          {isLocalAudioEnabled ? "Mute" : "Unmute"}
+        </Button>
+        <Button onClick={toggleVideo}>
+          {isLocalVideoEnabled ? "Hide" : "Unhide"}
+        </Button>
+        <Link as={RemixLink} to="../">
+          Leave
+        </Link>
+      </div>
     </>
   );
 };
