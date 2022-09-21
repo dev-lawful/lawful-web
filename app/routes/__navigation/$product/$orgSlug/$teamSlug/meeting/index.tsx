@@ -1,70 +1,28 @@
-import {
-  useHMSActions,
-  useHMSStore,
-  selectIsConnectedToRoom,
-  selectPeers,
-  useVideo,
-} from "@100mslive/react-sdk";
-import type { HMSPeer } from "@100mslive/react-sdk";
-import { Button } from "@chakra-ui/react";
+import { Button, Link, Text } from "@chakra-ui/react";
 import type { ActionFunction } from "@remix-run/node";
-import { Form } from "@remix-run/react";
+import { Link as RemixLink } from "@remix-run/react";
 
 export const action: ActionFunction = () => {};
 
 const MeetingIndexPage = () => {
-  const hmsActions = useHMSActions();
-  const peers = useHMSStore(selectPeers);
-  const isConnected = useHMSStore(selectIsConnectedToRoom);
+  const availableMeeting = false;
+  const roomId = "";
 
-  return (
+  return availableMeeting ? (
     <>
-      <Form>
-        <Button
-          type="button"
-          onClick={() => {
-            hmsActions.join({
-              userName: "Gian Tester",
-              authToken: "",
-            });
-          }}
-        >
-          Join
-        </Button>
-      </Form>
-      <h1>Is connected? {isConnected ? "true" : "false"}</h1>
-      {isConnected ? (
-        <>
-          <h2>Peers</h2>
-          {peers.map((peer) => (
-            <Peer key={peer.id} peer={peer} />
-          ))}
-        </>
-      ) : null}
+      <Text>There is a meeting going on right now!</Text>
+      <Link as={RemixLink} to={`./${roomId}`}>
+        Join
+      </Link>
+    </>
+  ) : (
+    <>
+      <Text>Whoops, no meetings yet...</Text>
+      <Button type="button" onClick={() => {}}>
+        Start a meeting
+      </Button>
     </>
   );
 };
 
 export default MeetingIndexPage;
-
-const Peer = ({ peer }: { peer: HMSPeer }) => {
-  const { videoRef } = useVideo({
-    trackId: peer.videoTrack,
-  });
-
-  return (
-    <div>
-      <video
-        ref={videoRef}
-        autoPlay
-        muted
-        playsInline
-        width={300}
-        height={300}
-      />
-      <div>
-        {peer.name} {peer.isLocal ? "(You)" : ""}
-      </div>
-    </div>
-  );
-};
