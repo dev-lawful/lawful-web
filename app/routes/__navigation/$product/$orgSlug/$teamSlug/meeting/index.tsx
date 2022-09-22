@@ -120,7 +120,7 @@ const MeetingIndexPage = () => {
     <>
       <Text>There is a meeting going on right now!</Text>
       <Link as={RemixLink} to={`./${roomId}`}>
-        Join
+        Go to meeting
       </Link>
     </>
   ) : (

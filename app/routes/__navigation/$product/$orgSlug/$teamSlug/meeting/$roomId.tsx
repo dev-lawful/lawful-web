@@ -1,16 +1,18 @@
 import {
   selectIsConnectedToRoom,
   selectPeers,
+  selectIsInPreview,
+  selectLocalPeer,
   useHMSActions,
   useHMSStore,
   useVideo,
   useAVToggle,
 } from "@100mslive/react-sdk";
 import type { HMSPeer } from "@100mslive/react-sdk";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { json, Response } from "@remix-run/node";
 import type { LoaderFunction } from "@remix-run/node";
-import { useLoaderData, Link as RemixLink } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
 import { useSupabaseClient } from "~/db";
 import { UUID4, JWT } from "~/utils";
 import { Button, Link } from "@chakra-ui/react";
@@ -56,35 +58,43 @@ const RoomPage = () => {
   const { user } = useSupabaseClient();
   const hmsActions = useHMSActions();
   const peers = useHMSStore(selectPeers);
+  const localPeer = useHMSStore(selectLocalPeer);
   const isConnected = useHMSStore(selectIsConnectedToRoom);
-
+  const isPreview = useHMSStore(selectIsInPreview);
   const { isLocalAudioEnabled, isLocalVideoEnabled, toggleAudio, toggleVideo } =
     useAVToggle();
 
-  useEffect(() => {
-    const joinRoom = async () => {
-      await hmsActions.join({
-        userName: user?.email || "",
-        authToken,
-      });
-    };
-    joinRoom();
+  const [hasLeft, setHasLeft] = useState(false);
 
+  useEffect(() => {
+    // This effect syncronizes the PREVIEW mode with the room in the server
+    const previewRoom = async () => {
+      if (!isConnected && !hasLeft) {
+        await hmsActions.preview({
+          userName: user?.email || "",
+          authToken,
+          settings: {
+            isAudioMuted: true,
+            isVideoMuted: false,
+          },
+        });
+      }
+    };
+
+    previewRoom();
+  }, [authToken, hmsActions, user, isConnected, hasLeft]);
+
+  useEffect(() => {
+    // This effect forces you to leave the room when Unmounting the component, not perfect though
     return () => {
       hmsActions.leave();
     };
-  }, [authToken, hmsActions, user]);
+  }, [hmsActions]);
 
   return (
     <>
-      {isConnected ? (
-        <>
-          <h2>Peers</h2>
-          {peers.map((peer) => (
-            <Peer key={peer.id} peer={peer} />
-          ))}
-        </>
-      ) : null}
+      {isConnected ? <Meeting peers={peers} /> : null}
+      {isPreview && localPeer ? <Preview localPeer={localPeer} /> : null}
       <div>
         <Button onClick={toggleAudio}>
           {isLocalAudioEnabled ? "Mute" : "Unmute"}
@@ -92,9 +102,28 @@ const RoomPage = () => {
         <Button onClick={toggleVideo}>
           {isLocalVideoEnabled ? "Hide" : "Unhide"}
         </Button>
-        <Link as={RemixLink} to="../">
+        <Button
+          onClick={async () => {
+            if (!isConnected) {
+              await hmsActions.join({
+                userName: user?.email || "",
+                authToken,
+              });
+            }
+          }}
+        >
+          JOIN
+        </Button>
+        <Button
+          onClick={async () => {
+            if (isConnected) {
+              setHasLeft(true);
+              await hmsActions.leave();
+            }
+          }}
+        >
           Leave
-        </Link>
+        </Button>
       </div>
     </>
   );
@@ -121,5 +150,25 @@ const Peer = ({ peer }: { peer: HMSPeer }) => {
         {peer.name} {peer.isLocal ? "(You)" : ""}
       </div>
     </div>
+  );
+};
+
+const Preview = ({ localPeer }: { localPeer: HMSPeer }) => {
+  return (
+    <>
+      <h2>Preview</h2>
+      <Peer peer={localPeer} />
+    </>
+  );
+};
+
+const Meeting = ({ peers }: { peers: Array<HMSPeer> }) => {
+  return (
+    <>
+      <h2>Peers</h2>
+      {peers.map((peer) => (
+        <Peer key={peer.id} peer={peer} />
+      ))}
+    </>
   );
 };
