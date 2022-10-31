@@ -17,12 +17,7 @@ import {
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
-import {
-  Form,
-  Link as RemixLink,
-  useMatches,
-  useParams,
-} from "@remix-run/react";
+import { Form, Link as RemixLink, useParams } from "@remix-run/react";
 import type { FC, PropsWithChildren } from "react";
 import { useSupabaseClient } from "~/db";
 import { useProduct } from "~/utils";
