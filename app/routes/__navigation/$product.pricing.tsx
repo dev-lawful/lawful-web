@@ -11,11 +11,12 @@ import {
   ListItem,
   ListIcon,
   Button,
+  Link,
 } from "@chakra-ui/react";
 import { FaCheckCircle } from "react-icons/fa";
 import { json, redirect } from "@remix-run/node";
 import type { LoaderFunction } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, Link as RemixLink } from "@remix-run/react";
 
 interface LoaderData {
   hobby: string[];
@@ -24,12 +25,12 @@ interface LoaderData {
 
 const planChecks = {
   network: {
-    hobby: ["Online Chat", "Videocalls"],
-    pro: ["Online Chat PRO", "Videocalls PRO"],
+    hobby: ["Online Chat.", "Videocalls."],
+    pro: ["Online Chat PRO.", "Videocalls PRO."],
   },
   decode: {
-    hobby: ["Kanban board", "Poker planning"],
-    pro: ["Kanban board PRO", "Poker planning PRO"],
+    hobby: ["Kanban board.", "Poker planning."],
+    pro: ["Kanban board PRO.", "Poker planning PRO."],
   },
 };
 
@@ -41,7 +42,6 @@ export const loader: LoaderFunction = ({ params }) => {
   if (params.product !== "decode" && params.product !== "network") {
     return redirect("/");
   }
-  params.product;
   return json<LoaderData>(planChecks[params.product]);
 };
 
@@ -117,9 +117,27 @@ const PricingPage = () => {
               ))}
             </List>
             <Box w="80%" pt={7}>
-              <Button w="full" colorScheme="red" variant="outline">
+              <Link
+                as={RemixLink}
+                to="/signup"
+                w="full"
+                variant="outline"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                border="1px solid"
+                borderColor="red.200"
+                borderRadius="md"
+                h="10"
+                fontWeight="semibold"
+                color="red.200"
+                _hover={{
+                  textDecoration: "none",
+                  backgroundColor: "rgba(254, 178, 178, 0.12)",
+                }}
+              >
                 Start trial
-              </Button>
+              </Link>
             </Box>
           </VStack>
         </PriceWrapper>
@@ -183,9 +201,25 @@ const PricingPage = () => {
                 ))}
               </List>
               <Box w="80%" pt={7}>
-                <Button w="full" colorScheme="red">
+                <Link
+                  as={RemixLink}
+                  to="/signup"
+                  w="full"
+                  color="gray.800"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  bgColor="red.200"
+                  borderRadius="md"
+                  h="10"
+                  fontWeight="semibold"
+                  _hover={{
+                    textDecoration: "none",
+                    backgroundColor: "red.300",
+                  }}
+                >
                   Get started
-                </Button>
+                </Link>
               </Box>
             </VStack>
           </Box>
