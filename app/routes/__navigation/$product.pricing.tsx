@@ -10,7 +10,6 @@ import {
   List,
   ListItem,
   ListIcon,
-  Button,
   Link,
 } from "@chakra-ui/react";
 import { FaCheckCircle } from "react-icons/fa";
