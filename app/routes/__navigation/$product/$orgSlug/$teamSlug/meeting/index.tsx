@@ -1,10 +1,11 @@
-import { Button, Input, Link, Text } from "@chakra-ui/react";
+import { Button, Container, Input, Link, Text, VStack } from "@chakra-ui/react";
 import { fetch, json, redirect, Response } from "@remix-run/node";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { Form, Link as RemixLink, useLoaderData } from "@remix-run/react";
 import { getOrganizationBySlug, getTeamBySlug } from "~/models";
 import { createRoomForTeam, getRoomsByTeam } from "~/models/rooms.server";
 import { JWT, UUID4 } from "~/utils";
+import { PhoneIcon, WarningIcon } from "@chakra-ui/icons";
 
 interface LoaderData {
   roomId: string | undefined;
@@ -60,7 +61,6 @@ export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
   //TODO: This is not good, but I didn't want to fetch org and team again
   const { teamId } = Object.fromEntries(formData);
-  console.log(teamId);
   if (!teamId || typeof teamId !== "string") {
     throw new Response("Invalid team id");
   }
@@ -116,21 +116,35 @@ const MeetingIndexPage = () => {
   const { roomId, teamId } = useLoaderData<LoaderData>();
   const availableMeeting = !!roomId;
 
-  return availableMeeting ? (
-    <>
-      <Text>There is a meeting going on right now!</Text>
-      <Link as={RemixLink} to={`./${roomId}`}>
-        Go to meeting
-      </Link>
-    </>
-  ) : (
-    <>
-      <Text>Whoops, no meetings yet...</Text>
-      <Form method="post">
-        <Input type="hidden" value={teamId} name="teamId" />
-        <Button type="submit">Start a meeting</Button>
-      </Form>
-    </>
+  return (
+    <Container>
+      <VStack pt="12">
+        {!availableMeeting ? (
+          <>
+            <PhoneIcon boxSize={"70px"} color={"green.500"} mb="3" />
+            <Text fontSize="larger" textAlign="center">
+              There is a meeting going on right now!
+            </Text>
+            <Link as={RemixLink} to={`./${roomId}`} color={"blue.400"}>
+              Go to meeting
+            </Link>
+          </>
+        ) : (
+          <>
+            <WarningIcon boxSize={"70px"} color={"red.300"} />
+            <Text fontSize="larger" textAlign="center">
+              Whoops, no meetings yet...
+            </Text>
+            <Form method="post">
+              <Input type="hidden" value={teamId} name="teamId" />
+              <Button type="submit" mt="3">
+                Start a meeting
+              </Button>
+            </Form>
+          </>
+        )}
+      </VStack>
+    </Container>
   );
 };
 
