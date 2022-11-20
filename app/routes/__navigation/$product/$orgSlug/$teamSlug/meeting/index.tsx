@@ -119,7 +119,7 @@ const MeetingIndexPage = () => {
   return (
     <Container>
       <VStack pt="12">
-        {!availableMeeting ? (
+        {availableMeeting ? (
           <>
             <PhoneIcon boxSize={"70px"} color={"green.500"} mb="3" />
             <Text fontSize="larger" textAlign="center">

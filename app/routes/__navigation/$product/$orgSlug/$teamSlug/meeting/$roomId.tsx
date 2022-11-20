@@ -15,7 +15,13 @@ import type { LoaderFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { useSupabaseClient } from "~/db";
 import { UUID4, JWT } from "~/utils";
-import { Button, Link } from "@chakra-ui/react";
+import { Button, Flex, Icon } from "@chakra-ui/react";
+import {
+  FaMicrophoneSlash,
+  FaMicrophone,
+  FaVideo,
+  FaVideoSlash,
+} from "react-icons/fa";
 
 interface LoaderData {
   authToken: string;
@@ -95,13 +101,31 @@ const RoomPage = () => {
     <>
       {isConnected ? <Meeting peers={peers} /> : null}
       {isPreview && localPeer ? <Preview localPeer={localPeer} /> : null}
-      <div>
-        <Button onClick={toggleAudio}>
-          {isLocalAudioEnabled ? "Mute" : "Unmute"}
-        </Button>
-        <Button onClick={toggleVideo}>
-          {isLocalVideoEnabled ? "Hide" : "Unhide"}
-        </Button>
+      <Flex justifyContent="center" alignItems="center" wrap="wrap" gap="2">
+        <Icon
+          as={isLocalAudioEnabled ? FaMicrophone : FaMicrophoneSlash}
+          onClick={toggleAudio}
+          w="12"
+          h="12"
+          p="2"
+          color={isLocalAudioEnabled ? undefined : "red.300"}
+          bgColor="gray.700"
+          _hover={{ bgColor: "gray.600" }}
+          cursor="pointer"
+          borderRadius="md"
+        />
+        <Icon
+          as={isLocalVideoEnabled ? FaVideo : FaVideoSlash}
+          onClick={toggleVideo}
+          w="12"
+          h="12"
+          p="2"
+          color={isLocalVideoEnabled ? undefined : "red.300"}
+          bgColor="gray.700"
+          _hover={{ bgColor: "gray.600" }}
+          cursor="pointer"
+          borderRadius="md"
+        />
         <Button
           onClick={async () => {
             if (!isConnected) {
@@ -124,7 +148,7 @@ const RoomPage = () => {
         >
           Leave
         </Button>
-      </div>
+      </Flex>
     </>
   );
 };
