@@ -1,7 +1,7 @@
 import {
   selectIsConnectedToRoom,
   selectPeers,
-  selectIsInPreview,
+  // selectIsInPreview,
   selectLocalPeer,
   useHMSActions,
   useHMSStore,
@@ -15,13 +15,22 @@ import type { LoaderFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { useSupabaseClient } from "~/db";
 import { UUID4, JWT } from "~/utils";
-import { Button, Flex, Icon } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  Heading,
+  Icon,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import {
   FaMicrophoneSlash,
   FaMicrophone,
   FaVideo,
   FaVideoSlash,
 } from "react-icons/fa";
+import { SpinnerIcon } from "@chakra-ui/icons";
 
 interface LoaderData {
   authToken: string;
@@ -66,7 +75,7 @@ const RoomPage = () => {
   const peers = useHMSStore(selectPeers);
   const localPeer = useHMSStore(selectLocalPeer);
   const isConnected = useHMSStore(selectIsConnectedToRoom);
-  const isPreview = useHMSStore(selectIsInPreview);
+  // const isPreview = useHMSStore(selectIsInPreview);
   const { isLocalAudioEnabled, isLocalVideoEnabled, toggleAudio, toggleVideo } =
     useAVToggle();
 
@@ -97,57 +106,73 @@ const RoomPage = () => {
     };
   }, [hmsActions]);
 
+  const showPreview = !isConnected && !hasLeft;
+
   return (
     <>
       {isConnected ? <Meeting peers={peers} /> : null}
-      {isPreview && localPeer ? <Preview localPeer={localPeer} /> : null}
+      {showPreview ? <Preview localPeer={localPeer} /> : null}
       <Flex justifyContent="center" alignItems="center" wrap="wrap" gap="2">
-        <Icon
-          as={isLocalAudioEnabled ? FaMicrophone : FaMicrophoneSlash}
-          onClick={toggleAudio}
-          w="12"
-          h="12"
-          p="2"
-          color={isLocalAudioEnabled ? undefined : "red.300"}
-          bgColor="gray.700"
-          _hover={{ bgColor: "gray.600" }}
-          cursor="pointer"
-          borderRadius="md"
-        />
-        <Icon
-          as={isLocalVideoEnabled ? FaVideo : FaVideoSlash}
-          onClick={toggleVideo}
-          w="12"
-          h="12"
-          p="2"
-          color={isLocalVideoEnabled ? undefined : "red.300"}
-          bgColor="gray.700"
-          _hover={{ bgColor: "gray.600" }}
-          cursor="pointer"
-          borderRadius="md"
-        />
-        <Button
-          onClick={async () => {
-            if (!isConnected) {
-              await hmsActions.join({
-                userName: user?.email || "",
-                authToken,
-              });
-            }
-          }}
-        >
-          JOIN
-        </Button>
-        <Button
-          onClick={async () => {
-            if (isConnected) {
-              setHasLeft(true);
-              await hmsActions.leave();
-            }
-          }}
-        >
-          Leave
-        </Button>
+        {hasLeft ? (
+          <Text>
+            Thank you for using our Meetings service, we hope you really enjoyed
+            the experience
+          </Text>
+        ) : (
+          <>
+            <Icon
+              as={isLocalAudioEnabled ? FaMicrophone : FaMicrophoneSlash}
+              onClick={toggleAudio}
+              w="12"
+              h="12"
+              p="2"
+              color={isLocalAudioEnabled ? undefined : "red.300"}
+              bgColor="gray.700"
+              _hover={{ bgColor: "gray.600" }}
+              cursor="pointer"
+              borderRadius="md"
+            />
+            <Icon
+              as={isLocalVideoEnabled ? FaVideo : FaVideoSlash}
+              onClick={toggleVideo}
+              w="12"
+              h="12"
+              p="2"
+              color={isLocalVideoEnabled ? undefined : "red.300"}
+              bgColor="gray.700"
+              _hover={{ bgColor: "gray.600" }}
+              cursor="pointer"
+              borderRadius="md"
+            />
+            {isConnected ? (
+              <Button
+                h="12"
+                onClick={async () => {
+                  if (isConnected) {
+                    setHasLeft(true);
+                    await hmsActions.leave();
+                  }
+                }}
+              >
+                Leave
+              </Button>
+            ) : (
+              <Button
+                h="12"
+                onClick={async () => {
+                  if (!isConnected) {
+                    await hmsActions.join({
+                      userName: user?.email || "",
+                      authToken,
+                    });
+                  }
+                }}
+              >
+                Join!
+              </Button>
+            )}
+          </>
+        )}
       </Flex>
     </>
   );
@@ -161,27 +186,42 @@ const Peer = ({ peer }: { peer: HMSPeer }) => {
   });
 
   return (
-    <div>
+    <Box>
       <video
         ref={videoRef}
         autoPlay
         muted
         playsInline
         width={300}
-        height={300}
+        height={225}
       />
-      <div>
+      <Text>
         {peer.name} {peer.isLocal ? "(You)" : ""}
-      </div>
-    </div>
+      </Text>
+    </Box>
   );
 };
 
-const Preview = ({ localPeer }: { localPeer: HMSPeer }) => {
+const Preview = ({ localPeer }: { localPeer: HMSPeer | undefined }) => {
+  return (
+    <VStack mt="8" mb="4">
+      <VStack bgColor="gray.700" p="4" borderRadius="lg">
+        <Heading as={"h1"} fontSize="medium">
+          Preview
+        </Heading>
+        {localPeer ? <Peer peer={localPeer} /> : <PreviewPlaceholder />}
+      </VStack>
+    </VStack>
+  );
+};
+
+const PreviewPlaceholder = () => {
   return (
     <>
-      <h2>Preview</h2>
-      <Peer peer={localPeer} />
+      <Flex h="225px" w="300px" justifyContent="center" alignItems="center">
+        <SpinnerIcon color={"red.200"} boxSize={"70px"} />
+      </Flex>
+      <Text color={"gray.400"}>Your meeting name</Text>
     </>
   );
 };
