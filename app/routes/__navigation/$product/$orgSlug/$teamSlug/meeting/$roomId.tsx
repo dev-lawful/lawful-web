@@ -114,7 +114,7 @@ const RoomPage = () => {
       {showPreview ? <Preview localPeer={localPeer} /> : null}
       <Flex justifyContent="center" alignItems="center" wrap="wrap" gap="2">
         {hasLeft ? (
-          <Text>
+          <Text mt="8">
             Thank you for using our Meetings service, we hope you really enjoyed
             the experience
           </Text>
@@ -188,6 +188,11 @@ const Peer = ({ peer }: { peer: HMSPeer }) => {
   return (
     <Box>
       <video
+        style={{
+          width: 300,
+          height: 225,
+          backgroundColor: "black",
+        }}
         ref={videoRef}
         autoPlay
         muted
@@ -229,10 +234,14 @@ const PreviewPlaceholder = () => {
 const Meeting = ({ peers }: { peers: Array<HMSPeer> }) => {
   return (
     <>
-      <h2>Peers</h2>
-      {peers.map((peer) => (
-        <Peer key={peer.id} peer={peer} />
-      ))}
+      <Heading as={"h1"} fontSize="medium" mt="8" ml="2">
+        Meeting members
+      </Heading>
+      <Flex wrap="wrap" m="1" gap="2" justifyContent={"center"}>
+        {peers.map((peer) => (
+          <Peer key={peer.id} peer={peer} />
+        ))}
+      </Flex>
     </>
   );
 };
