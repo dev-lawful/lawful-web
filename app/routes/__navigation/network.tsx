@@ -2,10 +2,12 @@ import {
   Flex,
   Heading,
   Img,
+  Link,
   Stack,
   Text,
   useBreakpointValue,
 } from "@chakra-ui/react";
+import { Link as RemixLink } from "@remix-run/react";
 
 const NetworkAboutRoute = () => {
   return (
@@ -39,6 +41,9 @@ const NetworkAboutRoute = () => {
             <Text as="strong">Network</Text> brings top-notch messaging and
             decision-making features to the table.
           </Text>
+          <Link as={RemixLink} to="./responsibility" >
+            See Network's social responsibility initiative
+          </Link>
         </Stack>
       </Flex>
       <Flex flex={1}>
