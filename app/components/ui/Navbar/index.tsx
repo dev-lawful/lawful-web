@@ -61,6 +61,10 @@ const useNavbarLinks = () => {
           label: "Initiatives",
           to: `${params.product}/${params.orgSlug}/${params.teamSlug}/initiatives`,
         },
+        {
+          label: "Meeting",
+          to: `${params.product}/${params.orgSlug}/${params.teamSlug}/meeting`,
+        },
       ];
     }
     default: {

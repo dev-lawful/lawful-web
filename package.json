@@ -9,6 +9,7 @@
     "types": "openapi-typescript https://pxctfvtvdzmcrmssxkkj.supabase.co/rest/v1/?apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4Y3RmdnR2ZHptY3Jtc3N4a2tqIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDk2MjczMjYsImV4cCI6MTk2NTIwMzMyNn0.42sk46cq8u4yvDqpfe3AioOq9pM1sU_thncq7ip2MI0 --output app/_types/supabase.ts"
   },
   "dependencies": {
+    "@100mslive/react-sdk": "^0.4.0",
     "@chakra-ui/icons": "^2.0.2",
     "@chakra-ui/react": "^2.2.1",
     "@emotion/react": "^11.9.0",
@@ -21,20 +22,24 @@
     "@supabase/supabase-js": "^1.35.0",
     "@vercel/node": "^1.15.4",
     "framer-motion": "^6.3.0",
+    "jsonwebtoken": "^8.5.1",
     "lexical": "^0.2.7",
     "react": "^18.2.0",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.2.0",
     "react-icons": "^4.6.0",
-    "react-markdown": "^8.0.3"
+    "react-markdown": "^8.0.3",
+    "uuid4": "^2.0.3"
   },
   "devDependencies": {
     "@remix-run/dev": "^1.6.1",
     "@remix-run/eslint-config": "^1.6.1",
     "@remix-run/serve": "^1.6.1",
+    "@types/jsonwebtoken": "^8.5.9",
     "@types/react": "^18.0.15",
     "@types/react-dom": "^18.0.6",
+    "@types/uuid4": "^2.0.0",
     "eslint": "^8.11.0",
     "openapi-typescript": "^5.2.0",
     "typescript": "^4.5.5"
