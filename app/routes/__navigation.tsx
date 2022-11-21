@@ -16,8 +16,6 @@ const NavigationLayoutRoute = () => {
 
 export default NavigationLayoutRoute;
 
-export const ErrorBoundary = () => {
-  return <div>Hola</div>;
-};
+export const ErrorBoundary = CustomErrorBoundary;
 
 export const CatchBoundary = CustomCatchBoundary;
