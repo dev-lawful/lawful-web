@@ -1,5 +1,5 @@
 import { Outlet } from "@remix-run/react";
-import { CustomCatchBoundary, Navbar } from "~/components/ui";
+import { CustomCatchBoundary, CustomErrorBoundary, Navbar } from "~/components/ui";
 
 const NavigationLayoutRoute = () => {
   return (
