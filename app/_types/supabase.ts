@@ -399,6 +399,108 @@ export interface paths {
       };
     };
   };
+  "/estimations": {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.estimations.id"];
+          created_at?: parameters["rowFilter.estimations.created_at"];
+          effort?: parameters["rowFilter.estimations.effort"];
+          userId?: parameters["rowFilter.estimations.userId"];
+          justification?: parameters["rowFilter.estimations.justification"];
+          taskId?: parameters["rowFilter.estimations.taskId"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["estimations"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** estimations */
+          estimations?: definitions["estimations"];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters["select"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.estimations.id"];
+          created_at?: parameters["rowFilter.estimations.created_at"];
+          effort?: parameters["rowFilter.estimations.effort"];
+          userId?: parameters["rowFilter.estimations.userId"];
+          justification?: parameters["rowFilter.estimations.justification"];
+          taskId?: parameters["rowFilter.estimations.taskId"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.estimations.id"];
+          created_at?: parameters["rowFilter.estimations.created_at"];
+          effort?: parameters["rowFilter.estimations.effort"];
+          userId?: parameters["rowFilter.estimations.userId"];
+          justification?: parameters["rowFilter.estimations.justification"];
+          taskId?: parameters["rowFilter.estimations.taskId"];
+        };
+        body: {
+          /** estimations */
+          estimations?: definitions["estimations"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
   "/initiatives": {
     get: {
       parameters: {
@@ -1670,6 +1772,35 @@ export interface definitions {
      */
     teamId?: number;
   };
+  estimations: {
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: number;
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    created_at?: string;
+    /** Format: bigint */
+    effort?: number;
+    /**
+     * Format: uuid
+     * @description Note:
+     * This is a Foreign Key to `profiles.id`.<fk table='profiles' column='id'/>
+     */
+    userId?: string;
+    /** Format: text */
+    justification?: string;
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Foreign Key to `tasks.id`.<fk table='tasks' column='id'/>
+     */
+    taskId?: number;
+  };
   initiatives: {
     /**
      * Format: bigint
@@ -2017,6 +2148,20 @@ export interface parameters {
   "rowFilter.chats.thumbnail": string;
   /** Format: bigint */
   "rowFilter.chats.teamId": string;
+  /** @description estimations */
+  "body.estimations": definitions["estimations"];
+  /** Format: bigint */
+  "rowFilter.estimations.id": string;
+  /** Format: timestamp with time zone */
+  "rowFilter.estimations.created_at": string;
+  /** Format: bigint */
+  "rowFilter.estimations.effort": string;
+  /** Format: uuid */
+  "rowFilter.estimations.userId": string;
+  /** Format: text */
+  "rowFilter.estimations.justification": string;
+  /** Format: bigint */
+  "rowFilter.estimations.taskId": string;
   /** @description initiatives */
   "body.initiatives": definitions["initiatives"];
   /** Format: bigint */

@@ -3,7 +3,7 @@ import {
   ChevronDownIcon,
   DeleteIcon,
   EditIcon,
-  PlusSquareIcon,
+  PlusSquareIcon
 } from "@chakra-ui/icons";
 import {
   Button,
@@ -16,23 +16,23 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  Stack,
+  Stack
 } from "@chakra-ui/react";
 import type {
   ActionFunction,
   LoaderFunction,
-  RouteComponent,
+  RouteComponent
 } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import {
   Link as RemixLink,
   useFetcher,
   useLoaderData,
-  useParams,
+  useParams
 } from "@remix-run/react";
 import type {
   SupabaseClient,
-  SupabaseRealtimePayload,
+  SupabaseRealtimePayload
 } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
 import { DndProvider } from "react-dnd";
@@ -45,7 +45,7 @@ import {
   getBoardById,
   getBoardStatesByBoardId,
   getTasksByBoardStateId,
-  updateTaskState,
+  updateTaskState
 } from "~/models";
 import type { Board, BoardState, Task } from "~/_types";
 
@@ -151,7 +151,7 @@ export const action: ActionFunction = async ({ request }) => {
         taskId,
       });
 
-      if (error) {
+      if (error) {  
         throw new Error(error);
       }
 

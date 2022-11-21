@@ -1,4 +1,9 @@
-import { ArrowBackIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
+import {
+  ArrowBackIcon,
+  CheckIcon,
+  DeleteIcon,
+  EditIcon,
+} from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -195,6 +200,15 @@ const TaskRoute = () => {
                 <Button>
                   <HStack>
                     <EditIcon /> <Text>Edit</Text>
+                  </HStack>
+                </Button>
+              </Link>
+            </WrapItem>
+            <WrapItem>
+              <Link as={RemixLink} to={`./estimate`}>
+                <Button variant="outline">
+                  <HStack>
+                    <CheckIcon /> <Text>Estimate effort</Text>
                   </HStack>
                 </Button>
               </Link>
