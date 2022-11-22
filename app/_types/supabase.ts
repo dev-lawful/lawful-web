@@ -12,13 +12,16 @@ export interface paths {
       };
     };
   };
-  "/boardStates": {
+  "/estimations": {
     get: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.boardStates.id"];
-          boardId?: parameters["rowFilter.boardStates.boardId"];
-          description?: parameters["rowFilter.boardStates.description"];
+          id?: parameters["rowFilter.estimations.id"];
+          created_at?: parameters["rowFilter.estimations.created_at"];
+          effort?: parameters["rowFilter.estimations.effort"];
+          userId?: parameters["rowFilter.estimations.userId"];
+          justification?: parameters["rowFilter.estimations.justification"];
+          taskId?: parameters["rowFilter.estimations.taskId"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -40,7 +43,7 @@ export interface paths {
       responses: {
         /** OK */
         200: {
-          schema: definitions["boardStates"][];
+          schema: definitions["estimations"][];
         };
         /** Partial Content */
         206: unknown;
@@ -49,8 +52,8 @@ export interface paths {
     post: {
       parameters: {
         body: {
-          /** boardStates */
-          boardStates?: definitions["boardStates"];
+          /** estimations */
+          estimations?: definitions["estimations"];
         };
         query: {
           /** Filtering Columns */
@@ -69,9 +72,12 @@ export interface paths {
     delete: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.boardStates.id"];
-          boardId?: parameters["rowFilter.boardStates.boardId"];
-          description?: parameters["rowFilter.boardStates.description"];
+          id?: parameters["rowFilter.estimations.id"];
+          created_at?: parameters["rowFilter.estimations.created_at"];
+          effort?: parameters["rowFilter.estimations.effort"];
+          userId?: parameters["rowFilter.estimations.userId"];
+          justification?: parameters["rowFilter.estimations.justification"];
+          taskId?: parameters["rowFilter.estimations.taskId"];
         };
         header: {
           /** Preference */
@@ -86,13 +92,16 @@ export interface paths {
     patch: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.boardStates.id"];
-          boardId?: parameters["rowFilter.boardStates.boardId"];
-          description?: parameters["rowFilter.boardStates.description"];
+          id?: parameters["rowFilter.estimations.id"];
+          created_at?: parameters["rowFilter.estimations.created_at"];
+          effort?: parameters["rowFilter.estimations.effort"];
+          userId?: parameters["rowFilter.estimations.userId"];
+          justification?: parameters["rowFilter.estimations.justification"];
+          taskId?: parameters["rowFilter.estimations.taskId"];
         };
         body: {
-          /** boardStates */
-          boardStates?: definitions["boardStates"];
+          /** estimations */
+          estimations?: definitions["estimations"];
         };
         header: {
           /** Preference */
@@ -105,14 +114,14 @@ export interface paths {
       };
     };
   };
-  "/boards": {
+  "/organizationInvitations": {
     get: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.boards.id"];
-          created_at?: parameters["rowFilter.boards.created_at"];
-          teamId?: parameters["rowFilter.boards.teamId"];
-          name?: parameters["rowFilter.boards.name"];
+          id?: parameters["rowFilter.organizationInvitations.id"];
+          createdAt?: parameters["rowFilter.organizationInvitations.createdAt"];
+          userEmail?: parameters["rowFilter.organizationInvitations.userEmail"];
+          organizationId?: parameters["rowFilter.organizationInvitations.organizationId"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -134,7 +143,7 @@ export interface paths {
       responses: {
         /** OK */
         200: {
-          schema: definitions["boards"][];
+          schema: definitions["organizationInvitations"][];
         };
         /** Partial Content */
         206: unknown;
@@ -143,8 +152,8 @@ export interface paths {
     post: {
       parameters: {
         body: {
-          /** boards */
-          boards?: definitions["boards"];
+          /** organizationInvitations */
+          organizationInvitations?: definitions["organizationInvitations"];
         };
         query: {
           /** Filtering Columns */
@@ -163,10 +172,10 @@ export interface paths {
     delete: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.boards.id"];
-          created_at?: parameters["rowFilter.boards.created_at"];
-          teamId?: parameters["rowFilter.boards.teamId"];
-          name?: parameters["rowFilter.boards.name"];
+          id?: parameters["rowFilter.organizationInvitations.id"];
+          createdAt?: parameters["rowFilter.organizationInvitations.createdAt"];
+          userEmail?: parameters["rowFilter.organizationInvitations.userEmail"];
+          organizationId?: parameters["rowFilter.organizationInvitations.organizationId"];
         };
         header: {
           /** Preference */
@@ -181,14 +190,14 @@ export interface paths {
     patch: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.boards.id"];
-          created_at?: parameters["rowFilter.boards.created_at"];
-          teamId?: parameters["rowFilter.boards.teamId"];
-          name?: parameters["rowFilter.boards.name"];
+          id?: parameters["rowFilter.organizationInvitations.id"];
+          createdAt?: parameters["rowFilter.organizationInvitations.createdAt"];
+          userEmail?: parameters["rowFilter.organizationInvitations.userEmail"];
+          organizationId?: parameters["rowFilter.organizationInvitations.organizationId"];
         };
         body: {
-          /** boards */
-          boards?: definitions["boards"];
+          /** organizationInvitations */
+          organizationInvitations?: definitions["organizationInvitations"];
         };
         header: {
           /** Preference */
@@ -294,17 +303,14 @@ export interface paths {
       };
     };
   };
-  "/chats": {
+  "/subscriptions": {
     get: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.chats.id"];
-          createdAt?: parameters["rowFilter.chats.createdAt"];
-          isGroup?: parameters["rowFilter.chats.isGroup"];
-          name?: parameters["rowFilter.chats.name"];
-          description?: parameters["rowFilter.chats.description"];
-          thumbnail?: parameters["rowFilter.chats.thumbnail"];
-          teamId?: parameters["rowFilter.chats.teamId"];
+          id?: parameters["rowFilter.subscriptions.id"];
+          createdAt?: parameters["rowFilter.subscriptions.createdAt"];
+          organizationId?: parameters["rowFilter.subscriptions.organizationId"];
+          product?: parameters["rowFilter.subscriptions.product"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -326,7 +332,7 @@ export interface paths {
       responses: {
         /** OK */
         200: {
-          schema: definitions["chats"][];
+          schema: definitions["subscriptions"][];
         };
         /** Partial Content */
         206: unknown;
@@ -335,8 +341,8 @@ export interface paths {
     post: {
       parameters: {
         body: {
-          /** chats */
-          chats?: definitions["chats"];
+          /** subscriptions */
+          subscriptions?: definitions["subscriptions"];
         };
         query: {
           /** Filtering Columns */
@@ -355,13 +361,10 @@ export interface paths {
     delete: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.chats.id"];
-          createdAt?: parameters["rowFilter.chats.createdAt"];
-          isGroup?: parameters["rowFilter.chats.isGroup"];
-          name?: parameters["rowFilter.chats.name"];
-          description?: parameters["rowFilter.chats.description"];
-          thumbnail?: parameters["rowFilter.chats.thumbnail"];
-          teamId?: parameters["rowFilter.chats.teamId"];
+          id?: parameters["rowFilter.subscriptions.id"];
+          createdAt?: parameters["rowFilter.subscriptions.createdAt"];
+          organizationId?: parameters["rowFilter.subscriptions.organizationId"];
+          product?: parameters["rowFilter.subscriptions.product"];
         };
         header: {
           /** Preference */
@@ -376,17 +379,14 @@ export interface paths {
     patch: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.chats.id"];
-          createdAt?: parameters["rowFilter.chats.createdAt"];
-          isGroup?: parameters["rowFilter.chats.isGroup"];
-          name?: parameters["rowFilter.chats.name"];
-          description?: parameters["rowFilter.chats.description"];
-          thumbnail?: parameters["rowFilter.chats.thumbnail"];
-          teamId?: parameters["rowFilter.chats.teamId"];
+          id?: parameters["rowFilter.subscriptions.id"];
+          createdAt?: parameters["rowFilter.subscriptions.createdAt"];
+          organizationId?: parameters["rowFilter.subscriptions.organizationId"];
+          product?: parameters["rowFilter.subscriptions.product"];
         };
         body: {
-          /** chats */
-          chats?: definitions["chats"];
+          /** subscriptions */
+          subscriptions?: definitions["subscriptions"];
         };
         header: {
           /** Preference */
@@ -399,16 +399,18 @@ export interface paths {
       };
     };
   };
-  "/estimations": {
+  "/tasks": {
     get: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.estimations.id"];
-          created_at?: parameters["rowFilter.estimations.created_at"];
-          effort?: parameters["rowFilter.estimations.effort"];
-          userId?: parameters["rowFilter.estimations.userId"];
-          justification?: parameters["rowFilter.estimations.justification"];
-          taskId?: parameters["rowFilter.estimations.taskId"];
+          id?: parameters["rowFilter.tasks.id"];
+          created_at?: parameters["rowFilter.tasks.created_at"];
+          name?: parameters["rowFilter.tasks.name"];
+          description?: parameters["rowFilter.tasks.description"];
+          dueDate?: parameters["rowFilter.tasks.dueDate"];
+          asignee?: parameters["rowFilter.tasks.asignee"];
+          stateId?: parameters["rowFilter.tasks.stateId"];
+          effort?: parameters["rowFilter.tasks.effort"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -430,7 +432,7 @@ export interface paths {
       responses: {
         /** OK */
         200: {
-          schema: definitions["estimations"][];
+          schema: definitions["tasks"][];
         };
         /** Partial Content */
         206: unknown;
@@ -439,8 +441,8 @@ export interface paths {
     post: {
       parameters: {
         body: {
-          /** estimations */
-          estimations?: definitions["estimations"];
+          /** tasks */
+          tasks?: definitions["tasks"];
         };
         query: {
           /** Filtering Columns */
@@ -459,12 +461,14 @@ export interface paths {
     delete: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.estimations.id"];
-          created_at?: parameters["rowFilter.estimations.created_at"];
-          effort?: parameters["rowFilter.estimations.effort"];
-          userId?: parameters["rowFilter.estimations.userId"];
-          justification?: parameters["rowFilter.estimations.justification"];
-          taskId?: parameters["rowFilter.estimations.taskId"];
+          id?: parameters["rowFilter.tasks.id"];
+          created_at?: parameters["rowFilter.tasks.created_at"];
+          name?: parameters["rowFilter.tasks.name"];
+          description?: parameters["rowFilter.tasks.description"];
+          dueDate?: parameters["rowFilter.tasks.dueDate"];
+          asignee?: parameters["rowFilter.tasks.asignee"];
+          stateId?: parameters["rowFilter.tasks.stateId"];
+          effort?: parameters["rowFilter.tasks.effort"];
         };
         header: {
           /** Preference */
@@ -479,16 +483,219 @@ export interface paths {
     patch: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.estimations.id"];
-          created_at?: parameters["rowFilter.estimations.created_at"];
-          effort?: parameters["rowFilter.estimations.effort"];
-          userId?: parameters["rowFilter.estimations.userId"];
-          justification?: parameters["rowFilter.estimations.justification"];
-          taskId?: parameters["rowFilter.estimations.taskId"];
+          id?: parameters["rowFilter.tasks.id"];
+          created_at?: parameters["rowFilter.tasks.created_at"];
+          name?: parameters["rowFilter.tasks.name"];
+          description?: parameters["rowFilter.tasks.description"];
+          dueDate?: parameters["rowFilter.tasks.dueDate"];
+          asignee?: parameters["rowFilter.tasks.asignee"];
+          stateId?: parameters["rowFilter.tasks.stateId"];
+          effort?: parameters["rowFilter.tasks.effort"];
         };
         body: {
-          /** estimations */
-          estimations?: definitions["estimations"];
+          /** tasks */
+          tasks?: definitions["tasks"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
+  "/teams": {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.teams.id"];
+          createdAt?: parameters["rowFilter.teams.createdAt"];
+          name?: parameters["rowFilter.teams.name"];
+          slug?: parameters["rowFilter.teams.slug"];
+          description?: parameters["rowFilter.teams.description"];
+          organizationId?: parameters["rowFilter.teams.organizationId"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["teams"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** teams */
+          teams?: definitions["teams"];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters["select"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.teams.id"];
+          createdAt?: parameters["rowFilter.teams.createdAt"];
+          name?: parameters["rowFilter.teams.name"];
+          slug?: parameters["rowFilter.teams.slug"];
+          description?: parameters["rowFilter.teams.description"];
+          organizationId?: parameters["rowFilter.teams.organizationId"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.teams.id"];
+          createdAt?: parameters["rowFilter.teams.createdAt"];
+          name?: parameters["rowFilter.teams.name"];
+          slug?: parameters["rowFilter.teams.slug"];
+          description?: parameters["rowFilter.teams.description"];
+          organizationId?: parameters["rowFilter.teams.organizationId"];
+        };
+        body: {
+          /** teams */
+          teams?: definitions["teams"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
+  "/messages": {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.messages.id"];
+          createdAt?: parameters["rowFilter.messages.createdAt"];
+          text?: parameters["rowFilter.messages.text"];
+          chatId?: parameters["rowFilter.messages.chatId"];
+          userId?: parameters["rowFilter.messages.userId"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["messages"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** messages */
+          messages?: definitions["messages"];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters["select"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.messages.id"];
+          createdAt?: parameters["rowFilter.messages.createdAt"];
+          text?: parameters["rowFilter.messages.text"];
+          chatId?: parameters["rowFilter.messages.chatId"];
+          userId?: parameters["rowFilter.messages.userId"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.messages.id"];
+          createdAt?: parameters["rowFilter.messages.createdAt"];
+          text?: parameters["rowFilter.messages.text"];
+          chatId?: parameters["rowFilter.messages.chatId"];
+          userId?: parameters["rowFilter.messages.userId"];
+        };
+        body: {
+          /** messages */
+          messages?: definitions["messages"];
         };
         header: {
           /** Preference */
@@ -612,15 +819,13 @@ export interface paths {
       };
     };
   };
-  "/messages": {
+  "/teamMembers": {
     get: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.messages.id"];
-          createdAt?: parameters["rowFilter.messages.createdAt"];
-          text?: parameters["rowFilter.messages.text"];
-          chatId?: parameters["rowFilter.messages.chatId"];
-          userId?: parameters["rowFilter.messages.userId"];
+          id?: parameters["rowFilter.teamMembers.id"];
+          teamId?: parameters["rowFilter.teamMembers.teamId"];
+          userId?: parameters["rowFilter.teamMembers.userId"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -642,7 +847,7 @@ export interface paths {
       responses: {
         /** OK */
         200: {
-          schema: definitions["messages"][];
+          schema: definitions["teamMembers"][];
         };
         /** Partial Content */
         206: unknown;
@@ -651,8 +856,8 @@ export interface paths {
     post: {
       parameters: {
         body: {
-          /** messages */
-          messages?: definitions["messages"];
+          /** teamMembers */
+          teamMembers?: definitions["teamMembers"];
         };
         query: {
           /** Filtering Columns */
@@ -671,11 +876,9 @@ export interface paths {
     delete: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.messages.id"];
-          createdAt?: parameters["rowFilter.messages.createdAt"];
-          text?: parameters["rowFilter.messages.text"];
-          chatId?: parameters["rowFilter.messages.chatId"];
-          userId?: parameters["rowFilter.messages.userId"];
+          id?: parameters["rowFilter.teamMembers.id"];
+          teamId?: parameters["rowFilter.teamMembers.teamId"];
+          userId?: parameters["rowFilter.teamMembers.userId"];
         };
         header: {
           /** Preference */
@@ -690,15 +893,13 @@ export interface paths {
     patch: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.messages.id"];
-          createdAt?: parameters["rowFilter.messages.createdAt"];
-          text?: parameters["rowFilter.messages.text"];
-          chatId?: parameters["rowFilter.messages.chatId"];
-          userId?: parameters["rowFilter.messages.userId"];
+          id?: parameters["rowFilter.teamMembers.id"];
+          teamId?: parameters["rowFilter.teamMembers.teamId"];
+          userId?: parameters["rowFilter.teamMembers.userId"];
         };
         body: {
-          /** messages */
-          messages?: definitions["messages"];
+          /** teamMembers */
+          teamMembers?: definitions["teamMembers"];
         };
         header: {
           /** Preference */
@@ -711,13 +912,14 @@ export interface paths {
       };
     };
   };
-  "/options": {
+  "/boards": {
     get: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.options.id"];
-          initiativeId?: parameters["rowFilter.options.initiativeId"];
-          content?: parameters["rowFilter.options.content"];
+          id?: parameters["rowFilter.boards.id"];
+          created_at?: parameters["rowFilter.boards.created_at"];
+          teamId?: parameters["rowFilter.boards.teamId"];
+          name?: parameters["rowFilter.boards.name"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -739,7 +941,7 @@ export interface paths {
       responses: {
         /** OK */
         200: {
-          schema: definitions["options"][];
+          schema: definitions["boards"][];
         };
         /** Partial Content */
         206: unknown;
@@ -748,8 +950,8 @@ export interface paths {
     post: {
       parameters: {
         body: {
-          /** options */
-          options?: definitions["options"];
+          /** boards */
+          boards?: definitions["boards"];
         };
         query: {
           /** Filtering Columns */
@@ -768,9 +970,10 @@ export interface paths {
     delete: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.options.id"];
-          initiativeId?: parameters["rowFilter.options.initiativeId"];
-          content?: parameters["rowFilter.options.content"];
+          id?: parameters["rowFilter.boards.id"];
+          created_at?: parameters["rowFilter.boards.created_at"];
+          teamId?: parameters["rowFilter.boards.teamId"];
+          name?: parameters["rowFilter.boards.name"];
         };
         header: {
           /** Preference */
@@ -785,13 +988,14 @@ export interface paths {
     patch: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.options.id"];
-          initiativeId?: parameters["rowFilter.options.initiativeId"];
-          content?: parameters["rowFilter.options.content"];
+          id?: parameters["rowFilter.boards.id"];
+          created_at?: parameters["rowFilter.boards.created_at"];
+          teamId?: parameters["rowFilter.boards.teamId"];
+          name?: parameters["rowFilter.boards.name"];
         };
         body: {
-          /** options */
-          options?: definitions["options"];
+          /** boards */
+          boards?: definitions["boards"];
         };
         header: {
           /** Preference */
@@ -804,14 +1008,17 @@ export interface paths {
       };
     };
   };
-  "/organizationInvitations": {
+  "/chats": {
     get: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.organizationInvitations.id"];
-          createdAt?: parameters["rowFilter.organizationInvitations.createdAt"];
-          userEmail?: parameters["rowFilter.organizationInvitations.userEmail"];
-          organizationId?: parameters["rowFilter.organizationInvitations.organizationId"];
+          id?: parameters["rowFilter.chats.id"];
+          createdAt?: parameters["rowFilter.chats.createdAt"];
+          isGroup?: parameters["rowFilter.chats.isGroup"];
+          name?: parameters["rowFilter.chats.name"];
+          description?: parameters["rowFilter.chats.description"];
+          thumbnail?: parameters["rowFilter.chats.thumbnail"];
+          teamId?: parameters["rowFilter.chats.teamId"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -833,7 +1040,7 @@ export interface paths {
       responses: {
         /** OK */
         200: {
-          schema: definitions["organizationInvitations"][];
+          schema: definitions["chats"][];
         };
         /** Partial Content */
         206: unknown;
@@ -842,8 +1049,8 @@ export interface paths {
     post: {
       parameters: {
         body: {
-          /** organizationInvitations */
-          organizationInvitations?: definitions["organizationInvitations"];
+          /** chats */
+          chats?: definitions["chats"];
         };
         query: {
           /** Filtering Columns */
@@ -862,10 +1069,13 @@ export interface paths {
     delete: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.organizationInvitations.id"];
-          createdAt?: parameters["rowFilter.organizationInvitations.createdAt"];
-          userEmail?: parameters["rowFilter.organizationInvitations.userEmail"];
-          organizationId?: parameters["rowFilter.organizationInvitations.organizationId"];
+          id?: parameters["rowFilter.chats.id"];
+          createdAt?: parameters["rowFilter.chats.createdAt"];
+          isGroup?: parameters["rowFilter.chats.isGroup"];
+          name?: parameters["rowFilter.chats.name"];
+          description?: parameters["rowFilter.chats.description"];
+          thumbnail?: parameters["rowFilter.chats.thumbnail"];
+          teamId?: parameters["rowFilter.chats.teamId"];
         };
         header: {
           /** Preference */
@@ -880,14 +1090,17 @@ export interface paths {
     patch: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.organizationInvitations.id"];
-          createdAt?: parameters["rowFilter.organizationInvitations.createdAt"];
-          userEmail?: parameters["rowFilter.organizationInvitations.userEmail"];
-          organizationId?: parameters["rowFilter.organizationInvitations.organizationId"];
+          id?: parameters["rowFilter.chats.id"];
+          createdAt?: parameters["rowFilter.chats.createdAt"];
+          isGroup?: parameters["rowFilter.chats.isGroup"];
+          name?: parameters["rowFilter.chats.name"];
+          description?: parameters["rowFilter.chats.description"];
+          thumbnail?: parameters["rowFilter.chats.thumbnail"];
+          teamId?: parameters["rowFilter.chats.teamId"];
         };
         body: {
-          /** organizationInvitations */
-          organizationInvitations?: definitions["organizationInvitations"];
+          /** chats */
+          chats?: definitions["chats"];
         };
         header: {
           /** Preference */
@@ -981,6 +1194,201 @@ export interface paths {
         body: {
           /** organizationMembers */
           organizationMembers?: definitions["organizationMembers"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
+  "/votes": {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.votes.id"];
+          createdAt?: parameters["rowFilter.votes.createdAt"];
+          optionId?: parameters["rowFilter.votes.optionId"];
+          userId?: parameters["rowFilter.votes.userId"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["votes"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** votes */
+          votes?: definitions["votes"];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters["select"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.votes.id"];
+          createdAt?: parameters["rowFilter.votes.createdAt"];
+          optionId?: parameters["rowFilter.votes.optionId"];
+          userId?: parameters["rowFilter.votes.userId"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.votes.id"];
+          createdAt?: parameters["rowFilter.votes.createdAt"];
+          optionId?: parameters["rowFilter.votes.optionId"];
+          userId?: parameters["rowFilter.votes.userId"];
+        };
+        body: {
+          /** votes */
+          votes?: definitions["votes"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
+  "/profiles": {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.profiles.id"];
+          createdAt?: parameters["rowFilter.profiles.createdAt"];
+          email?: parameters["rowFilter.profiles.email"];
+          firstName?: parameters["rowFilter.profiles.firstName"];
+          lastName?: parameters["rowFilter.profiles.lastName"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["profiles"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** profiles */
+          profiles?: definitions["profiles"];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters["select"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.profiles.id"];
+          createdAt?: parameters["rowFilter.profiles.createdAt"];
+          email?: parameters["rowFilter.profiles.email"];
+          firstName?: parameters["rowFilter.profiles.firstName"];
+          lastName?: parameters["rowFilter.profiles.lastName"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.profiles.id"];
+          createdAt?: parameters["rowFilter.profiles.createdAt"];
+          email?: parameters["rowFilter.profiles.email"];
+          firstName?: parameters["rowFilter.profiles.firstName"];
+          lastName?: parameters["rowFilter.profiles.lastName"];
+        };
+        body: {
+          /** profiles */
+          profiles?: definitions["profiles"];
         };
         header: {
           /** Preference */
@@ -1098,15 +1506,13 @@ export interface paths {
       };
     };
   };
-  "/profiles": {
+  "/boardStates": {
     get: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.profiles.id"];
-          createdAt?: parameters["rowFilter.profiles.createdAt"];
-          email?: parameters["rowFilter.profiles.email"];
-          firstName?: parameters["rowFilter.profiles.firstName"];
-          lastName?: parameters["rowFilter.profiles.lastName"];
+          id?: parameters["rowFilter.boardStates.id"];
+          boardId?: parameters["rowFilter.boardStates.boardId"];
+          description?: parameters["rowFilter.boardStates.description"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -1128,7 +1534,7 @@ export interface paths {
       responses: {
         /** OK */
         200: {
-          schema: definitions["profiles"][];
+          schema: definitions["boardStates"][];
         };
         /** Partial Content */
         206: unknown;
@@ -1137,8 +1543,8 @@ export interface paths {
     post: {
       parameters: {
         body: {
-          /** profiles */
-          profiles?: definitions["profiles"];
+          /** boardStates */
+          boardStates?: definitions["boardStates"];
         };
         query: {
           /** Filtering Columns */
@@ -1157,11 +1563,9 @@ export interface paths {
     delete: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.profiles.id"];
-          createdAt?: parameters["rowFilter.profiles.createdAt"];
-          email?: parameters["rowFilter.profiles.email"];
-          firstName?: parameters["rowFilter.profiles.firstName"];
-          lastName?: parameters["rowFilter.profiles.lastName"];
+          id?: parameters["rowFilter.boardStates.id"];
+          boardId?: parameters["rowFilter.boardStates.boardId"];
+          description?: parameters["rowFilter.boardStates.description"];
         };
         header: {
           /** Preference */
@@ -1176,309 +1580,13 @@ export interface paths {
     patch: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.profiles.id"];
-          createdAt?: parameters["rowFilter.profiles.createdAt"];
-          email?: parameters["rowFilter.profiles.email"];
-          firstName?: parameters["rowFilter.profiles.firstName"];
-          lastName?: parameters["rowFilter.profiles.lastName"];
+          id?: parameters["rowFilter.boardStates.id"];
+          boardId?: parameters["rowFilter.boardStates.boardId"];
+          description?: parameters["rowFilter.boardStates.description"];
         };
         body: {
-          /** profiles */
-          profiles?: definitions["profiles"];
-        };
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
-      responses: {
-        /** No Content */
-        204: never;
-      };
-    };
-  };
-  "/subscriptions": {
-    get: {
-      parameters: {
-        query: {
-          id?: parameters["rowFilter.subscriptions.id"];
-          createdAt?: parameters["rowFilter.subscriptions.createdAt"];
-          organizationId?: parameters["rowFilter.subscriptions.organizationId"];
-          product?: parameters["rowFilter.subscriptions.product"];
-          /** Filtering Columns */
-          select?: parameters["select"];
-          /** Ordering */
-          order?: parameters["order"];
-          /** Limiting and Pagination */
-          offset?: parameters["offset"];
-          /** Limiting and Pagination */
-          limit?: parameters["limit"];
-        };
-        header: {
-          /** Limiting and Pagination */
-          Range?: parameters["range"];
-          /** Limiting and Pagination */
-          "Range-Unit"?: parameters["rangeUnit"];
-          /** Preference */
-          Prefer?: parameters["preferCount"];
-        };
-      };
-      responses: {
-        /** OK */
-        200: {
-          schema: definitions["subscriptions"][];
-        };
-        /** Partial Content */
-        206: unknown;
-      };
-    };
-    post: {
-      parameters: {
-        body: {
-          /** subscriptions */
-          subscriptions?: definitions["subscriptions"];
-        };
-        query: {
-          /** Filtering Columns */
-          select?: parameters["select"];
-        };
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
-      responses: {
-        /** Created */
-        201: unknown;
-      };
-    };
-    delete: {
-      parameters: {
-        query: {
-          id?: parameters["rowFilter.subscriptions.id"];
-          createdAt?: parameters["rowFilter.subscriptions.createdAt"];
-          organizationId?: parameters["rowFilter.subscriptions.organizationId"];
-          product?: parameters["rowFilter.subscriptions.product"];
-        };
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
-      responses: {
-        /** No Content */
-        204: never;
-      };
-    };
-    patch: {
-      parameters: {
-        query: {
-          id?: parameters["rowFilter.subscriptions.id"];
-          createdAt?: parameters["rowFilter.subscriptions.createdAt"];
-          organizationId?: parameters["rowFilter.subscriptions.organizationId"];
-          product?: parameters["rowFilter.subscriptions.product"];
-        };
-        body: {
-          /** subscriptions */
-          subscriptions?: definitions["subscriptions"];
-        };
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
-      responses: {
-        /** No Content */
-        204: never;
-      };
-    };
-  };
-  "/tasks": {
-    get: {
-      parameters: {
-        query: {
-          id?: parameters["rowFilter.tasks.id"];
-          created_at?: parameters["rowFilter.tasks.created_at"];
-          name?: parameters["rowFilter.tasks.name"];
-          description?: parameters["rowFilter.tasks.description"];
-          dueDate?: parameters["rowFilter.tasks.dueDate"];
-          asignee?: parameters["rowFilter.tasks.asignee"];
-          stateId?: parameters["rowFilter.tasks.stateId"];
-          /** Filtering Columns */
-          select?: parameters["select"];
-          /** Ordering */
-          order?: parameters["order"];
-          /** Limiting and Pagination */
-          offset?: parameters["offset"];
-          /** Limiting and Pagination */
-          limit?: parameters["limit"];
-        };
-        header: {
-          /** Limiting and Pagination */
-          Range?: parameters["range"];
-          /** Limiting and Pagination */
-          "Range-Unit"?: parameters["rangeUnit"];
-          /** Preference */
-          Prefer?: parameters["preferCount"];
-        };
-      };
-      responses: {
-        /** OK */
-        200: {
-          schema: definitions["tasks"][];
-        };
-        /** Partial Content */
-        206: unknown;
-      };
-    };
-    post: {
-      parameters: {
-        body: {
-          /** tasks */
-          tasks?: definitions["tasks"];
-        };
-        query: {
-          /** Filtering Columns */
-          select?: parameters["select"];
-        };
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
-      responses: {
-        /** Created */
-        201: unknown;
-      };
-    };
-    delete: {
-      parameters: {
-        query: {
-          id?: parameters["rowFilter.tasks.id"];
-          created_at?: parameters["rowFilter.tasks.created_at"];
-          name?: parameters["rowFilter.tasks.name"];
-          description?: parameters["rowFilter.tasks.description"];
-          dueDate?: parameters["rowFilter.tasks.dueDate"];
-          asignee?: parameters["rowFilter.tasks.asignee"];
-          stateId?: parameters["rowFilter.tasks.stateId"];
-        };
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
-      responses: {
-        /** No Content */
-        204: never;
-      };
-    };
-    patch: {
-      parameters: {
-        query: {
-          id?: parameters["rowFilter.tasks.id"];
-          created_at?: parameters["rowFilter.tasks.created_at"];
-          name?: parameters["rowFilter.tasks.name"];
-          description?: parameters["rowFilter.tasks.description"];
-          dueDate?: parameters["rowFilter.tasks.dueDate"];
-          asignee?: parameters["rowFilter.tasks.asignee"];
-          stateId?: parameters["rowFilter.tasks.stateId"];
-        };
-        body: {
-          /** tasks */
-          tasks?: definitions["tasks"];
-        };
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
-      responses: {
-        /** No Content */
-        204: never;
-      };
-    };
-  };
-  "/teamMembers": {
-    get: {
-      parameters: {
-        query: {
-          id?: parameters["rowFilter.teamMembers.id"];
-          teamId?: parameters["rowFilter.teamMembers.teamId"];
-          userId?: parameters["rowFilter.teamMembers.userId"];
-          /** Filtering Columns */
-          select?: parameters["select"];
-          /** Ordering */
-          order?: parameters["order"];
-          /** Limiting and Pagination */
-          offset?: parameters["offset"];
-          /** Limiting and Pagination */
-          limit?: parameters["limit"];
-        };
-        header: {
-          /** Limiting and Pagination */
-          Range?: parameters["range"];
-          /** Limiting and Pagination */
-          "Range-Unit"?: parameters["rangeUnit"];
-          /** Preference */
-          Prefer?: parameters["preferCount"];
-        };
-      };
-      responses: {
-        /** OK */
-        200: {
-          schema: definitions["teamMembers"][];
-        };
-        /** Partial Content */
-        206: unknown;
-      };
-    };
-    post: {
-      parameters: {
-        body: {
-          /** teamMembers */
-          teamMembers?: definitions["teamMembers"];
-        };
-        query: {
-          /** Filtering Columns */
-          select?: parameters["select"];
-        };
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
-      responses: {
-        /** Created */
-        201: unknown;
-      };
-    };
-    delete: {
-      parameters: {
-        query: {
-          id?: parameters["rowFilter.teamMembers.id"];
-          teamId?: parameters["rowFilter.teamMembers.teamId"];
-          userId?: parameters["rowFilter.teamMembers.userId"];
-        };
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
-      responses: {
-        /** No Content */
-        204: never;
-      };
-    };
-    patch: {
-      parameters: {
-        query: {
-          id?: parameters["rowFilter.teamMembers.id"];
-          teamId?: parameters["rowFilter.teamMembers.teamId"];
-          userId?: parameters["rowFilter.teamMembers.userId"];
-        };
-        body: {
-          /** teamMembers */
-          teamMembers?: definitions["teamMembers"];
+          /** boardStates */
+          boardStates?: definitions["boardStates"];
         };
         header: {
           /** Preference */
@@ -1584,16 +1692,13 @@ export interface paths {
       };
     };
   };
-  "/teams": {
+  "/options": {
     get: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.teams.id"];
-          createdAt?: parameters["rowFilter.teams.createdAt"];
-          name?: parameters["rowFilter.teams.name"];
-          slug?: parameters["rowFilter.teams.slug"];
-          description?: parameters["rowFilter.teams.description"];
-          organizationId?: parameters["rowFilter.teams.organizationId"];
+          id?: parameters["rowFilter.options.id"];
+          initiativeId?: parameters["rowFilter.options.initiativeId"];
+          content?: parameters["rowFilter.options.content"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -1615,7 +1720,7 @@ export interface paths {
       responses: {
         /** OK */
         200: {
-          schema: definitions["teams"][];
+          schema: definitions["options"][];
         };
         /** Partial Content */
         206: unknown;
@@ -1624,8 +1729,8 @@ export interface paths {
     post: {
       parameters: {
         body: {
-          /** teams */
-          teams?: definitions["teams"];
+          /** options */
+          options?: definitions["options"];
         };
         query: {
           /** Filtering Columns */
@@ -1644,12 +1749,9 @@ export interface paths {
     delete: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.teams.id"];
-          createdAt?: parameters["rowFilter.teams.createdAt"];
-          name?: parameters["rowFilter.teams.name"];
-          slug?: parameters["rowFilter.teams.slug"];
-          description?: parameters["rowFilter.teams.description"];
-          organizationId?: parameters["rowFilter.teams.organizationId"];
+          id?: parameters["rowFilter.options.id"];
+          initiativeId?: parameters["rowFilter.options.initiativeId"];
+          content?: parameters["rowFilter.options.content"];
         };
         header: {
           /** Preference */
@@ -1664,112 +1766,13 @@ export interface paths {
     patch: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.teams.id"];
-          createdAt?: parameters["rowFilter.teams.createdAt"];
-          name?: parameters["rowFilter.teams.name"];
-          slug?: parameters["rowFilter.teams.slug"];
-          description?: parameters["rowFilter.teams.description"];
-          organizationId?: parameters["rowFilter.teams.organizationId"];
+          id?: parameters["rowFilter.options.id"];
+          initiativeId?: parameters["rowFilter.options.initiativeId"];
+          content?: parameters["rowFilter.options.content"];
         };
         body: {
-          /** teams */
-          teams?: definitions["teams"];
-        };
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
-      responses: {
-        /** No Content */
-        204: never;
-      };
-    };
-  };
-  "/votes": {
-    get: {
-      parameters: {
-        query: {
-          id?: parameters["rowFilter.votes.id"];
-          createdAt?: parameters["rowFilter.votes.createdAt"];
-          optionId?: parameters["rowFilter.votes.optionId"];
-          userId?: parameters["rowFilter.votes.userId"];
-          /** Filtering Columns */
-          select?: parameters["select"];
-          /** Ordering */
-          order?: parameters["order"];
-          /** Limiting and Pagination */
-          offset?: parameters["offset"];
-          /** Limiting and Pagination */
-          limit?: parameters["limit"];
-        };
-        header: {
-          /** Limiting and Pagination */
-          Range?: parameters["range"];
-          /** Limiting and Pagination */
-          "Range-Unit"?: parameters["rangeUnit"];
-          /** Preference */
-          Prefer?: parameters["preferCount"];
-        };
-      };
-      responses: {
-        /** OK */
-        200: {
-          schema: definitions["votes"][];
-        };
-        /** Partial Content */
-        206: unknown;
-      };
-    };
-    post: {
-      parameters: {
-        body: {
-          /** votes */
-          votes?: definitions["votes"];
-        };
-        query: {
-          /** Filtering Columns */
-          select?: parameters["select"];
-        };
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
-      responses: {
-        /** Created */
-        201: unknown;
-      };
-    };
-    delete: {
-      parameters: {
-        query: {
-          id?: parameters["rowFilter.votes.id"];
-          createdAt?: parameters["rowFilter.votes.createdAt"];
-          optionId?: parameters["rowFilter.votes.optionId"];
-          userId?: parameters["rowFilter.votes.userId"];
-        };
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
-      responses: {
-        /** No Content */
-        204: never;
-      };
-    };
-    patch: {
-      parameters: {
-        query: {
-          id?: parameters["rowFilter.votes.id"];
-          createdAt?: parameters["rowFilter.votes.createdAt"];
-          optionId?: parameters["rowFilter.votes.optionId"];
-          userId?: parameters["rowFilter.votes.userId"];
-        };
-        body: {
-          /** votes */
-          votes?: definitions["votes"];
+          /** options */
+          options?: definitions["options"];
         };
         header: {
           /** Preference */
@@ -1785,92 +1788,8 @@ export interface paths {
 }
 
 export interface definitions {
-  boardStates: {
-    /**
-     * Format: bigint
-     * @description Note:
-     * This is a Primary Key.<pk/>
-     */
-    id: number;
-    /**
-     * Format: bigint
-     * @description Note:
-     * This is a Foreign Key to `boards.id`.<fk table='boards' column='id'/>
-     */
-    boardId?: number;
-    /** Format: text */
-    description?: string;
-  };
-  boards: {
-    /**
-     * Format: bigint
-     * @description Note:
-     * This is a Primary Key.<pk/>
-     */
-    id: number;
-    /**
-     * Format: timestamp with time zone
-     * @default now()
-     */
-    created_at?: string;
-    /**
-     * Format: bigint
-     * @description Note:
-     * This is a Foreign Key to `teams.id`.<fk table='teams' column='id'/>
-     */
-    teamId?: number;
-    /** Format: text */
-    name?: string;
-  };
-  chatMembers: {
-    /**
-     * Format: bigint
-     * @description Note:
-     * This is a Primary Key.<pk/>
-     */
-    id: number;
-    /** Format: uuid */
-    userId?: string;
-    /**
-     * Format: bigint
-     * @description Note:
-     * This is a Foreign Key to `chats.id`.<fk table='chats' column='id'/>
-     */
-    chatId?: number;
-  };
-  chats: {
-    /**
-     * Format: bigint
-     * @description Note:
-     * This is a Primary Key.<pk/>
-     */
-    id: number;
-    /**
-     * Format: timestamp with time zone
-     * @default now()
-     */
-    createdAt?: string;
-    /** Format: boolean */
-    isGroup?: boolean;
-    /** Format: text */
-    name?: string;
-    /** Format: text */
-    description?: string;
-    /** Format: text */
-    thumbnail?: string;
-    /**
-     * Format: bigint
-     * @description Note:
-     * This is a Foreign Key to `teams.id`.<fk table='teams' column='id'/>
-     */
-    teamId?: number;
-  };
   estimations: {
-    /**
-     * Format: bigint
-     * @description Note:
-     * This is a Primary Key.<pk/>
-     */
+    /** Format: bigint */
     id: number;
     /**
      * Format: timestamp with time zone
@@ -1882,94 +1801,19 @@ export interface definitions {
     /**
      * Format: uuid
      * @description Note:
+     * This is a Primary Key.<pk/>
      * This is a Foreign Key to `profiles.id`.<fk table='profiles' column='id'/>
      */
-    userId?: string;
+    userId: string;
     /** Format: text */
     justification?: string;
     /**
      * Format: bigint
      * @description Note:
+     * This is a Primary Key.<pk/>
      * This is a Foreign Key to `tasks.id`.<fk table='tasks' column='id'/>
      */
-    taskId?: number;
-  };
-  initiatives: {
-    /**
-     * Format: bigint
-     * @description Note:
-     * This is a Primary Key.<pk/>
-     */
-    id: number;
-    /**
-     * Format: timestamp with time zone
-     * @default now()
-     */
-    created_at?: string;
-    /** Format: text */
-    title?: string;
-    /** Format: text */
-    description?: string;
-    /** Format: text */
-    content?: string;
-    /**
-     * Format: bigint
-     * @description Note:
-     * This is a Foreign Key to `teams.id`.<fk table='teams' column='id'/>
-     */
-    teamId?: number;
-    /** Format: timestamp with time zone */
-    dueDate?: string;
-    /**
-     * Format: uuid
-     * @description Note:
-     * This is a Foreign Key to `profiles.id`.<fk table='profiles' column='id'/>
-     */
-    owner?: string;
-    /**
-     * Format: text
-     * @default draft
-     */
-    status?: string;
-  };
-  messages: {
-    /**
-     * Format: bigint
-     * @description Note:
-     * This is a Primary Key.<pk/>
-     */
-    id: number;
-    /**
-     * Format: timestamp with time zone
-     * @default now()
-     */
-    createdAt?: string;
-    /** Format: text */
-    text?: string;
-    /**
-     * Format: bigint
-     * @description Note:
-     * This is a Foreign Key to `chats.id`.<fk table='chats' column='id'/>
-     */
-    chatId?: number;
-    /** Format: uuid */
-    userId?: string;
-  };
-  options: {
-    /**
-     * Format: bigint
-     * @description Note:
-     * This is a Primary Key.<pk/>
-     */
-    id: number;
-    /**
-     * Format: bigint
-     * @description Note:
-     * This is a Foreign Key to `initiatives.id`.<fk table='initiatives' column='id'/>
-     */
-    initiativeId?: number;
-    /** Format: text */
-    content?: string;
+    taskId: number;
   };
   organizationInvitations: {
     /**
@@ -1992,7 +1836,7 @@ export interface definitions {
      */
     organizationId?: number;
   };
-  organizationMembers: {
+  chatMembers: {
     /**
      * Format: bigint
      * @description Note:
@@ -2004,51 +1848,9 @@ export interface definitions {
     /**
      * Format: bigint
      * @description Note:
-     * This is a Foreign Key to `organizations.id`.<fk table='organizations' column='id'/>
+     * This is a Foreign Key to `chats.id`.<fk table='chats' column='id'/>
      */
-    organizationId?: number;
-  };
-  organizations: {
-    /**
-     * Format: bigint
-     * @description Note:
-     * This is a Primary Key.<pk/>
-     */
-    id: number;
-    /**
-     * Format: timestamp with time zone
-     * @default now()
-     */
-    createdAt?: string;
-    /** Format: text */
-    name?: string;
-    /** Format: text */
-    slug?: string;
-    /** Format: text */
-    logoUrl?: string;
-    /** Format: text */
-    description?: string;
-    /** Format: uuid */
-    ownerId?: string;
-  };
-  profiles: {
-    /**
-     * Format: uuid
-     * @description Note:
-     * This is a Primary Key.<pk/>
-     */
-    id: string;
-    /**
-     * Format: timestamp with time zone
-     * @default now()
-     */
-    createdAt?: string;
-    /** Format: text */
-    email: string;
-    /** Format: text */
-    firstName?: string;
-    /** Format: text */
-    lastName?: string;
+    chatId?: number;
   };
   subscriptions: {
     /**
@@ -2101,38 +1903,8 @@ export interface definitions {
      * This is a Foreign Key to `boardStates.id`.<fk table='boardStates' column='id'/>
      */
     stateId?: number;
-  };
-  teamMembers: {
-    /**
-     * Format: bigint
-     * @description Note:
-     * This is a Primary Key.<pk/>
-     */
-    id: number;
-    /**
-     * Format: bigint
-     * @description Note:
-     * This is a Foreign Key to `teams.id`.<fk table='teams' column='id'/>
-     */
-    teamId?: number;
-    /** Format: uuid */
-    userId?: string;
-  };
-  teamRooms: {
-    /**
-     * Format: bigint
-     * @description Note:
-     * This is a Primary Key.<pk/>
-     */
-    id: number;
-    /**
-     * Format: bigint
-     * @description Note:
-     * This is a Foreign Key to `teams.id`.<fk table='teams' column='id'/>
-     */
-    teamId?: number;
-    /** Format: text */
-    roomId?: string;
+    /** Format: bigint */
+    effort?: number;
   };
   teams: {
     /**
@@ -2152,6 +1924,147 @@ export interface definitions {
     slug?: string;
     /** Format: text */
     description?: string;
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Foreign Key to `organizations.id`.<fk table='organizations' column='id'/>
+     */
+    organizationId?: number;
+  };
+  messages: {
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: number;
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    createdAt?: string;
+    /** Format: text */
+    text?: string;
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Foreign Key to `chats.id`.<fk table='chats' column='id'/>
+     */
+    chatId?: number;
+    /** Format: uuid */
+    userId?: string;
+  };
+  initiatives: {
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: number;
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    created_at?: string;
+    /** Format: text */
+    title?: string;
+    /** Format: text */
+    description?: string;
+    /** Format: text */
+    content?: string;
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Foreign Key to `teams.id`.<fk table='teams' column='id'/>
+     */
+    teamId?: number;
+    /** Format: timestamp with time zone */
+    dueDate?: string;
+    /**
+     * Format: uuid
+     * @description Note:
+     * This is a Foreign Key to `profiles.id`.<fk table='profiles' column='id'/>
+     */
+    owner?: string;
+    /**
+     * Format: text
+     * @default draft
+     */
+    status?: string;
+  };
+  teamMembers: {
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: number;
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Foreign Key to `teams.id`.<fk table='teams' column='id'/>
+     */
+    teamId?: number;
+    /** Format: uuid */
+    userId?: string;
+  };
+  boards: {
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: number;
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    created_at?: string;
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Foreign Key to `teams.id`.<fk table='teams' column='id'/>
+     */
+    teamId?: number;
+    /** Format: text */
+    name?: string;
+  };
+  chats: {
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: number;
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    createdAt?: string;
+    /** Format: boolean */
+    isGroup?: boolean;
+    /** Format: text */
+    name?: string;
+    /** Format: text */
+    description?: string;
+    /** Format: text */
+    thumbnail?: string;
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Foreign Key to `teams.id`.<fk table='teams' column='id'/>
+     */
+    teamId?: number;
+  };
+  organizationMembers: {
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: number;
+    /** Format: uuid */
+    userId?: string;
     /**
      * Format: bigint
      * @description Note:
@@ -2179,6 +2092,96 @@ export interface definitions {
     optionId?: number;
     /** Format: uuid */
     userId?: string;
+  };
+  profiles: {
+    /**
+     * Format: uuid
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: string;
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    createdAt?: string;
+    /** Format: text */
+    email: string;
+    /** Format: text */
+    firstName?: string;
+    /** Format: text */
+    lastName?: string;
+  };
+  organizations: {
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: number;
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    createdAt?: string;
+    /** Format: text */
+    name?: string;
+    /** Format: text */
+    slug?: string;
+    /** Format: text */
+    logoUrl?: string;
+    /** Format: text */
+    description?: string;
+    /** Format: uuid */
+    ownerId?: string;
+  };
+  boardStates: {
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: number;
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Foreign Key to `boards.id`.<fk table='boards' column='id'/>
+     */
+    boardId?: number;
+    /** Format: text */
+    description?: string;
+  };
+  teamRooms: {
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: number;
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Foreign Key to `teams.id`.<fk table='teams' column='id'/>
+     */
+    teamId?: number;
+    /** Format: text */
+    roomId?: string;
+  };
+  options: {
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: number;
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Foreign Key to `initiatives.id`.<fk table='initiatives' column='id'/>
+     */
+    initiativeId?: number;
+    /** Format: text */
+    content?: string;
   };
 }
 
@@ -2215,48 +2218,6 @@ export interface parameters {
   offset: string;
   /** @description Limiting and Pagination */
   limit: string;
-  /** @description boardStates */
-  "body.boardStates": definitions["boardStates"];
-  /** Format: bigint */
-  "rowFilter.boardStates.id": string;
-  /** Format: bigint */
-  "rowFilter.boardStates.boardId": string;
-  /** Format: text */
-  "rowFilter.boardStates.description": string;
-  /** @description boards */
-  "body.boards": definitions["boards"];
-  /** Format: bigint */
-  "rowFilter.boards.id": string;
-  /** Format: timestamp with time zone */
-  "rowFilter.boards.created_at": string;
-  /** Format: bigint */
-  "rowFilter.boards.teamId": string;
-  /** Format: text */
-  "rowFilter.boards.name": string;
-  /** @description chatMembers */
-  "body.chatMembers": definitions["chatMembers"];
-  /** Format: bigint */
-  "rowFilter.chatMembers.id": string;
-  /** Format: uuid */
-  "rowFilter.chatMembers.userId": string;
-  /** Format: bigint */
-  "rowFilter.chatMembers.chatId": string;
-  /** @description chats */
-  "body.chats": definitions["chats"];
-  /** Format: bigint */
-  "rowFilter.chats.id": string;
-  /** Format: timestamp with time zone */
-  "rowFilter.chats.createdAt": string;
-  /** Format: boolean */
-  "rowFilter.chats.isGroup": string;
-  /** Format: text */
-  "rowFilter.chats.name": string;
-  /** Format: text */
-  "rowFilter.chats.description": string;
-  /** Format: text */
-  "rowFilter.chats.thumbnail": string;
-  /** Format: bigint */
-  "rowFilter.chats.teamId": string;
   /** @description estimations */
   "body.estimations": definitions["estimations"];
   /** Format: bigint */
@@ -2271,46 +2232,6 @@ export interface parameters {
   "rowFilter.estimations.justification": string;
   /** Format: bigint */
   "rowFilter.estimations.taskId": string;
-  /** @description initiatives */
-  "body.initiatives": definitions["initiatives"];
-  /** Format: bigint */
-  "rowFilter.initiatives.id": string;
-  /** Format: timestamp with time zone */
-  "rowFilter.initiatives.created_at": string;
-  /** Format: text */
-  "rowFilter.initiatives.title": string;
-  /** Format: text */
-  "rowFilter.initiatives.description": string;
-  /** Format: text */
-  "rowFilter.initiatives.content": string;
-  /** Format: bigint */
-  "rowFilter.initiatives.teamId": string;
-  /** Format: timestamp with time zone */
-  "rowFilter.initiatives.dueDate": string;
-  /** Format: uuid */
-  "rowFilter.initiatives.owner": string;
-  /** Format: text */
-  "rowFilter.initiatives.status": string;
-  /** @description messages */
-  "body.messages": definitions["messages"];
-  /** Format: bigint */
-  "rowFilter.messages.id": string;
-  /** Format: timestamp with time zone */
-  "rowFilter.messages.createdAt": string;
-  /** Format: text */
-  "rowFilter.messages.text": string;
-  /** Format: bigint */
-  "rowFilter.messages.chatId": string;
-  /** Format: uuid */
-  "rowFilter.messages.userId": string;
-  /** @description options */
-  "body.options": definitions["options"];
-  /** Format: bigint */
-  "rowFilter.options.id": string;
-  /** Format: bigint */
-  "rowFilter.options.initiativeId": string;
-  /** Format: text */
-  "rowFilter.options.content": string;
   /** @description organizationInvitations */
   "body.organizationInvitations": definitions["organizationInvitations"];
   /** Format: bigint */
@@ -2321,42 +2242,14 @@ export interface parameters {
   "rowFilter.organizationInvitations.userEmail": string;
   /** Format: bigint */
   "rowFilter.organizationInvitations.organizationId": string;
-  /** @description organizationMembers */
-  "body.organizationMembers": definitions["organizationMembers"];
+  /** @description chatMembers */
+  "body.chatMembers": definitions["chatMembers"];
   /** Format: bigint */
-  "rowFilter.organizationMembers.id": string;
+  "rowFilter.chatMembers.id": string;
   /** Format: uuid */
-  "rowFilter.organizationMembers.userId": string;
+  "rowFilter.chatMembers.userId": string;
   /** Format: bigint */
-  "rowFilter.organizationMembers.organizationId": string;
-  /** @description organizations */
-  "body.organizations": definitions["organizations"];
-  /** Format: bigint */
-  "rowFilter.organizations.id": string;
-  /** Format: timestamp with time zone */
-  "rowFilter.organizations.createdAt": string;
-  /** Format: text */
-  "rowFilter.organizations.name": string;
-  /** Format: text */
-  "rowFilter.organizations.slug": string;
-  /** Format: text */
-  "rowFilter.organizations.logoUrl": string;
-  /** Format: text */
-  "rowFilter.organizations.description": string;
-  /** Format: uuid */
-  "rowFilter.organizations.ownerId": string;
-  /** @description profiles */
-  "body.profiles": definitions["profiles"];
-  /** Format: uuid */
-  "rowFilter.profiles.id": string;
-  /** Format: timestamp with time zone */
-  "rowFilter.profiles.createdAt": string;
-  /** Format: text */
-  "rowFilter.profiles.email": string;
-  /** Format: text */
-  "rowFilter.profiles.firstName": string;
-  /** Format: text */
-  "rowFilter.profiles.lastName": string;
+  "rowFilter.chatMembers.chatId": string;
   /** @description subscriptions */
   "body.subscriptions": definitions["subscriptions"];
   /** Format: bigint */
@@ -2383,22 +2276,8 @@ export interface parameters {
   "rowFilter.tasks.asignee": string;
   /** Format: bigint */
   "rowFilter.tasks.stateId": string;
-  /** @description teamMembers */
-  "body.teamMembers": definitions["teamMembers"];
   /** Format: bigint */
-  "rowFilter.teamMembers.id": string;
-  /** Format: bigint */
-  "rowFilter.teamMembers.teamId": string;
-  /** Format: uuid */
-  "rowFilter.teamMembers.userId": string;
-  /** @description teamRooms */
-  "body.teamRooms": definitions["teamRooms"];
-  /** Format: bigint */
-  "rowFilter.teamRooms.id": string;
-  /** Format: bigint */
-  "rowFilter.teamRooms.teamId": string;
-  /** Format: text */
-  "rowFilter.teamRooms.roomId": string;
+  "rowFilter.tasks.effort": string;
   /** @description teams */
   "body.teams": definitions["teams"];
   /** Format: bigint */
@@ -2413,6 +2292,80 @@ export interface parameters {
   "rowFilter.teams.description": string;
   /** Format: bigint */
   "rowFilter.teams.organizationId": string;
+  /** @description messages */
+  "body.messages": definitions["messages"];
+  /** Format: bigint */
+  "rowFilter.messages.id": string;
+  /** Format: timestamp with time zone */
+  "rowFilter.messages.createdAt": string;
+  /** Format: text */
+  "rowFilter.messages.text": string;
+  /** Format: bigint */
+  "rowFilter.messages.chatId": string;
+  /** Format: uuid */
+  "rowFilter.messages.userId": string;
+  /** @description initiatives */
+  "body.initiatives": definitions["initiatives"];
+  /** Format: bigint */
+  "rowFilter.initiatives.id": string;
+  /** Format: timestamp with time zone */
+  "rowFilter.initiatives.created_at": string;
+  /** Format: text */
+  "rowFilter.initiatives.title": string;
+  /** Format: text */
+  "rowFilter.initiatives.description": string;
+  /** Format: text */
+  "rowFilter.initiatives.content": string;
+  /** Format: bigint */
+  "rowFilter.initiatives.teamId": string;
+  /** Format: timestamp with time zone */
+  "rowFilter.initiatives.dueDate": string;
+  /** Format: uuid */
+  "rowFilter.initiatives.owner": string;
+  /** Format: text */
+  "rowFilter.initiatives.status": string;
+  /** @description teamMembers */
+  "body.teamMembers": definitions["teamMembers"];
+  /** Format: bigint */
+  "rowFilter.teamMembers.id": string;
+  /** Format: bigint */
+  "rowFilter.teamMembers.teamId": string;
+  /** Format: uuid */
+  "rowFilter.teamMembers.userId": string;
+  /** @description boards */
+  "body.boards": definitions["boards"];
+  /** Format: bigint */
+  "rowFilter.boards.id": string;
+  /** Format: timestamp with time zone */
+  "rowFilter.boards.created_at": string;
+  /** Format: bigint */
+  "rowFilter.boards.teamId": string;
+  /** Format: text */
+  "rowFilter.boards.name": string;
+  /** @description chats */
+  "body.chats": definitions["chats"];
+  /** Format: bigint */
+  "rowFilter.chats.id": string;
+  /** Format: timestamp with time zone */
+  "rowFilter.chats.createdAt": string;
+  /** Format: boolean */
+  "rowFilter.chats.isGroup": string;
+  /** Format: text */
+  "rowFilter.chats.name": string;
+  /** Format: text */
+  "rowFilter.chats.description": string;
+  /** Format: text */
+  "rowFilter.chats.thumbnail": string;
+  /** Format: bigint */
+  "rowFilter.chats.teamId": string;
+  /** @description organizationMembers */
+  "body.organizationMembers": definitions["organizationMembers"];
+  /** Format: bigint */
+  "rowFilter.organizationMembers.id": string;
+  /** Format: uuid */
+  "rowFilter.organizationMembers.userId": string;
+  /** Format: bigint */
+  "rowFilter.organizationMembers.organizationId": string;
   /** @description votes */
   "body.votes": definitions["votes"];
   /** Format: bigint */
@@ -2423,6 +2376,58 @@ export interface parameters {
   "rowFilter.votes.optionId": string;
   /** Format: uuid */
   "rowFilter.votes.userId": string;
+  /** @description profiles */
+  "body.profiles": definitions["profiles"];
+  /** Format: uuid */
+  "rowFilter.profiles.id": string;
+  /** Format: timestamp with time zone */
+  "rowFilter.profiles.createdAt": string;
+  /** Format: text */
+  "rowFilter.profiles.email": string;
+  /** Format: text */
+  "rowFilter.profiles.firstName": string;
+  /** Format: text */
+  "rowFilter.profiles.lastName": string;
+  /** @description organizations */
+  "body.organizations": definitions["organizations"];
+  /** Format: bigint */
+  "rowFilter.organizations.id": string;
+  /** Format: timestamp with time zone */
+  "rowFilter.organizations.createdAt": string;
+  /** Format: text */
+  "rowFilter.organizations.name": string;
+  /** Format: text */
+  "rowFilter.organizations.slug": string;
+  /** Format: text */
+  "rowFilter.organizations.logoUrl": string;
+  /** Format: text */
+  "rowFilter.organizations.description": string;
+  /** Format: uuid */
+  "rowFilter.organizations.ownerId": string;
+  /** @description boardStates */
+  "body.boardStates": definitions["boardStates"];
+  /** Format: bigint */
+  "rowFilter.boardStates.id": string;
+  /** Format: bigint */
+  "rowFilter.boardStates.boardId": string;
+  /** Format: text */
+  "rowFilter.boardStates.description": string;
+  /** @description teamRooms */
+  "body.teamRooms": definitions["teamRooms"];
+  /** Format: bigint */
+  "rowFilter.teamRooms.id": string;
+  /** Format: bigint */
+  "rowFilter.teamRooms.teamId": string;
+  /** Format: text */
+  "rowFilter.teamRooms.roomId": string;
+  /** @description options */
+  "body.options": definitions["options"];
+  /** Format: bigint */
+  "rowFilter.options.id": string;
+  /** Format: bigint */
+  "rowFilter.options.initiativeId": string;
+  /** Format: text */
+  "rowFilter.options.content": string;
 }
 
 export interface operations {}

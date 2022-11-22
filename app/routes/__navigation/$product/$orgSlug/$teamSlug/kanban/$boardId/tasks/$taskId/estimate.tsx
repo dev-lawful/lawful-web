@@ -1,16 +1,20 @@
-import { Button, Text, Wrap, WrapItem } from "@chakra-ui/react";
+import { Box, Button, Heading, Stack, Wrap, WrapItem } from "@chakra-ui/react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { useFetcher, useLoaderData } from "@remix-run/react";
+import { useFetcher, useLoaderData, useParams } from "@remix-run/react";
 import type {
   SupabaseClient,
   SupabaseRealtimePayload,
 } from "@supabase/supabase-js";
 import { useEffect } from "react";
 import { supabase, useSupabaseClient } from "~/db";
-import { getOrganizationBySlug, getProfilesByTeamSlug } from "~/models";
+import {
+  getOrganizationBySlug,
+  getProfilesByTeamSlug,
+  getTaskById,
+} from "~/models";
 import { getSession } from "~/sessions";
-import type { Estimation, Profile, UserSession } from "~/_types";
+import type { Estimation, Profile, Task, UserSession } from "~/_types";
 
 interface LoaderData {
   data: {
@@ -20,6 +24,7 @@ interface LoaderData {
       }
     >;
     teamMembersProfiles: Array<Profile>;
+    task: Task;
   };
 }
 
@@ -37,18 +42,60 @@ export const action: ActionFunction = async ({ params, request }) => {
     return redirect("/signin");
   }
 
-  await supabase.from<Estimation>("estimations").insert({
+  await supabase.from<Estimation>("estimations").upsert({
     effort,
     justification: "Some justification",
     taskId: Number(params?.taskId! as string),
     userId: user.id,
   });
 
+  const {
+    data: {
+      0: { id: organizationId },
+    },
+  } = await getOrganizationBySlug(params.orgSlug!);
+
+  const { data: teamMembersProfiles } = await getProfilesByTeamSlug({
+    organizationId,
+    slug: params.teamSlug!,
+  });
+
+  if (!teamMembersProfiles) throw new Error("No team members");
+
+  const teamMembersIds = teamMembersProfiles.map((p) => p.id);
+
+  const { data: estimations } = await supabase
+    .from<
+      Estimation & {
+        profiles: Array<Profile>;
+      }
+    >("estimations")
+    .select("*, profiles (*)")
+    .in("userId", teamMembersIds)
+    .eq("taskId", params?.taskId!);
+
+  if (estimations?.length === teamMembersIds.length) {
+    const efforts = estimations
+      .filter((e) => e.effort && e.effort > 0)
+      .map((e: Estimation) => e.effort) as Array<NonNullable<Task["effort"]>>;
+
+    const effortsAvg = efforts.reduce((a, b) => a + b, 0) / efforts.length;
+
+    await supabase
+      .from<Task>("tasks")
+      .update({
+        effort: effortsAvg,
+      })
+      .eq("id", Number(params?.taskId! as string));
+  }
+
   return json({});
 };
 
-export const loader: LoaderFunction = async ({ params, request }) => {
-  // traer todas las estimaciones de las personas que forman parte de este board
+export const loader: LoaderFunction = async ({ params }) => {
+  const {
+    data: { 0: task },
+  } = await getTaskById(params.taskId!);
 
   const {
     data: {
@@ -81,6 +128,7 @@ export const loader: LoaderFunction = async ({ params, request }) => {
     data: {
       estimations,
       teamMembersProfiles,
+      task,
     },
   });
 };
@@ -92,22 +140,17 @@ const getEstimationsTableSubscription = ({
   client: SupabaseClient;
   callback: (payload: SupabaseRealtimePayload<unknown>) => void;
 }) => {
-  return client.from("estimations").on("INSERT", callback).subscribe();
+  return client.from("estimations").on("*", callback).subscribe();
 };
 
 const EstimateTaskRoute = () => {
   const {
-    data: { estimations, teamMembersProfiles },
+    data: { estimations, teamMembersProfiles, task },
   } = useLoaderData<LoaderData>();
+
   const fetcher = useFetcher();
 
   const { user } = useSupabaseClient();
-
-  const currentUserEstimation = estimations.filter((e) => {
-    return e.userId === user?.id!;
-  })?.[0];
-
-  const userVoted = !!currentUserEstimation;
 
   useEffect(() => {
     if (!supabase) return;
@@ -124,74 +167,100 @@ const EstimateTaskRoute = () => {
     };
   }, [fetcher]);
 
+  const { product } = useParams();
+
   return (
-    <div>
-      <h1>Estimating task</h1>
-      {teamMembersProfiles.map((u) => {
-        const { effort, justification } = currentUserEstimation;
+    <Stack>
+      <Heading>{`Estimating task: "${task.name}"`}</Heading>
+      {task.effort ? (
+        <Heading
+          color={`${product}.400`}
+          size="md"
+        >{`Hooray! This task's effort is ${Number(task.effort)}`}</Heading>
+      ) : null}
+      <Box>
+        {teamMembersProfiles.map((profile: Profile) => {
+          if (user?.id === profile.id) {
+            // Current user
 
-        if (user?.id === u.id) {
+            const currentUserEstimation: Estimation =
+              estimations.filter((e: Estimation) => {
+                return e.userId === user?.id!;
+              })?.[0] ?? null;
+
+            const userVoted = !!currentUserEstimation;
+
+            return (
+              <Box key={profile.id}>
+                <Wrap p={1}>
+                  {profile.firstName} {profile.lastName} (You)
+                </Wrap>
+                <Wrap p={1} as={fetcher.Form} method="post">
+                  {[1, 2, 3, 5, 8, 13].map((effortOption) => {
+                    return (
+                      <WrapItem
+                        key={effortOption}
+                        as={Button}
+                        type={"submit"}
+                        value={effortOption}
+                        name="effort"
+                        p={3}
+                        border={
+                          userVoted
+                            ? currentUserEstimation.effort === effortOption
+                              ? "1px solid red"
+                              : "none"
+                            : "none"
+                        }
+                      >
+                        {effortOption}
+                      </WrapItem>
+                    );
+                  })}
+                </Wrap>
+              </Box>
+            );
+          }
+
+          const teammateVote =
+            estimations.filter(
+              ({ userId }: Estimation) => userId === profile.id
+            )[0] ?? null;
+
+          // Isn't current user
           return (
-            <div key={u.id}>
+            <>
               <Wrap>
-                {u.firstName} {u.lastName} (You)
+                {profile.firstName} {profile.lastName}
               </Wrap>
-              <Wrap as={fetcher.Form} method="post">
+              <Wrap key={profile.id} p={1} as={fetcher.Form} method="post">
                 {[1, 2, 3, 5, 8, 13].map((effortOption) => {
-                  const userVotedOption = userVoted
-                    ? effort === effortOption
-                    : null;
-
                   return (
                     <WrapItem
                       key={effortOption}
                       as={Button}
-                      type={userVoted ? "button" : "submit"}
-                      value={effortOption}
+                      type={"button"}
                       name="effort"
                       p={3}
-                      border={userVotedOption ? "1px solid red" : "none"}
+                      border={
+                        teammateVote
+                          ? effortOption === teammateVote.effort
+                            ? "1px solid red"
+                            : "none"
+                          : "none"
+                      }
                     >
                       {effortOption}
                     </WrapItem>
                   );
                 })}
               </Wrap>
-              {userVoted ? <Text>{justification}</Text> : null}
-            </div>
+            </>
           );
-        }
-
-        return (
-          <div key={u.id}>
-            <Wrap>
-              {u.firstName} {u.lastName}
-            </Wrap>
-            <Wrap>
-              {[1, 2, 3, 5, 8, 13].map((effort) => {
-                return (
-                  <WrapItem key={effort} as={Button} type="button" p={3}>
-                    {effort}
-                  </WrapItem>
-                );
-              })}
-            </Wrap>
-            |
-          </div>
-        );
-      })}
-    </div>
+        })}
+      </Box>
+    </Stack>
   );
 };
-
-// const EffortCard = ({
-//   effort,
-//   isVoted = false,
-// }: {
-//   effort: number;
-//   isVoted?: boolean;
-// }) => {
-//   return <></>;
-// };
 
 export default EstimateTaskRoute;

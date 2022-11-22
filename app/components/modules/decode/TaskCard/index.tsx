@@ -39,6 +39,11 @@ export const TaskCard = ({ task }: Props) => {
         {task.name}
       </Heading>
       <Text>{task.description}</Text>
+      {task.effort ? (
+        <HStack>
+          <Text>Effort: {task.effort}</Text>
+        </HStack>
+      ) : null}
       <HStack>
         <Link to={`${pathname}/tasks/${task.id}/edit`}>
           <Button>
