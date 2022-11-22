@@ -29,70 +29,87 @@ interface LoaderData {
 }
 
 export const action: ActionFunction = async ({ params, request }) => {
-  const formData = await request.formData();
-  const effort = Number(formData.get("effort") as string);
-  const session = await getSession(request.headers.get("Cookie"));
+  switch (request.method) {
+    case "PATCH": {
+      return json({});
+    }
 
-  const { accessToken, user: userCookie } =
-    (session.get("authenticated") as UserSession) || {};
+    case "POST": {
+      const formData = await request.formData();
+      const effort = Number(formData.get("effort") as string);
+      const session = await getSession(request.headers.get("Cookie"));
 
-  const { user } = await supabase.auth.api.getUser(accessToken);
+      const { accessToken, user: userCookie } =
+        (session.get("authenticated") as UserSession) || {};
 
-  if (!user || !userCookie) {
-    return redirect("/signin");
-  }
+      const { user } = await supabase.auth.api.getUser(accessToken);
 
-  await supabase.from<Estimation>("estimations").upsert({
-    effort,
-    justification: "Some justification",
-    taskId: Number(params?.taskId! as string),
-    userId: user.id,
-  });
-
-  const {
-    data: {
-      0: { id: organizationId },
-    },
-  } = await getOrganizationBySlug(params.orgSlug!);
-
-  const { data: teamMembersProfiles } = await getProfilesByTeamSlug({
-    organizationId,
-    slug: params.teamSlug!,
-  });
-
-  if (!teamMembersProfiles) throw new Error("No team members");
-
-  const teamMembersIds = teamMembersProfiles.map((p) => p.id);
-
-  const { data: estimations } = await supabase
-    .from<
-      Estimation & {
-        profiles: Array<Profile>;
+      if (!user || !userCookie) {
+        return redirect("/signin");
       }
-    >("estimations")
-    .select("*, profiles (*)")
-    .in("userId", teamMembersIds)
-    .eq("taskId", params?.taskId!);
 
-  if (estimations?.length === teamMembersIds.length) {
-    const efforts = estimations
-      .filter((e) => e.effort && e.effort > 0)
-      .map((e: Estimation) => e.effort) as Array<NonNullable<Task["effort"]>>;
+      await supabase
+        .from<Estimation>("estimations")
+        .upsert({
+          effort,
+          justification: "Some justification",
+          taskId: Number(params?.taskId! as string),
+          userId: user.id,
+        })
+        .eq("userId", user.id);
 
-    const effortsAvg = efforts.reduce((a, b) => a + b, 0) / efforts.length;
+      const {
+        data: {
+          0: { id: organizationId },
+        },
+      } = await getOrganizationBySlug(params.orgSlug!);
 
-    await supabase
-      .from<Task>("tasks")
-      .update({
-        effort: effortsAvg,
-      })
-      .eq("id", Number(params?.taskId! as string));
+      const { data: teamMembersProfiles } = await getProfilesByTeamSlug({
+        organizationId,
+        slug: params.teamSlug!,
+      });
+
+      if (!teamMembersProfiles) throw new Error("No team members");
+
+      const teamMembersIds = teamMembersProfiles.map((p) => p.id);
+
+      const { data: estimations } = await supabase
+        .from<
+          Estimation & {
+            profiles: Array<Profile>;
+          }
+        >("estimations")
+        .select("*, profiles (*)")
+        .in("userId", teamMembersIds)
+        .eq("taskId", params?.taskId!);
+
+      if (estimations?.length === teamMembersIds.length) {
+        const efforts = estimations
+          .filter((e) => e.effort && e.effort > 0)
+          .map((e: Estimation) => e.effort) as Array<
+          NonNullable<Task["effort"]>
+        >;
+
+        const effortsAvg = efforts.reduce((a, b) => a + b, 0) / efforts.length;
+
+        await supabase
+          .from<Task>("tasks")
+          .update({
+            effort: effortsAvg,
+          })
+          .eq("id", Number(params?.taskId! as string));
+      }
+
+      return json({});
+    }
+
+    default: {
+      throw new Error(`Method ${request.method} is currently not supported`);
+    }
   }
-
-  return json({});
 };
 
-export const loader: LoaderFunction = async ({ params }) => {
+export const loader: LoaderFunction = async ({ params, request }) => {
   const {
     data: { 0: task },
   } = await getTaskById(params.taskId!);
@@ -150,22 +167,24 @@ const EstimateTaskRoute = () => {
 
   const fetcher = useFetcher();
 
-  const { user } = useSupabaseClient();
+  const { user, supabase } = useSupabaseClient();
 
   useEffect(() => {
     if (!supabase) return;
 
     const subscription = getEstimationsTableSubscription({
       callback: () => {
-        fetcher.submit(null, { method: "post" });
+        fetcher.submit(null, { method: "patch" });
       },
       client: supabase,
     });
 
     return () => {
-      subscription.unsubscribe();
+      supabase.removeSubscription(subscription);
     };
-  }, [fetcher]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [supabase]);
 
   const { product } = useParams();
 
@@ -176,13 +195,12 @@ const EstimateTaskRoute = () => {
         <Heading
           color={`${product}.400`}
           size="md"
-        >{`Hooray! This task's effort is ${Number(task.effort)}`}</Heading>
+        >{`This task's effort is ${Number(task.effort)}`}</Heading>
       ) : null}
       <Box>
         {teamMembersProfiles.map((profile: Profile) => {
           if (user?.id === profile.id) {
             // Current user
-
             const currentUserEstimation: Estimation =
               estimations.filter((e: Estimation) => {
                 return e.userId === user?.id!;
@@ -198,10 +216,10 @@ const EstimateTaskRoute = () => {
                 <Wrap p={1} as={fetcher.Form} method="post">
                   {[1, 2, 3, 5, 8, 13].map((effortOption) => {
                     return (
-                      <WrapItem
+                      <Button
                         key={effortOption}
                         as={Button}
-                        type={"submit"}
+                        type="submit"
                         value={effortOption}
                         name="effort"
                         p={3}
@@ -214,7 +232,7 @@ const EstimateTaskRoute = () => {
                         }
                       >
                         {effortOption}
-                      </WrapItem>
+                      </Button>
                     );
                   })}
                 </Wrap>
@@ -229,7 +247,7 @@ const EstimateTaskRoute = () => {
 
           // Isn't current user
           return (
-            <>
+            <Box key={profile.id}>
               <Wrap>
                 {profile.firstName} {profile.lastName}
               </Wrap>
@@ -255,7 +273,7 @@ const EstimateTaskRoute = () => {
                   );
                 })}
               </Wrap>
-            </>
+            </Box>
           );
         })}
       </Box>

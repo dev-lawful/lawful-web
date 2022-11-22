@@ -242,7 +242,7 @@ const BoardRoute: RouteComponent = () => {
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [supabase]);
 
   return (
     <Stack direction="column" spacing="2" overflowY="auto">
