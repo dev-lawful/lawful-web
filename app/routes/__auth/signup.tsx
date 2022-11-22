@@ -17,7 +17,7 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import type { ActionFunction } from "@remix-run/node";
+import type { ActionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import {
   Form,
@@ -30,19 +30,27 @@ import { supabase } from "~/db";
 import {
   addUserToOrganization,
   addUserToTeam,
+  createOrganization,
   createProfile,
   createTeam,
   findProfileByEmail,
   suscribeToProduct,
 } from "~/models";
-import { createOrganization } from "~/models";
+import { z } from "zod";
+import type { inferSafeParseErrors } from "~/_types";
 
-interface SignUpForm {
-  email: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-}
+const SignUpFormSchema = z.object({
+  email: z.string().min(1, "Email is required"),
+  password: z.string().min(1, "Password is required"),
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+});
+
+type SignUpForm = { fields?: z.infer<typeof SignUpFormSchema> };
+type SignUpFormErrors = inferSafeParseErrors<typeof SignUpFormSchema>;
+
+//TODO: IN PROGRESS
+type ActionData = SignUpFormErrors & SignUpForm;
 
 type ActionData = {
   formResult?: {
@@ -56,7 +64,7 @@ type ActionData = {
 //TODO: Repeated
 const badRequest = (data: ActionData) => json(data, { status: 400 });
 
-export const action: ActionFunction = async ({ request }) => {
+export const action = async ({ request }: ActionArgs) => {
   const formData = await request.formData();
   const email = formData.get("email");
   const password = formData.get("password");

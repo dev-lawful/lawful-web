@@ -14,61 +14,54 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import type { ActionFunction } from "@remix-run/node";
+import type { ActionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import {
   Form,
+  Link as RemixLink,
   useActionData,
   useTransition,
-  Link as RemixLink,
 } from "@remix-run/react";
+import { z } from "zod";
 import { supabase } from "~/db";
 import { commitSession, getSession } from "~/sessions";
+import type { inferSafeParseErrors } from "~/_types";
 
-interface SignInForm {
-  email: string;
-  password: string;
-}
+const SignInFormSchema = z.object({
+  email: z.string().min(1, "Email is required"),
+  password: z.string().min(1, "Password is required"),
+});
 
-type ActionData = {
-  formError?: string;
-  fieldErrors?: Partial<SignInForm>;
-  fields?: SignInForm;
-};
+type SignInForm = { fields?: z.infer<typeof SignInFormSchema> };
+type SignInFormErrors = inferSafeParseErrors<typeof SignInFormSchema>;
+
+type ActionData = SignInFormErrors & SignInForm;
 
 const badRequest = (data: ActionData) => json(data, { status: 400 });
 
-export const action: ActionFunction = async ({ request }) => {
+export const action = async ({ request }: ActionArgs) => {
   const formData = await request.formData();
-  const email = formData.get("email");
-  const password = formData.get("password");
 
-  if (typeof email !== "string" || typeof password !== "string") {
+  //Validate fields
+  const fields = Object.fromEntries(formData.entries());
+  const result = SignInFormSchema.safeParse(fields);
+  if (!result.success) {
     return badRequest({
-      formError: `Form not submitted correctly.`,
+      ...result.error.flatten(),
     });
   }
 
-  const fieldErrors = {
-    email: !email ? "Email is required" : undefined,
-    password: !password ? "Password is required" : undefined,
-  };
-
-  const fields = { email, password };
-
-  if (Object.values(fieldErrors).some(Boolean)) {
-    return badRequest({ fieldErrors, fields });
-  }
-
+  //SignIn
+  const { email, password } = result.data;
   const { data, error } = await supabase.auth.api.signInWithEmail(
     email,
     password
   );
-
   if (error) {
-    return badRequest({ formError: error.message });
+    return badRequest({ formErrors: [error.message], fieldErrors: {} });
   }
 
+  //TODO: Repeated code
   const userSession = data &&
     data.user && {
       accessToken: data.access_token,
@@ -90,15 +83,20 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   return badRequest({
-    formError: "Oops! We coudn't sign you in, please try again",
+    formErrors: ["Oops! We coudn't sign you in, please try again"],
+    fieldErrors: {},
   });
 };
 
 const SignInRoute = () => {
   const transition = useTransition();
-  const actionData = useActionData<ActionData>();
+  const actionData = useActionData<typeof action>();
 
-  const shouldShowAlert = !!actionData?.formError;
+  const shouldShowAlert = !!actionData?.formErrors?.length;
+
+  //TODO: move this too
+  const formatErrors = (error: string, index: number, array: Array<string>) =>
+    index === array.length - 1 ? error : `${error}. `;
 
   return (
     <Flex minH="100vh" align="center" justify="center" bg="gray.800">
@@ -115,7 +113,7 @@ const SignInRoute = () => {
               {shouldShowAlert ? (
                 <Alert status="error" borderRadius={5}>
                   <AlertIcon />
-                  {actionData.formError}
+                  {actionData.formErrors.map(formatErrors)}
                 </Alert>
               ) : null}
               <FormControl
@@ -129,7 +127,7 @@ const SignInRoute = () => {
                   defaultValue={actionData?.fields?.email}
                 />
                 <FormErrorMessage>
-                  {actionData?.fieldErrors?.email}
+                  {actionData?.fieldErrors?.email?.map(formatErrors)}
                 </FormErrorMessage>
               </FormControl>
               <FormControl
@@ -139,7 +137,7 @@ const SignInRoute = () => {
                 <FormLabel>Password</FormLabel>
                 <Input name="password" type="password" />
                 <FormErrorMessage>
-                  {actionData?.fieldErrors?.password}
+                  {actionData?.fieldErrors?.password?.map(formatErrors)}
                 </FormErrorMessage>
               </FormControl>
               <Stack spacing={10}>

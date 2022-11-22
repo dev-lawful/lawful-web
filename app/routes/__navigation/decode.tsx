@@ -2,11 +2,12 @@ import {
   Flex,
   Heading,
   Img,
+  Link,
   Stack,
   Text,
   useBreakpointValue,
 } from "@chakra-ui/react";
-
+import { Link as RemixLink } from "@remix-run/react";
 const DecodeAboutRoute = () => {
   return (
     <Stack minH={"100vh"} direction={{ base: "column", md: "row" }}>
@@ -39,6 +40,9 @@ const DecodeAboutRoute = () => {
             <Text as="strong">Decode</Text> brings top-notch task management and
             decision-making features to the table.
           </Text>
+          <Link as={RemixLink} to="./responsibility">
+            See Decode's social responsibility initiative
+          </Link>
         </Stack>
       </Flex>
       <Flex flex={1}>

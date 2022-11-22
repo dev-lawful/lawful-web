@@ -51,7 +51,6 @@ export const createBoard = async ({
       },
     ];
 
-    // TODO: Include board states creation in board creation page
     await supabase.from<BoardState>("boardStates").insert(states);
 
     return { data: data ?? [], error: null };

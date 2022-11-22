@@ -16,3 +16,4 @@ export type Task = definitions["tasks"];
 export type Team = definitions["teams"];
 export type TeamMember = definitions["teamMembers"];
 export type Vote = definitions["votes"];
+export type TeamRoom = definitions["teamRooms"];

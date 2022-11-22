@@ -20,7 +20,7 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   if (!user || !userCookie) {
     return redirect("/signin");
   }
-  
+
   return json({});
 };
 

@@ -1491,6 +1491,99 @@ export interface paths {
       };
     };
   };
+  "/teamRooms": {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.teamRooms.id"];
+          teamId?: parameters["rowFilter.teamRooms.teamId"];
+          roomId?: parameters["rowFilter.teamRooms.roomId"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["teamRooms"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** teamRooms */
+          teamRooms?: definitions["teamRooms"];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters["select"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.teamRooms.id"];
+          teamId?: parameters["rowFilter.teamRooms.teamId"];
+          roomId?: parameters["rowFilter.teamRooms.roomId"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.teamRooms.id"];
+          teamId?: parameters["rowFilter.teamRooms.teamId"];
+          roomId?: parameters["rowFilter.teamRooms.roomId"];
+        };
+        body: {
+          /** teamRooms */
+          teamRooms?: definitions["teamRooms"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
   "/teams": {
     get: {
       parameters: {
@@ -2025,6 +2118,22 @@ export interface definitions {
     /** Format: uuid */
     userId?: string;
   };
+  teamRooms: {
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: number;
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Foreign Key to `teams.id`.<fk table='teams' column='id'/>
+     */
+    teamId?: number;
+    /** Format: text */
+    roomId?: string;
+  };
   teams: {
     /**
      * Format: bigint
@@ -2282,6 +2391,14 @@ export interface parameters {
   "rowFilter.teamMembers.teamId": string;
   /** Format: uuid */
   "rowFilter.teamMembers.userId": string;
+  /** @description teamRooms */
+  "body.teamRooms": definitions["teamRooms"];
+  /** Format: bigint */
+  "rowFilter.teamRooms.id": string;
+  /** Format: bigint */
+  "rowFilter.teamRooms.teamId": string;
+  /** Format: text */
+  "rowFilter.teamRooms.roomId": string;
   /** @description teams */
   "body.teams": definitions["teams"];
   /** Format: bigint */
