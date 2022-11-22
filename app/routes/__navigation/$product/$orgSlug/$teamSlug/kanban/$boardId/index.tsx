@@ -204,6 +204,7 @@ const BoardRoute: RouteComponent = () => {
     data: { boardStates, tasks, boards },
   } = useLoaderData<LoaderData>();
   const { supabase } = useSupabaseClient();
+
   const fetcher = useFetcher();
 
   const { 0: board } = boards;
@@ -237,9 +238,11 @@ const BoardRoute: RouteComponent = () => {
     });
 
     return () => {
-      subscription.unsubscribe();
+      supabase.removeSubscription(subscription);
     };
-  }, [fetcher, supabase]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Stack direction="column" spacing="2" overflowY="auto">
