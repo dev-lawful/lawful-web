@@ -1,6 +1,6 @@
 import { useParams, useMatches } from "@remix-run/react";
 
-export const useProduct = (): string => {
+export const useProduct = () => {
   const { product } = useParams();
 
   const {

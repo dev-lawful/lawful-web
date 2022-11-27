@@ -17,13 +17,22 @@ import {
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
-import { Form, Link as RemixLink, useParams } from "@remix-run/react";
-import type { FC, PropsWithChildren } from "react";
+import {
+  Form,
+  Link as RemixLink,
+  useLocation,
+  useParams,
+} from "@remix-run/react";
+import type { PropsWithChildren } from "react";
 import { useSupabaseClient } from "~/db";
-import { useProduct } from "~/utils";
 
 const useNavbarLinks = () => {
   const params = useParams();
+  const location = useLocation();
+
+  const decode = location.pathname.startsWith("/decode") && "decode";
+  const network = location.pathname.startsWith("/network") && "network";
+  const product = decode || network || "lawful";
 
   const baseLinks = [
     {
@@ -36,39 +45,46 @@ const useNavbarLinks = () => {
     },
   ];
 
-  if (!params.product || !params.teamSlug || !params.orgSlug) return baseLinks;
+  if (!params.product || !params.teamSlug || !params.orgSlug)
+    return { product, links: baseLinks };
 
   switch (params.product) {
     case "decode": {
-      return [
-        {
-          label: "Kanban",
-          to: `${params.product}/${params.orgSlug}/${params.teamSlug}/kanban`,
-        },
-        {
-          label: "Initiatives",
-          to: `${params.product}/${params.orgSlug}/${params.teamSlug}/initiatives`,
-        },
-      ];
+      return {
+        product,
+        links: [
+          {
+            label: "Kanban",
+            to: `${params.product}/${params.orgSlug}/${params.teamSlug}/kanban`,
+          },
+          {
+            label: "Initiatives",
+            to: `${params.product}/${params.orgSlug}/${params.teamSlug}/initiatives`,
+          },
+        ],
+      };
     }
     case "network": {
-      return [
-        {
-          label: "Chat",
-          to: `${params.product}/${params.orgSlug}/${params.teamSlug}/chat`,
-        },
-        {
-          label: "Initiatives",
-          to: `${params.product}/${params.orgSlug}/${params.teamSlug}/initiatives`,
-        },
-        {
-          label: "Meeting",
-          to: `${params.product}/${params.orgSlug}/${params.teamSlug}/meeting`,
-        },
-      ];
+      return {
+        product,
+        links: [
+          {
+            label: "Chat",
+            to: `${params.product}/${params.orgSlug}/${params.teamSlug}/chat`,
+          },
+          {
+            label: "Initiatives",
+            to: `${params.product}/${params.orgSlug}/${params.teamSlug}/initiatives`,
+          },
+          {
+            label: "Meeting",
+            to: `${params.product}/${params.orgSlug}/${params.teamSlug}/meeting`,
+          },
+        ],
+      };
     }
     default: {
-      return baseLinks;
+      return { links: baseLinks, product };
     }
   }
 };
@@ -89,13 +105,11 @@ const NavLink = ({ children, to }: PropsWithChildren<{ to: string }>) => (
   </Link>
 );
 
-export const Navbar: FC = () => {
+export const Navbar = () => {
   const { user } = useSupabaseClient();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const product = useProduct();
-
-  const links = useNavbarLinks();
+  const { links, product } = useNavbarLinks();
 
   return (
     <Box bg={useColorModeValue("gray.100", "gray.900")} px={4}>
@@ -109,7 +123,7 @@ export const Navbar: FC = () => {
           onClick={isOpen ? onClose : onOpen}
         />
         <HStack spacing={8} alignItems="center">
-          <RemixLink to="/">
+          <RemixLink to={`/${product}`}>
             <Img src={`/images/logos/${product}-logo-white.svg`} height={10} />
           </RemixLink>
           <HStack as="nav" spacing={4} display={{ base: "none", md: "flex" }}>
