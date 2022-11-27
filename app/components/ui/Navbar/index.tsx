@@ -44,9 +44,13 @@ const useNavbarLinks = () => {
       to: "/decode",
     },
   ];
-
-  if (!params.product || !params.teamSlug || !params.orgSlug)
+  if (product === "lawful") {
     return { product, links: baseLinks };
+  }
+
+  if (!params.product || !params.teamSlug || !params.orgSlug) {
+    return { product, links: [] };
+  }
 
   switch (params.product) {
     case "decode": {
