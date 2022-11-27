@@ -49,16 +49,13 @@ const SignUpFormSchema = z.object({
 type SignUpForm = { fields?: z.infer<typeof SignUpFormSchema> };
 type SignUpFormErrors = inferSafeParseErrors<typeof SignUpFormSchema>;
 
-//TODO: IN PROGRESS
-type ActionData = SignUpFormErrors & SignUpForm;
-
 type ActionData = {
   formResult?: {
     status: "error" | "success";
     message: string;
   };
-  fieldErrors?: Partial<SignUpForm>;
-  fields?: SignUpForm;
+  fieldErrors?: Partial<SignUpForm["fields"]>;
+  fields?: SignUpForm["fields"];
 };
 
 //TODO: Repeated
