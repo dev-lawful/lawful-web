@@ -232,7 +232,7 @@ const InitiativeRoute = () => {
                     <Text as={"span"} fontWeight={"bold"}>
                       Due date:
                     </Text>{" "}
-                    {new Date(initiative.dueDate).toLocaleString()}
+                    {new Date(initiative.dueDate).toLocaleString("es")}
                   </ListItem>
                 ) : null}
               </List>
