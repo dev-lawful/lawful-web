@@ -21,7 +21,7 @@ export const TaskForm = ({
   profiles,
   defaultValues = {
     id: 0,
-    dueDate: new Date().toString(),
+    dueDate: new Date().toISOString().toLocaleString(),
     name: "",
     description: "",
     stateId: undefined,

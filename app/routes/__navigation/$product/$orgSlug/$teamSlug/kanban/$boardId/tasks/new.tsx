@@ -52,7 +52,10 @@ export const loader: LoaderFunction = async ({ params }) => {
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
 
-  const dueDate = (formData.get("dueDate") as string) ?? "";
+  const dueDate =
+    new Date(formData.get("dueDate") as string)
+      .toISOString()
+      .toLocaleString() ?? "";
   const name = (formData.get("name") as string) ?? "";
   const description = (formData.get("description") as string) ?? "";
   const stateId = (formData.get("stateId") as string) ?? "";
