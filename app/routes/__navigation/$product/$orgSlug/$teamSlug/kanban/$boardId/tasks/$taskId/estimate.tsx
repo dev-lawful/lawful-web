@@ -32,6 +32,26 @@ interface LoaderData {
 }
 
 export const action: ActionFunction = async ({ params, request }) => {
+  const {
+    data: {
+      0: { id: organizationId },
+    },
+  } = await getOrganizationBySlug(params.orgSlug!);
+
+  const { data: teamMembersProfiles } = await getProfilesByTeamSlug({
+    organizationId,
+    slug: params.teamSlug!,
+  });
+
+  if (!teamMembersProfiles) throw new Error("No team members");
+
+  const teamMembersIds = teamMembersProfiles.map((p) => p.id);
+
+  const { data: estimations } = await getEstimationsByTaskId({
+    taskId: params?.taskId!,
+    teamMembersIds,
+  });
+
   switch (request.method) {
     case "POST": {
       const formData = await request.formData();
@@ -48,32 +68,12 @@ export const action: ActionFunction = async ({ params, request }) => {
       }
 
       await upsertEstimationByUserId({
-        userId: params?.userId!,
+        userId: user.id,
         data: {
           effort,
           justification: "Some justification",
           taskId: params?.taskId!,
         },
-      });
-
-      const {
-        data: {
-          0: { id: organizationId },
-        },
-      } = await getOrganizationBySlug(params.orgSlug!);
-
-      const { data: teamMembersProfiles } = await getProfilesByTeamSlug({
-        organizationId,
-        slug: params.teamSlug!,
-      });
-
-      if (!teamMembersProfiles) throw new Error("No team members");
-
-      const teamMembersIds = teamMembersProfiles.map((p) => p.id);
-
-      const { data: estimations } = await getEstimationsByTaskId({
-        taskId: params?.taskId!,
-        teamMembersIds,
       });
 
       if (estimations?.length === teamMembersIds.length) {
@@ -99,6 +99,25 @@ export const action: ActionFunction = async ({ params, request }) => {
     }
 
     case "PATCH": {
+      const efforts = estimations
+        .filter((e) => e.effort && e.effort > 0)
+        .map((e: Estimation) => e.effort) as Array<NonNullable<Task["effort"]>>;
+
+      const calculatedEffort =
+        efforts.length === 1
+          ? efforts[0]
+          : (calculateMedian(efforts) + calculateMode(efforts)) /
+            efforts.length;
+
+      await updateTaskEffort({
+        calculatedEffort,
+        taskId: params?.taskId!,
+      });
+
+      return json({});
+    }
+
+    case "PUT": {
       return json({});
     }
 
@@ -168,7 +187,7 @@ const EstimateTaskRoute = () => {
 
     const subscription = getEstimationsTableSubscription({
       callback: () => {
-        fetcher.submit(null, { method: "patch" });
+        fetcher.submit(null, { method: "put" });
       },
       client: supabase,
     });
@@ -211,6 +230,7 @@ const EstimateTaskRoute = () => {
                   {[1, 2, 3, 5, 8, 13].map((effortOption) => {
                     return (
                       <Button
+                        disabled={userVoted || !!task.effort}
                         key={effortOption}
                         as={Button}
                         type="submit"
@@ -220,7 +240,7 @@ const EstimateTaskRoute = () => {
                         border={
                           userVoted
                             ? currentUserEstimation.effort === effortOption
-                              ? "1px solid red"
+                              ? "2px solid red"
                               : "none"
                             : "none"
                         }
@@ -230,6 +250,13 @@ const EstimateTaskRoute = () => {
                     );
                   })}
                 </Wrap>
+                {profile.id === task.asignee.id ? (
+                  <Box p={1} as={fetcher.Form} method="patch">
+                    <Button disabled={!!task.effort} type="submit">
+                      End voting period
+                    </Button>
+                  </Box>
+                ) : null}
               </Box>
             );
           }
