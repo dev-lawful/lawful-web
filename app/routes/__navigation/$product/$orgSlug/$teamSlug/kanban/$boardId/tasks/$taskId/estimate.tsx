@@ -126,10 +126,12 @@ export const action: ActionFunction = async ({ params, request }) => {
       const calculatedEffort =
         efforts.length === 1
           ? efforts[0]
+          : efforts.length === 0
+          ? 0
           : (calculateMedian(efforts) + calculateMode(efforts)) /
             efforts.length;
 
-      await updateTaskEffort({
+      const res = await updateTaskEffort({
         calculatedEffort,
         taskId: params?.taskId!,
       });
@@ -224,7 +226,7 @@ const EstimateTaskRoute = () => {
   return (
     <Stack>
       <Heading>{`Estimating task: "${task.name}"`}</Heading>
-      {task.effort ? (
+      {task.effort !== null ? (
         <Heading
           color={`${product}.400`}
           size="md"

@@ -145,8 +145,6 @@ const InitiativeRoute = () => {
           )[0] ?? null
       : null;
 
-  console.log({ mostVotedOption });
-
   return (
     <Container maxW={"7xl"}>
       <SimpleGrid
