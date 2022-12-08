@@ -18,7 +18,7 @@ import {
   useColorModeValue,
   VStack,
   Wrap,
-  WrapItem,
+  WrapItem
 } from "@chakra-ui/react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
@@ -28,14 +28,14 @@ import { InitiativeStatus } from "~/components/modules/lawful";
 import {
   CustomCatchBoundary,
   CustomErrorBoundary,
-  MarkdownViewer,
+  MarkdownViewer
 } from "~/components/ui";
 import { useSupabaseClient } from "~/db";
 import {
   createVote,
   getInitiativeById,
   getOptionsByInitiativeId,
-  updateInitiative,
+  updateInitiative
 } from "~/models";
 import type { Initiative, Option, Vote } from "~/_types";
 
@@ -48,14 +48,14 @@ const getInitiativeStatus = ({
 }): Status =>
   draft ? "draft" : date.getTime() > new Date().getTime() ? "active" : "closed";
 
+type OptionWithVotes = Option & {
+  votes: Array<Vote>;
+};
+
 interface LoaderData {
   data: {
     initiatives: Array<Initiative>;
-    options: Array<
-      Option & {
-        votes: Array<Vote>;
-      }
-    >;
+    options: Array<OptionWithVotes>;
   };
 }
 
@@ -125,14 +125,27 @@ const InitiativeRoute = () => {
 
   const hasUserAlreadyVoted =
     options
-      .map((i) => i.votes)
+      .map((i: OptionWithVotes) => i.votes)
       .flat()
-      .filter((item) => item.userId === supabase?.user?.id).length > 0;
+      .filter((item: Vote) => item.userId === supabase?.user?.id).length > 0;
 
   const initiativeStatus: Status = getInitiativeStatus({
     date: new Date(initiative?.dueDate!),
     draft: initiative?.status === "draft",
   });
+
+  const mostVotedOption =
+    initiativeStatus === "closed"
+      ? options
+          .map((o: OptionWithVotes) => o.votes)
+          .flat()
+          .sort(
+            (a: OptionWithVotes["votes"], b: OptionWithVotes["votes"]) =>
+              b.length - a.length
+          )[0] ?? null
+      : null;
+
+  console.log({ mostVotedOption });
 
   return (
     <Container maxW={"7xl"}>
@@ -257,7 +270,8 @@ const InitiativeRoute = () => {
             <Input type="hidden" value={supabase?.user?.id} name="userId" />
             <RadioGroup defaultChecked={true} name="option">
               <VStack align="start" spacing={3}>
-                {options.map(({ votes, content, id }) => {
+                {options.map(({ votes, content, id }: OptionWithVotes) => {
+                  const isMostVotedOption = mostVotedOption.optionId === id;
                   return (
                     <Radio
                       name="optionId"
@@ -265,7 +279,20 @@ const InitiativeRoute = () => {
                       colorScheme="lawful"
                       value={`${id}`}
                     >
-                      {content} (Votes count: {votes.length})
+                      <Wrap>
+                        <WrapItem>
+                          <Text
+                            fontWeight={isMostVotedOption ? "bold" : "normal"}
+                          >
+                            {content} (Votes count: {votes.length}){" "}
+                          </Text>
+                        </WrapItem>
+                        <WrapItem>
+                          <Text fontWeight="bold" color="green.400">
+                            {isMostVotedOption ? "Most voted option! 🏆" : null}
+                          </Text>
+                        </WrapItem>
+                      </Wrap>
                     </Radio>
                   );
                 })}
