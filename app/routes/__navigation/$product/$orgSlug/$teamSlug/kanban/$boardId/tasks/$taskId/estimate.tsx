@@ -131,7 +131,7 @@ export const action: ActionFunction = async ({ params, request }) => {
           : (calculateMedian(efforts) + calculateMode(efforts)) /
             efforts.length;
 
-      const res = await updateTaskEffort({
+      await updateTaskEffort({
         calculatedEffort,
         taskId: params?.taskId!,
       });
