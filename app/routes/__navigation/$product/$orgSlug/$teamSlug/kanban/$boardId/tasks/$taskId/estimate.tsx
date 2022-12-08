@@ -13,6 +13,7 @@ import {
   getProfilesByTeamSlug,
   getTaskById,
 } from "~/models";
+import TeamLayoutRoute from "~/routes/__navigation/$product/$orgSlug/$teamSlug";
 import { getSession } from "~/sessions";
 import type { Estimation, Profile, Task, UserSession } from "~/_types";
 
@@ -28,9 +29,90 @@ interface LoaderData {
   };
 }
 
+const getEstimationsByTeamMembers = async ({
+  teamSlug,
+  organizationId,
+  taskId,
+}: {
+  teamSlug: string;
+  organizationId: number;
+  taskId: string;
+}) => {
+  const { data: teamMembersProfiles } = await getProfilesByTeamSlug({
+    organizationId,
+    slug: teamSlug!,
+  });
+
+  if (!teamMembersProfiles) throw new Error("No team members");
+
+  const teamMembersIds = teamMembersProfiles.map((p) => p.id);
+
+  const { data: estimations } = await supabase
+    .from<
+      Estimation & {
+        profiles: Array<Profile>;
+      }
+    >("estimations")
+    .select("*, profiles (*)")
+    .in("userId", teamMembersIds)
+    .eq("taskId", taskId!);
+
+  return estimations;
+};
+
+const addEffort = async ({
+  organizationId,
+  teamSlug,
+  taskId,
+}: {
+  organizationId: number;
+  teamSlug: string;
+  taskId: string;
+}) => {
+  console.log("y entrar a addEffort");
+  const estimations = await getEstimationsByTeamMembers({
+    organizationId,
+    taskId,
+    teamSlug,
+  });
+
+  if (estimations?.length && estimations?.length > 0) {
+    const efforts = estimations
+      .filter((e) => e.effort && e.effort > 0)
+      .map((e: Estimation) => e.effort) as Array<NonNullable<Task["effort"]>>;
+
+    // Si el largo es uno, tomo ese valor y fue, si es mas de uno, hago esto
+    const effortsAvg =
+      efforts.length === 1
+        ? efforts[0]
+        : (calculateMedian(efforts) + calculateMode(efforts)) / efforts.length;
+
+    await supabase
+      .from<Task>("tasks")
+      .update({
+        effort: effortsAvg,
+      })
+      .eq("id", Number(taskId! as string));
+  }
+};
+
 export const action: ActionFunction = async ({ params, request }) => {
+  const {
+    data: {
+      0: { id: organizationId },
+    },
+  } = await getOrganizationBySlug(params?.orgSlug!);
+
   switch (request.method) {
     case "PATCH": {
+      // Actualizar el effort con lo que hay
+      console.log("patch patch patch patch patch patch patch  ");
+      await addEffort({
+        organizationId,
+        teamSlug: params?.teamSlug!,
+        taskId: params?.taskId!,
+      });
+
       return json({});
     }
 
@@ -58,11 +140,11 @@ export const action: ActionFunction = async ({ params, request }) => {
         })
         .eq("userId", user.id);
 
-      const {
-        data: {
-          0: { id: organizationId },
-        },
-      } = await getOrganizationBySlug(params.orgSlug!);
+      const estimations = await getEstimationsByTeamMembers({
+        organizationId,
+        taskId: params?.taskId!,
+        teamSlug: params?.teamSlug!,
+      });
 
       const { data: teamMembersProfiles } = await getProfilesByTeamSlug({
         organizationId,
@@ -73,31 +155,18 @@ export const action: ActionFunction = async ({ params, request }) => {
 
       const teamMembersIds = teamMembersProfiles.map((p) => p.id);
 
-      const { data: estimations } = await supabase
-        .from<
-          Estimation & {
-            profiles: Array<Profile>;
-          }
-        >("estimations")
-        .select("*, profiles (*)")
-        .in("userId", teamMembersIds)
-        .eq("taskId", params?.taskId!);
+      console.log(
+        { e: estimations?.length, t: teamMembersIds.length },
+        "Si estas dos son iguales"
+      );
 
       if (estimations?.length === teamMembersIds.length) {
-        const efforts = estimations
-          .filter((e) => e.effort && e.effort > 0)
-          .map((e: Estimation) => e.effort) as Array<
-          NonNullable<Task["effort"]>
-        >;
-
-        const effortsAvg = efforts.reduce((a, b) => a + b, 0) / efforts.length;
-
-        await supabase
-          .from<Task>("tasks")
-          .update({
-            effort: effortsAvg,
-          })
-          .eq("id", Number(params?.taskId! as string));
+        console.log("Esto deberia correr");
+        await addEffort({
+          organizationId,
+          teamSlug: params?.teamSlug!,
+          taskId: params?.taskId!,
+        });
       }
 
       return json({});
@@ -217,6 +286,7 @@ const EstimateTaskRoute = () => {
                   {[1, 2, 3, 5, 8, 13].map((effortOption) => {
                     return (
                       <Button
+                        disabled={userVoted}
                         key={effortOption}
                         as={Button}
                         type="submit"
@@ -236,6 +306,13 @@ const EstimateTaskRoute = () => {
                     );
                   })}
                 </Wrap>
+                {profile.id === task.asignee.id ? (
+                  <Box p={1} as={fetcher.Form} method="patch">
+                    <Button disabled={!!task.effort} type="submit">
+                      End voting period
+                    </Button>
+                  </Box>
+                ) : null}
               </Box>
             );
           }
@@ -282,3 +359,38 @@ const EstimateTaskRoute = () => {
 };
 
 export default EstimateTaskRoute;
+
+const calculateMedian = (arr: Array<number>) => {
+  const { length } = arr;
+
+  arr.sort((a, b) => a - b);
+
+  if (length % 2 === 0) {
+    return (arr[length / 2 - 1] + arr[length / 2]) / 2;
+  }
+
+  return arr[(length - 1) / 2];
+};
+
+const calculateMode = (arr: Array<number>) => {
+  const mode: Record<string, number> = {};
+  let max = 0,
+    count = 0;
+
+  for (let i = 0; i < arr.length; i++) {
+    const item = arr[i];
+
+    if (mode[item]) {
+      mode[item]++;
+    } else {
+      mode[item] = 1;
+    }
+
+    if (count < mode[item]) {
+      max = item;
+      count = mode[item];
+    }
+  }
+
+  return max;
+};

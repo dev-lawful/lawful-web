@@ -98,7 +98,8 @@ const EditTaskRoute = () => {
     },
   } = useLoaderData<LoaderData>();
 
-  const { created_at, ...taskData } = {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { created_at = "", ...taskData } = {
     ...task,
     asignee: task.asignee?.id,
   };
