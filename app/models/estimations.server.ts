@@ -33,17 +33,17 @@ export const getEstimationsByTaskId = async ({
 };
 
 export const updateTaskEffort = async ({
-  effortsAvg,
+  calculatedEffort,
   taskId,
 }: {
-  effortsAvg: number;
+  calculatedEffort: number;
   taskId: string;
 }): Promise<CustomResponse<Task>> => {
   try {
     const { data } = await supabase
       .from<Task>("tasks")
       .update({
-        effort: effortsAvg,
+        effort: calculatedEffort,
       })
       .eq("id", Number(taskId));
 

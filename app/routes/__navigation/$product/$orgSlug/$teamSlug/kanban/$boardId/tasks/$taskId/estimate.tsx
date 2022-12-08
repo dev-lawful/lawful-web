@@ -83,10 +83,14 @@ export const action: ActionFunction = async ({ params, request }) => {
           NonNullable<Task["effort"]>
         >;
 
-        const effortsAvg = efforts.reduce((a, b) => a + b, 0) / efforts.length;
+        const calculatedEffort =
+          efforts.length === 1
+            ? efforts[0]
+            : (calculateMedian(efforts) + calculateMode(efforts)) /
+              efforts.length;
 
         await updateTaskEffort({
-          effortsAvg,
+          calculatedEffort,
           taskId: params?.taskId!,
         });
       }
