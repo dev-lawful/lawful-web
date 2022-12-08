@@ -9,9 +9,12 @@ import type {
 import { useEffect } from "react";
 import { supabase, useSupabaseClient } from "~/db";
 import {
+  getEstimationsByTaskId,
   getOrganizationBySlug,
   getProfilesByTeamSlug,
   getTaskById,
+  updateTaskEffort,
+  upsertEstimationByUserId,
 } from "~/models";
 import { getSession } from "~/sessions";
 import type { Estimation, Profile, Task, UserSession } from "~/_types";
@@ -30,10 +33,6 @@ interface LoaderData {
 
 export const action: ActionFunction = async ({ params, request }) => {
   switch (request.method) {
-    case "PATCH": {
-      return json({});
-    }
-
     case "POST": {
       const formData = await request.formData();
       const effort = Number(formData.get("effort") as string);
@@ -48,15 +47,14 @@ export const action: ActionFunction = async ({ params, request }) => {
         return redirect("/signin");
       }
 
-      await supabase
-        .from<Estimation>("estimations")
-        .upsert({
+      await upsertEstimationByUserId({
+        userId: params?.userId!,
+        data: {
           effort,
           justification: "Some justification",
-          taskId: Number(params?.taskId! as string),
-          userId: user.id,
-        })
-        .eq("userId", user.id);
+          taskId: params?.taskId!,
+        },
+      });
 
       const {
         data: {
@@ -73,15 +71,10 @@ export const action: ActionFunction = async ({ params, request }) => {
 
       const teamMembersIds = teamMembersProfiles.map((p) => p.id);
 
-      const { data: estimations } = await supabase
-        .from<
-          Estimation & {
-            profiles: Array<Profile>;
-          }
-        >("estimations")
-        .select("*, profiles (*)")
-        .in("userId", teamMembersIds)
-        .eq("taskId", params?.taskId!);
+      const { data: estimations } = await getEstimationsByTaskId({
+        taskId: params?.taskId!,
+        teamMembersIds,
+      });
 
       if (estimations?.length === teamMembersIds.length) {
         const efforts = estimations
@@ -92,14 +85,16 @@ export const action: ActionFunction = async ({ params, request }) => {
 
         const effortsAvg = efforts.reduce((a, b) => a + b, 0) / efforts.length;
 
-        await supabase
-          .from<Task>("tasks")
-          .update({
-            effort: effortsAvg,
-          })
-          .eq("id", Number(params?.taskId! as string));
+        await updateTaskEffort({
+          effortsAvg,
+          taskId: params?.taskId!,
+        });
       }
 
+      return json({});
+    }
+
+    case "PATCH": {
       return json({});
     }
 
@@ -129,15 +124,10 @@ export const loader: LoaderFunction = async ({ params, request }) => {
 
   const teamMembersIds = teamMembersProfiles.map((p) => p.id);
 
-  const { data: estimations } = await supabase
-    .from<
-      Estimation & {
-        profiles: Array<Profile>;
-      }
-    >("estimations")
-    .select("*, profiles (*)")
-    .in("userId", teamMembersIds)
-    .eq("taskId", params?.taskId!);
+  const { data: estimations } = await getEstimationsByTaskId({
+    taskId: params?.taskId!,
+    teamMembersIds,
+  });
 
   if (!estimations) throw new Error("No estimations");
 
