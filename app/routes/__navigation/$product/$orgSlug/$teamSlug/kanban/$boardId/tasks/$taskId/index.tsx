@@ -161,7 +161,7 @@ const TaskRoute = () => {
                     <Text as={"span"} fontWeight={"bold"}>
                       Created at:
                     </Text>{" "}
-                    {new Date(task.created_at).toLocaleString()}
+                    {new Date(task.created_at).toLocaleString("es")}
                   </ListItem>
                 ) : null}
                 {task.dueDate ? (
@@ -169,7 +169,7 @@ const TaskRoute = () => {
                     <Text as={"span"} fontWeight={"bold"}>
                       Due to:
                     </Text>{" "}
-                    {new Date(task.dueDate).toLocaleString()}
+                    {new Date(task.dueDate).toLocaleString("es")}
                   </ListItem>
                 ) : null}
                 <ListItem>
