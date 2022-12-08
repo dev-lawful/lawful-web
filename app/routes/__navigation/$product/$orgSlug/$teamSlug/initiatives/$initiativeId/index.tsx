@@ -18,7 +18,7 @@ import {
   useColorModeValue,
   VStack,
   Wrap,
-  WrapItem
+  WrapItem,
 } from "@chakra-ui/react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
@@ -28,14 +28,14 @@ import { InitiativeStatus } from "~/components/modules/lawful";
 import {
   CustomCatchBoundary,
   CustomErrorBoundary,
-  MarkdownViewer
+  MarkdownViewer,
 } from "~/components/ui";
 import { useSupabaseClient } from "~/db";
 import {
   createVote,
   getInitiativeById,
   getOptionsByInitiativeId,
-  updateInitiative
+  updateInitiative,
 } from "~/models";
 import type { Initiative, Option, Vote } from "~/_types";
 
@@ -271,7 +271,7 @@ const InitiativeRoute = () => {
             <RadioGroup defaultChecked={true} name="option">
               <VStack align="start" spacing={3}>
                 {options.map(({ votes, content, id }: OptionWithVotes) => {
-                  const isMostVotedOption = mostVotedOption.optionId === id;
+                  const isMostVotedOption = mostVotedOption?.optionId === id;
                   return (
                     <Radio
                       name="optionId"
