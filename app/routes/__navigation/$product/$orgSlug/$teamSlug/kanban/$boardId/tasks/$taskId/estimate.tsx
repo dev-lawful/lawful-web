@@ -32,26 +32,6 @@ interface LoaderData {
 }
 
 export const action: ActionFunction = async ({ params, request }) => {
-  const {
-    data: {
-      0: { id: organizationId },
-    },
-  } = await getOrganizationBySlug(params.orgSlug!);
-
-  const { data: teamMembersProfiles } = await getProfilesByTeamSlug({
-    organizationId,
-    slug: params.teamSlug!,
-  });
-
-  if (!teamMembersProfiles) throw new Error("No team members");
-
-  const teamMembersIds = teamMembersProfiles.map((p) => p.id);
-
-  const { data: estimations } = await getEstimationsByTaskId({
-    taskId: params?.taskId!,
-    teamMembersIds,
-  });
-
   switch (request.method) {
     case "POST": {
       const formData = await request.formData();
@@ -74,6 +54,26 @@ export const action: ActionFunction = async ({ params, request }) => {
           justification: "Some justification",
           taskId: params?.taskId!,
         },
+      });
+
+      const {
+        data: {
+          0: { id: organizationId },
+        },
+      } = await getOrganizationBySlug(params.orgSlug!);
+
+      const { data: teamMembersProfiles } = await getProfilesByTeamSlug({
+        organizationId,
+        slug: params.teamSlug!,
+      });
+
+      if (!teamMembersProfiles) throw new Error("No team members");
+
+      const teamMembersIds = teamMembersProfiles.map((p) => p.id);
+
+      const { data: estimations } = await getEstimationsByTaskId({
+        taskId: params?.taskId!,
+        teamMembersIds,
       });
 
       if (estimations?.length === teamMembersIds.length) {
@@ -99,6 +99,26 @@ export const action: ActionFunction = async ({ params, request }) => {
     }
 
     case "PATCH": {
+      const {
+        data: {
+          0: { id: organizationId },
+        },
+      } = await getOrganizationBySlug(params.orgSlug!);
+
+      const { data: teamMembersProfiles } = await getProfilesByTeamSlug({
+        organizationId,
+        slug: params.teamSlug!,
+      });
+
+      if (!teamMembersProfiles) throw new Error("No team members");
+
+      const teamMembersIds = teamMembersProfiles.map((p) => p.id);
+
+      const { data: estimations } = await getEstimationsByTaskId({
+        taskId: params?.taskId!,
+        teamMembersIds,
+      });
+
       const efforts = estimations
         .filter((e) => e.effort && e.effort > 0)
         .map((e: Estimation) => e.effort) as Array<NonNullable<Task["effort"]>>;
