@@ -44,12 +44,21 @@ const useNavbarLinks = () => {
       to: "/decode",
     },
   ];
+
   if (product === "lawful") {
     return { product, links: baseLinks };
   }
 
   if (!params.product || !params.teamSlug || !params.orgSlug) {
-    return { product, links: [] };
+    return {
+      product,
+      links: [
+        {
+          label: "Pricing",
+          to: `${product}/pricing`,
+        },
+      ],
+    };
   }
 
   switch (params.product) {
